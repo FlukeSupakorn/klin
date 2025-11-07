@@ -16,7 +16,6 @@ function App() {
             <Route path="/files/secret" element={<SecretFolderPage />} />
             <Route path="/tasks" element={<div className="p-6">Tasks Page</div>} />
             <Route path="/users" element={<div className="p-6">Users Page</div>} />
-            <Route path="/apis" element={<div className="p-6">APIs Page</div>} />
             <Route path="/subscription" element={<div className="p-6">Subscription Page</div>} />
             <Route path="/settings" element={<div className="p-6">Settings Page</div>} />
             <Route path="/help" element={<div className="p-6">Help & Support Page</div>} />
