@@ -1,51 +1,31 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
-import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Sidebar } from './components/layout/sidebar'
+import { MyFilesPage } from './pages/my-files-page'
+import { SecretFolderPage } from './pages/secret-folder-page'
+import './index.css'
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
-
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
-  }
-
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <BrowserRouter>
+      <div className="flex h-screen bg-white overflow-hidden">
+        <Sidebar />
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <Routes>
+            <Route path="/" element={<Navigate to="/files" replace />} />
+            <Route path="/files" element={<MyFilesPage />} />
+            <Route path="/files/secret" element={<SecretFolderPage />} />
+            <Route path="/tasks" element={<div className="p-6">Tasks Page</div>} />
+            <Route path="/users" element={<div className="p-6">Users Page</div>} />
+            <Route path="/apis" element={<div className="p-6">APIs Page</div>} />
+            <Route path="/subscription" element={<div className="p-6">Subscription Page</div>} />
+            <Route path="/settings" element={<div className="p-6">Settings Page</div>} />
+            <Route path="/help" element={<div className="p-6">Help & Support Page</div>} />
+          </Routes>
+        </main>
       </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
-  );
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
+
