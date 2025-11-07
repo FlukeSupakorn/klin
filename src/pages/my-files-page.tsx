@@ -156,92 +156,177 @@ export function MyFilesPage() {
             </div>
           </div>
           
-          {/* Table */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="py-3 px-4 text-left w-12">
-                    <Checkbox 
-                      checked={allSelected}
-                      onCheckedChange={() => allSelected ? deselectAllFiles() : selectAllFiles()}
-                      aria-label="Select all"
-                    />
-                  </th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <FileIcon type="folder" className="h-4 w-4" />
-                      <span>File Name</span>
-                      <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                      </svg>
+          {/* List View */}
+          {currentView === 'list' && (
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+              <table className="w-full">
+                <thead className="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th className="py-3 px-4 text-left w-12">
+                      <Checkbox 
+                        checked={allSelected}
+                        onCheckedChange={() => allSelected ? deselectAllFiles() : selectAllFiles()}
+                        aria-label="Select all"
+                      />
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
+                      <div className="flex items-center gap-2">
+                        <FileIcon type="folder" className="h-4 w-4" />
+                        <span>File Name</span>
+                        <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                        </svg>
+                      </div>
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
+                      <div className="flex items-center gap-2">
+                        <span>File Size</span>
+                        <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                        </svg>
+                      </div>
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
+                      <div className="flex items-center gap-2">
+                        <span>User Permission</span>
+                        <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                        </svg>
+                      </div>
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
+                      <div className="flex items-center gap-2">
+                        <span>Last Modified</span>
+                        <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                          <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                        </svg>
+                      </div>
+                    </th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {filteredFiles.map((file) => {
+                    const isSelected = selectedFileIds.includes(file.id)
+                    return (
+                      <tr 
+                        key={file.id} 
+                        className={`hover:bg-slate-50 transition-colors ${isSelected ? 'bg-indigo-50' : ''}`}
+                      >
+                        <td className="py-4 px-4">
+                          <Checkbox 
+                            checked={isSelected}
+                            onCheckedChange={() => toggleFileSelection(file.id)}
+                            aria-label={`Select ${file.name}`}
+                          />
+                        </td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <FileIcon type={file.type} className="h-5 w-5 text-indigo-600" />
+                            <span className="font-medium text-slate-900">{file.name}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-sm text-slate-600">{file.sizeFormatted}</td>
+                        <td className="py-4 px-4">
+                          <AvatarGroup users={file.users} max={3} />
+                        </td>
+                        <td className="py-4 px-4 text-sm text-slate-600">{file.lastModifiedFormatted}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <button className="text-sm font-medium text-rose-500 hover:text-rose-600">Delete</button>
+                            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Edit</button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+          
+          {/* Grid View */}
+          {currentView === 'grid' && (
+            <div className="grid grid-cols-4 gap-4">
+              {filteredFiles.map((file) => {
+                const isSelected = selectedFileIds.includes(file.id)
+                return (
+                  <div 
+                    key={file.id}
+                    className={`bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all cursor-pointer ${isSelected ? 'ring-2 ring-indigo-600 border-indigo-600' : ''}`}
+                    onClick={() => toggleFileSelection(file.id)}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <Checkbox 
+                        checked={isSelected}
+                        onCheckedChange={() => toggleFileSelection(file.id)}
+                        aria-label={`Select ${file.name}`}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      <button className="text-slate-400 hover:text-slate-600">
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                        </svg>
+                      </button>
                     </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <span>File Size</span>
-                      <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                      </svg>
+                    
+                    <div className="h-24 bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
+                      <FileIcon type={file.type} className="h-12 w-12 text-indigo-600" />
                     </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <span>User Permission</span>
-                      <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                      </svg>
+                    
+                    <h3 className="font-semibold text-slate-900 mb-1 truncate">{file.name}</h3>
+                    <p className="text-sm text-slate-500 mb-3">{file.sizeFormatted}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <AvatarGroup users={file.users} max={2} size="sm" />
+                      <span className="text-xs text-slate-400">{file.lastModifiedFormatted}</span>
                     </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <span>Last Modified</span>
-                      <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
-                      </svg>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          
+          {/* Tab View */}
+          {currentView === 'tab' && (
+            <div className="space-y-3">
+              {filteredFiles.map((file) => {
+                const isSelected = selectedFileIds.includes(file.id)
+                return (
+                  <div 
+                    key={file.id}
+                    className={`bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-all cursor-pointer ${isSelected ? 'ring-2 ring-indigo-600 border-indigo-600' : ''}`}
+                    onClick={() => toggleFileSelection(file.id)}
+                  >
+                    <div className="flex items-center gap-4">
+                      <Checkbox 
+                        checked={isSelected}
+                        onCheckedChange={() => toggleFileSelection(file.id)}
+                        aria-label={`Select ${file.name}`}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      
+                      <div className="h-12 w-12 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FileIcon type={file.type} className="h-6 w-6 text-indigo-600" />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-slate-900 truncate">{file.name}</h3>
+                        <p className="text-sm text-slate-500">{file.sizeFormatted} • {file.lastModifiedFormatted}</p>
+                      </div>
+                      
+                      <AvatarGroup users={file.users} max={3} />
+                      
+                      <div className="flex items-center gap-2">
+                        <button className="text-sm font-medium text-rose-500 hover:text-rose-600 px-3 py-1">Delete</button>
+                        <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700 px-3 py-1">Edit</button>
+                      </div>
                     </div>
-                  </th>
-                  <th className="py-3 px-4 text-left text-sm font-semibold text-slate-700">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {filteredFiles.map((file) => {
-                  const isSelected = selectedFileIds.includes(file.id)
-                  return (
-                    <tr 
-                      key={file.id} 
-                      className={`hover:bg-slate-50 transition-colors ${isSelected ? 'bg-indigo-50' : ''}`}
-                    >
-                      <td className="py-4 px-4">
-                        <Checkbox 
-                          checked={isSelected}
-                          onCheckedChange={() => toggleFileSelection(file.id)}
-                          aria-label={`Select ${file.name}`}
-                        />
-                      </td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <FileIcon type={file.type} className="h-5 w-5 text-indigo-600" />
-                          <span className="font-medium text-slate-900">{file.name}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-sm text-slate-600">{file.sizeFormatted}</td>
-                      <td className="py-4 px-4">
-                        <AvatarGroup users={file.users} max={3} />
-                      </td>
-                      <td className="py-4 px-4 text-sm text-slate-600">{file.lastModifiedFormatted}</td>
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <button className="text-sm font-medium text-rose-500 hover:text-rose-600">Delete</button>
-                          <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Edit</button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
       
