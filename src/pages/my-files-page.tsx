@@ -20,7 +20,7 @@ interface OrganizePreview {
 }
 
 export function MyFilesPage() {
-  const { selectedFileIds, toggleFileSelection, selectAllFiles, deselectAllFiles, currentView, setCurrentView, storageUsed, storageTotal } = useFileStore()
+  const { selectedFileIds, toggleFileSelection, deselectAllFiles, currentView, setCurrentView, storageUsed, storageTotal } = useFileStore()
   const [localSearch, setLocalSearch] = useState('')
   const [isOrganizeOpen, setIsOrganizeOpen] = useState(false)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
@@ -81,8 +81,22 @@ export function MyFilesPage() {
     file.name.toLowerCase().includes(localSearch.toLowerCase())
   )
   
-  const allSelected = selectedFileIds.length === realFiles.length && realFiles.length > 0
-  const selectedFiles = realFiles.filter(file => selectedFileIds.includes(file.path))
+  const selectedFiles = filteredFiles.filter(file => selectedFileIds.includes(file.path))
+
+  const handleSelectAll = () => {
+    if (selectedFileIds.length === filteredFiles.length) {
+      deselectAllFiles()
+    } else {
+      const allFileIds = filteredFiles.map(file => file.path)
+      allFileIds.forEach(id => {
+        if (!selectedFileIds.includes(id)) {
+          toggleFileSelection(id)
+        }
+      })
+    }
+  }
+
+  const isAllSelected = filteredFiles.length > 0 && selectedFileIds.length === filteredFiles.length
 
   const getFolderName = (path: string) => {
     const parts = path.split(/[\/\\]/)
@@ -178,13 +192,11 @@ export function MyFilesPage() {
     const approvedCount = organizePreviews.filter(p => p.status !== 'rejected').length
     
     if (approvedCount === 0) {
-      alert('All files were rejected. No changes will be made.')
       setIsPreviewOpen(false)
       return
     }
     
     // In real app, this would execute the organization
-    alert(`Successfully organized ${approvedCount} file(s)!`)
     setIsPreviewOpen(false)
     deselectAllFiles()
   }
@@ -295,8 +307,8 @@ export function MyFilesPage() {
                       <tr>
                         <th className="py-3 px-4 text-left w-12">
                           <Checkbox 
-                            checked={allSelected}
-                            onCheckedChange={() => allSelected ? deselectAllFiles() : selectAllFiles()}
+                            checked={isAllSelected}
+                            onCheckedChange={handleSelectAll}
                             aria-label="Select all"
                           />
                         </th>
@@ -455,10 +467,10 @@ export function MyFilesPage() {
               <p className="text-sm font-medium text-slate-700">Selected files ({selectedFiles.length}):</p>
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {selectedFiles.map((file) => (
-                  <div key={file.path} className="flex items-center gap-3 bg-white rounded-md p-2 border border-slate-200">
-                    <FileIcon type={getFileType(file.name, file.is_dir)} className="h-4 w-4 text-indigo-600" />
-                    <span className="text-sm text-slate-900">{file.name}</span>
-                    <span className="text-xs text-slate-500 ml-auto">{formatFileSize(file.size)}</span>
+                  <div key={file.path} className="flex items-center gap-3 bg-white rounded-md p-2 border border-slate-200 overflow-hidden">
+                    <FileIcon type={getFileType(file.name, file.is_dir)} className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+                    <span className="text-sm text-slate-900 truncate flex-1 min-w-0 max-w-[250px]" title={file.name}>{file.name}</span>
+                    <span className="text-xs text-slate-500 flex-shrink-0 whitespace-nowrap">{formatFileSize(file.size)}</span>
                   </div>
                 ))}
               </div>
