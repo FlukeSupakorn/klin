@@ -1,7 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
 import { MyFilesPage } from './pages/my-files-page'
-import { SecretFolderPage } from './pages/secret-folder-page'
+import { HistoryPage } from './pages/history-page'
+import { NotePage } from './pages/note-page'
+import { CalendarPage } from './pages/calendar-page'
+import { SubscriptionPage } from './pages/subscription-page'
+import { SettingsPage } from './pages/settings-page'
+import { HelpSupportPage } from './pages/help-support-page'
 import './index.css'
 
 function App() {
@@ -13,12 +18,12 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/files" replace />} />
             <Route path="/files" element={<MyFilesPage />} />
-            <Route path="/files/secret" element={<SecretFolderPage />} />
-            <Route path="/tasks" element={<div className="p-6">Tasks Page</div>} />
-            <Route path="/users" element={<div className="p-6">Users Page</div>} />
-            <Route path="/subscription" element={<div className="p-6">Subscription Page</div>} />
-            <Route path="/settings" element={<div className="p-6">Settings Page</div>} />
-            <Route path="/help" element={<div className="p-6">Help & Support Page</div>} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/note" element={<NotePage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/subscription" element={<SubscriptionPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/help" element={<HelpSupportPage />} />
           </Routes>
         </main>
       </div>

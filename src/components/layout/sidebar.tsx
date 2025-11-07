@@ -1,13 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, ListChecks, Users, Database, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Home, FolderClock, StickyNote, Calendar, CreditCard, Settings, HelpCircle, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
   { icon: Home, label: 'Home', path: '/files', badge: '10' },
-  { icon: ListChecks, label: 'Tasks', path: '/tasks' },
-  { icon: Users, label: 'Users', path: '/users', badge: '2' },
-  { icon: Database, label: 'Secret Folder', path: '/files/secret' },
-  { icon: Database, label: 'Subscription', path: '/subscription' },
+  { icon: FolderClock, label: 'History', path: '/history' },
+  { icon: StickyNote, label: 'Note', path: '/note' },
+  { icon: Calendar, label: 'Calendar', path: '/calendar' },
+  { icon: CreditCard, label: 'Subscription', path: '/subscription' },
   { icon: Settings, label: 'Settings', path: '/settings' },
   { icon: HelpCircle, label: 'Help & Support', path: '/help' },
 ]
