@@ -21,9 +21,9 @@ export function Sidebar() {
       <div className="px-6 py-4 border-b border-slate-200">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">S</span>
+            <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="font-bold text-lg text-slate-900">slothui</span>
+          <span className="font-bold text-lg text-slate-900">KLIN</span>
         </div>
       </div>
       
