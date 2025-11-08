@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
-import { MyFilesPage } from './pages/my-files-page'
+import HomePage from './pages/home'
 import { HistoryPage } from './pages/history-page'
 import { NotePage } from './pages/note-page'
 import { CalendarPage } from './pages/calendar-page'
@@ -17,7 +17,7 @@ function App() {
         <main className="flex-1 flex flex-col overflow-hidden">
           <Routes>
             <Route path="/" element={<Navigate to="/files" replace />} />
-            <Route path="/files" element={<MyFilesPage />} />
+            <Route path="/files" element={<HomePage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/note" element={<NotePage />} />
             <Route path="/calendar" element={<CalendarPage />} />
