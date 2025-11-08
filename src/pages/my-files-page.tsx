@@ -9,6 +9,7 @@ import { FileIcon } from '@/components/file/file-icon'
 import { StorageProgress } from '@/components/file/storage-progress'
 import { useFileStore } from '@/store/useFileStore'
 import { getDownloadsFolder, readFolder, FileItem } from '@/lib/tauri-api'
+import { callOrganizeAPI, FileOrganizeResult } from '@/lib/mock-api'
 
 interface OrganizePreview {
   file: FileItem
@@ -17,6 +18,7 @@ interface OrganizePreview {
   currentFolder: string
   destinationFolder: string
   status: 'pending' | 'approved' | 'rejected'
+  summary?: string
 }
 
 export function MyFilesPage() {
@@ -28,6 +30,7 @@ export function MyFilesPage() {
   const [watchedFolder, setWatchedFolder] = useState<string>('')
   const [realFiles, setRealFiles] = useState<FileItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isLoadingOrganize, setIsLoadingOrganize] = useState(false)
   const [organizePreviews, setOrganizePreviews] = useState<OrganizePreview[]>([])
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
@@ -103,41 +106,39 @@ export function MyFilesPage() {
     return parts[parts.length - 1] || 'Downloads'
   }
 
-  const generateOrganizePreview = () => {
-    // Mock AI organization - in real app, this would call AI service
-    const previews: OrganizePreview[] = selectedFiles.map(file => {
-      const ext = file.name.split('.').pop() || ''
-      const nameWithoutExt = file.name.replace(`.${ext}`, '')
+  const generateOrganizePreview = async () => {
+    setIsLoadingOrganize(true)
+    try {
+      // Call the mock API with batch organize
+      const response = await callOrganizeAPI({
+        action: 'Borganize',
+        file_paths: selectedFiles.map(f => f.path)
+      })
+
+      // Convert API response to preview format
+      const previews: OrganizePreview[] = selectedFiles.map(file => {
+        const result = response.result[file.name]
+        
+        return {
+          file,
+          currentName: file.name,
+          newName: result?.rename || file.name,
+          currentFolder: watchedFolder,
+          destinationFolder: result?.move || watchedFolder,
+          status: 'pending' as const,
+          summary: result?.summary
+        }
+      })
       
-      // Mock organization logic
-      let destinationFolder = 'Documents'
-      let newName = file.name
-      
-      if (getFileType(file.name, file.is_dir) === 'image') {
-        destinationFolder = 'Images/Photos_2024'
-        newName = `photo_${Date.now()}_${file.name}`
-      } else if (getFileType(file.name, file.is_dir) === 'document') {
-        destinationFolder = 'Documents/Work'
-        newName = `${nameWithoutExt}_organized.${ext}`
-      } else if (getFileType(file.name, file.is_dir) === 'video') {
-        destinationFolder = 'Videos/Recordings'
-      } else if (getFileType(file.name, file.is_dir) === 'code') {
-        destinationFolder = 'Projects/Code'
-      }
-      
-      return {
-        file,
-        currentName: file.name,
-        newName: newName,
-        currentFolder: watchedFolder,
-        destinationFolder: `${watchedFolder}/${destinationFolder}`,
-        status: 'pending' as const
-      }
-    })
-    
-    setOrganizePreviews(previews)
-    setIsOrganizeOpen(false)
-    setIsPreviewOpen(true)
+      setOrganizePreviews(previews)
+      setIsOrganizeOpen(false)
+      setIsPreviewOpen(true)
+    } catch (error) {
+      console.error('Failed to organize files:', error)
+      alert('Failed to generate organization preview. Please try again.')
+    } finally {
+      setIsLoadingOrganize(false)
+    }
   }
 
   const handleApproveAll = () => {
@@ -479,7 +480,19 @@ export function MyFilesPage() {
           
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsOrganizeOpen(false)}>Cancel</Button>
-            <Button onClick={generateOrganizePreview}>Confirm</Button>
+            <Button onClick={generateOrganizePreview} disabled={isLoadingOrganize}>
+              {isLoadingOrganize ? (
+                <>
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Organizing...
+                </>
+              ) : (
+                'Confirm'
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
