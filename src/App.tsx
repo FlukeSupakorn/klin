@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
 import HomePage from './pages/home'
-import { HistoryPage } from './pages/history-page'
-import { NotePage } from './pages/note-page'
-import { CalendarPage } from './pages/calendar-page'
+import HistoryPage from './pages/history'
+import NotePage from './pages/note'
+import CalendarPage from './pages/calendar'
 import { SubscriptionPage } from './pages/subscription-page'
-import { SettingsPage } from './pages/settings-page'
-import { HelpSupportPage } from './pages/help-support-page'
+import SettingsPage from './pages/settings'
+import HelpSupportPage from './pages/help-support'
 import './index.css'
 
 function App() {

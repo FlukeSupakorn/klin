@@ -12,6 +12,7 @@
 
 import { Upload, Sparkles, Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 // Hooks
 import { useFileLoading } from './hooks/useFileLoading'
@@ -34,6 +35,7 @@ import { useHomeStore } from './store/useHomeStore'
 export function HomePage() {
   // Initialize file loading
   useFileLoading()
+  const navigate = useNavigate()
 
   // Get state from stores
   const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen } = useHomeStore()
@@ -78,7 +80,10 @@ export function HomePage() {
               Organize
             </Button>
 
-            <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
+            <button 
+              className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+              onClick={() => navigate('/settings')}
+            >
               <Settings className="h-5 w-5 text-slate-600" />
             </button>
             <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
