@@ -21,12 +21,8 @@ export function HistoryPage() {
       <div className="px-8 py-6 border-b border-slate-200">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
-              <span>My Files</span>
-              <span>&gt;</span>
-              <span className="text-slate-900 font-medium">History</span>
-            </div>
             <h1 className="text-3xl font-bold text-slate-900">File History</h1>
+            <p className="text-sm text-slate-500 mt-1">View and track file modifications</p>
           </div>
           
           <div className="flex items-center gap-3">

@@ -579,23 +579,12 @@ export function MyFilesPage() {
   
   return (
     <div className="flex flex-col h-full">
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
+      <div className="bg-white border-b border-slate-200 px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            {/* Breadcrumbs */}
-            <nav className="flex items-center gap-2 text-sm text-slate-500 mb-1">
-              <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              <span>Home</span>
-              <ChevronRight className="h-4 w-4" />
-              <span>File Manager</span>
-              <ChevronRight className="h-4 w-4" />
-              <span className="text-indigo-600 font-medium">My Files</span>
-            </nav>
-            
             {/* Title */}
-            <h1 className="text-2xl font-bold text-slate-900">My Files</h1>
+            <h1 className="text-3xl font-bold text-slate-900">My Files</h1>
+            <p className="text-sm text-slate-500 mt-1">Manage and organize your files</p>
           </div>
           
           <div className="flex items-center gap-3">
