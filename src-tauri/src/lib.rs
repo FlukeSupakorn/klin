@@ -74,6 +74,7 @@ fn read_folder(folder_path: String) -> Result<Vec<FileItem>, String> {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![greet, get_downloads_folder, read_folder])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

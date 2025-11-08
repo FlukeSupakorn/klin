@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { FileIcon } from '@/components/file/file-icon'
 import { StorageProgress } from '@/components/file/storage-progress'
 import { useFileStore } from '@/store/useFileStore'
-import { getDownloadsFolder, readFolder, FileItem } from '@/lib/tauri-api'
+import { getDownloadsFolder, readFolder, FileItem, selectFolder } from '@/lib/tauri-api'
 import { callOrganizeAPI, FileOrganizeResult } from '@/lib/mock-api'
 
 interface OrganizePreview {
@@ -112,6 +112,51 @@ export function MyFilesPage() {
 
   const removeTempDestination = (folder: string) => {
     setTempDestinations(tempDestinations.filter(f => f !== folder))
+  }
+
+  const handleBrowseWatchingFolder = async () => {
+    console.log('Browse button clicked - opening folder picker...')
+    try {
+      const folder = await selectFolder('Select Folder to Watch')
+      console.log('Folder selected:', folder)
+      if (folder) {
+        setTempWatchingFolder(folder)
+      }
+    } catch (error) {
+      console.error('Error selecting folder:', error)
+    }
+  }
+
+  const handleBrowseDestinationFolder = async () => {
+    const folder = await selectFolder('Select Destination Folder')
+    if (folder) {
+      setTempNewDestination(folder)
+    }
+  }
+
+  const handleBrowseChangeFolder = async () => {
+    const folder = await selectFolder('Select New Watching Folder')
+    if (folder) {
+      setWatchedFolder(folder)
+      // Reload files from new folder
+      try {
+        setLoading(true)
+        const files = await readFolder(folder)
+        setRealFiles(files)
+      } catch (error) {
+        console.error('Failed to load files:', error)
+      } finally {
+        setLoading(false)
+      }
+      setIsChangeFolderOpen(false)
+    }
+  }
+
+  const handleBrowseManageDestination = async () => {
+    const folder = await selectFolder('Add Destination Folder')
+    if (folder) {
+      setNewDestinationFolder(folder)
+    }
   }
 
   const completeFirstTimeSetup = async () => {
@@ -371,12 +416,23 @@ export function MyFilesPage() {
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Folder Path
                     </label>
-                    <Input
-                      value={tempWatchingFolder}
-                      onChange={(e) => setTempWatchingFolder(e.target.value)}
-                      placeholder="Enter folder path (e.g., C:/Users/Downloads)"
-                      className="font-mono text-sm"
-                    />
+                    <div className="flex gap-2">
+                      <Input
+                        value={tempWatchingFolder}
+                        onChange={(e) => setTempWatchingFolder(e.target.value)}
+                        placeholder="Enter folder path (e.g., C:/Users/Downloads)"
+                        className="flex-1 font-mono text-sm"
+                      />
+                      <Button 
+                        type="button"
+                        variant="outline" 
+                        onClick={handleBrowseWatchingFolder}
+                        className="gap-2 flex-shrink-0"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Browse
+                      </Button>
+                    </div>
                     <p className="text-xs text-slate-500 mt-2">
                       Default: Your Downloads folder. You can change this later in settings.
                     </p>
@@ -481,6 +537,15 @@ export function MyFilesPage() {
                           }
                         }}
                       />
+                      <Button 
+                        type="button"
+                        variant="outline" 
+                        onClick={handleBrowseDestinationFolder}
+                        className="gap-2 flex-shrink-0"
+                      >
+                        <FolderOpen className="h-4 w-4" />
+                        Browse
+                      </Button>
                       <Button onClick={addTempDestination} disabled={!tempNewDestination.trim()}>
                         <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                           <path d="M12 4v16m8-8H4" />
@@ -1043,24 +1108,33 @@ export function MyFilesPage() {
               Change Watched Folder
             </DialogTitle>
             <DialogDescription className="text-base pt-2">
-              Select a folder to watch for file changes
+              Select a new folder to watch for file changes
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4">
-            <div className="bg-slate-50 rounded-lg p-4">
+            <div className="bg-slate-50 rounded-lg p-4 mb-4">
               <p className="text-sm font-medium text-slate-700 mb-2">Currently watching:</p>
-              <p className="text-sm text-slate-900 font-mono bg-white p-2 rounded border border-slate-200">{watchedFolder}</p>
+              <p className="text-sm text-slate-900 font-mono bg-white p-2 rounded border border-slate-200 truncate" title={watchedFolder}>{watchedFolder}</p>
             </div>
-            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-sm text-amber-800">
-                <strong>Note:</strong> Folder selection feature will be available in the next update. For now, the app watches your Downloads folder.
+            
+            <Button 
+              onClick={handleBrowseChangeFolder}
+              className="w-full gap-2"
+            >
+              <FolderOpen className="h-4 w-4" />
+              Browse for New Folder
+            </Button>
+            
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                <strong>Tip:</strong> Click the Browse button to select a new folder using your file explorer. Files from the new folder will be loaded automatically.
               </p>
             </div>
           </div>
           
           <DialogFooter>
-            <Button onClick={() => setIsChangeFolderOpen(false)}>Close</Button>
+            <Button variant="outline" onClick={() => setIsChangeFolderOpen(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -1134,13 +1208,22 @@ export function MyFilesPage() {
                   value={newDestinationFolder}
                   onChange={(e) => setNewDestinationFolder(e.target.value)}
                   placeholder="Enter folder path (e.g., C:/Users/Documents/Work)"
-                  className="flex-1"
+                  className="flex-1 font-mono text-sm"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       addDestinationFolder()
                     }
                   }}
                 />
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={handleBrowseManageDestination}
+                  className="gap-2 flex-shrink-0"
+                >
+                  <FolderOpen className="h-4 w-4" />
+                  Browse
+                </Button>
                 <Button onClick={addDestinationFolder} disabled={!newDestinationFolder.trim()}>
                   <svg className="h-4 w-4 mr-1" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                     <path d="M12 4v16m8-8H4" />
@@ -1149,7 +1232,7 @@ export function MyFilesPage() {
                 </Button>
               </div>
               <p className="text-xs text-slate-500 mt-2">
-                Note: In the full version, you'll be able to browse and select folders. For now, enter paths manually.
+                Click Browse to select a folder, or enter the path manually.
               </p>
             </div>
 
