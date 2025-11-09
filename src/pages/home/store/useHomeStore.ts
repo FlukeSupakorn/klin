@@ -47,14 +47,16 @@ interface HomeState {
   // First-Time Setup
   isFirstTimeSetup: boolean
   setIsFirstTimeSetup: (setup: boolean) => void
-  setupStep: 'welcome' | 'watching' | 'destinations'
-  setSetupStep: (step: 'welcome' | 'watching' | 'destinations') => void
+  setupStep: 'welcome' | 'watching' | 'mode-selection' | 'ai-generated' | 'destinations'
+  setSetupStep: (step: 'welcome' | 'watching' | 'mode-selection' | 'ai-generated' | 'destinations') => void
   tempWatchingFolder: string
   setTempWatchingFolder: (folder: string) => void
   tempDestinations: string[]
   setTempDestinations: (folders: string[]) => void
   addTempDestination: (folder: string) => void
   removeTempDestination: (folder: string) => void
+  destinationMode: 'ai' | 'custom' | null
+  setDestinationMode: (mode: 'ai' | 'custom' | null) => void
 }
 
 export const useHomeStore = create<HomeState>((set) => ({
@@ -127,4 +129,6 @@ export const useHomeStore = create<HomeState>((set) => ({
     set((state) => ({
       tempDestinations: state.tempDestinations.filter((f) => f !== folder),
     })),
+  destinationMode: null,
+  setDestinationMode: (mode) => set({ destinationMode: mode }),
 }))

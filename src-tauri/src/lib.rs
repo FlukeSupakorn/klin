@@ -124,12 +124,22 @@ fn delete_file(file_path: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn create_folder(folder_path: String) -> Result<(), String> {
+    let path = PathBuf::from(&folder_path);
+    
+    fs::create_dir_all(&path)
+        .map_err(|e| format!("Failed to create folder: {}", e))?;
+    
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![greet, get_downloads_folder, read_folder, open_file, delete_file])
+        .invoke_handler(tauri::generate_handler![greet, get_downloads_folder, read_folder, open_file, delete_file, create_folder])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -5,7 +5,6 @@ import { useHomeStore } from '../store/useHomeStore'
 export function useFileLoading() {
   const {
     setWatchedFolder,
-    setDestinationFolders,
     setFiles,
     setLoading,
     setIsFirstTimeSetup,
@@ -47,12 +46,7 @@ export function useFileLoading() {
       setWatchedFolder(downloadsPath)
       const files = await readFolder(downloadsPath)
       setFiles(files)
-
-      setDestinationFolders([
-        `${downloadsPath}/Documents`,
-        `${downloadsPath}/Images`,
-        `${downloadsPath}/Videos`,
-      ])
+      // Don't set mock destination folders - use what was saved from setup
     } catch (error) {
       console.error('Failed to load downloads folder:', error)
     } finally {

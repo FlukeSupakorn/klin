@@ -49,3 +49,12 @@ export async function deleteFile(filePath: string): Promise<void> {
     throw error
   }
 }
+
+export async function createFolder(folderPath: string): Promise<void> {
+  try {
+    await invoke('create_folder', { folderPath })
+  } catch (error) {
+    console.error('Failed to create folder:', error)
+    throw error
+  }
+}
