@@ -31,3 +31,12 @@ export async function selectFolder(title: string = 'Select Folder'): Promise<str
     return null
   }
 }
+
+export async function openFile(filePath: string): Promise<void> {
+  try {
+    await invoke('open_file', { filePath })
+  } catch (error) {
+    console.error('Failed to open file:', error)
+    throw error
+  }
+}

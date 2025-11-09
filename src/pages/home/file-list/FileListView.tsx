@@ -2,6 +2,7 @@ import { FolderOpen } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FileIcon } from '@/components/file/file-icon'
 import { FileItem } from '@/lib/tauri-api'
+import { openFile } from '@/lib/tauri-api'
 import { useFileStore } from '@/store/useFileStore'
 import { formatFileSize, formatDate, getFileType } from './utils'
 
@@ -14,6 +15,15 @@ interface FileListViewProps {
 
 export function FileListView({ files, selectedFileIds, onToggleSelection, loading }: FileListViewProps) {
   const { currentView } = useFileStore()
+
+  const handleOpenFile = async (filePath: string) => {
+    try {
+      await openFile(filePath)
+    } catch (error) {
+      console.error('Failed to open file:', error)
+      // You could show a toast notification here
+    }
+  }
 
   if (loading) {
     return (
@@ -81,7 +91,11 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                         type={getFileType(file.name, file.is_dir)}
                         className="h-5 w-5 text-indigo-600"
                       />
-                      <span className="font-medium text-slate-900 truncate max-w-md" title={file.name}>
+                      <span 
+                        className="font-medium text-slate-900 truncate max-w-md cursor-pointer hover:text-indigo-600 transition-colors" 
+                        title={file.name}
+                        onClick={() => handleOpenFile(file.path)}
+                      >
                         {file.name}
                       </span>
                     </div>
@@ -89,14 +103,9 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   <td className="py-4 px-4 text-sm text-slate-600">{formatFileSize(file.size)}</td>
                   <td className="py-4 px-4 text-sm text-slate-600">{formatDate(file.modified)}</td>
                   <td className="py-4 px-4">
-                    <div className="flex items-center gap-3">
-                      <button className="text-sm font-medium text-rose-500 hover:text-rose-600">
-                        Delete
-                      </button>
-                      <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">
-                        Open
-                      </button>
-                    </div>
+                    <button className="text-sm font-medium text-rose-500 hover:text-rose-600">
+                      Delete
+                    </button>
                   </td>
                 </tr>
               )
@@ -139,7 +148,14 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   />
                 </div>
 
-                <h3 className="font-semibold text-slate-900 mb-1 truncate" title={file.name}>
+                <h3 
+                  className="font-semibold text-slate-900 mb-1 truncate cursor-pointer hover:text-indigo-600 transition-colors" 
+                  title={file.name}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleOpenFile(file.path)
+                  }}
+                >
                   {file.name}
                 </h3>
                 <p className="text-sm text-slate-500 mb-3">{formatFileSize(file.size)}</p>
@@ -182,7 +198,14 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-slate-900 truncate" title={file.name}>
+                    <h3 
+                      className="font-semibold text-slate-900 truncate cursor-pointer hover:text-indigo-600 transition-colors" 
+                      title={file.name}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOpenFile(file.path)
+                      }}
+                    >
                       {file.name}
                     </h3>
                     <p className="text-sm text-slate-500">
@@ -190,20 +213,12 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      className="text-sm font-medium text-rose-500 hover:text-rose-600 px-3 py-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-700 px-3 py-1"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Open
-                    </button>
-                  </div>
+                  <button
+                    className="text-sm font-medium text-rose-500 hover:text-rose-600 px-3 py-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             )

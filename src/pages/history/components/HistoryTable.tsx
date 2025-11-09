@@ -1,5 +1,6 @@
 import { FileIcon } from '@/components/file/file-icon'
 import { PermissionBadge } from '@/components/file/permission-badge'
+import { openFile } from '@/lib/tauri-api'
 
 interface HistoryTableProps {
   files: any[]
@@ -8,6 +9,14 @@ interface HistoryTableProps {
 }
 
 export function HistoryTable({ files, selectedFile, onSelectFile }: HistoryTableProps) {
+  const handleOpenFile = async (filePath: string) => {
+    try {
+      await openFile(filePath)
+    } catch (error) {
+      console.error('Failed to open file:', error)
+    }
+  }
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
       <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
@@ -34,7 +43,15 @@ export function HistoryTable({ files, selectedFile, onSelectFile }: HistoryTable
                 <div className="flex items-center gap-3">
                   <FileIcon type={file.type} className="h-5 w-5 text-indigo-600" />
                   <div>
-                    <div className="font-medium text-slate-900">{file.name}</div>
+                    <div 
+                      className="font-medium text-slate-900 cursor-pointer hover:text-indigo-600 transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleOpenFile(file.path)
+                      }}
+                    >
+                      {file.name}
+                    </div>
                     <div className="text-sm text-slate-500">{file.sizeFormatted}</div>
                   </div>
                 </div>
