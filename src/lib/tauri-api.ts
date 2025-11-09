@@ -7,6 +7,10 @@ export interface FileItem {
   is_dir: boolean
   size: number
   modified?: string
+  // Extended properties for multiple watching folders
+  sourceFolder?: string
+  sourceFolderId?: string
+  sourceFolderName?: string
 }
 
 export async function getDownloadsFolder(): Promise<string> {

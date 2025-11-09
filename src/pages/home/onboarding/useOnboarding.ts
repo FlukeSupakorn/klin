@@ -59,6 +59,13 @@ export function useOnboarding() {
       const folder = await selectFolder('Select Folder to Watch')
       console.log('Folder selected:', folder)
       if (folder) {
+        // Check for duplicates
+        const isDuplicate = tempWatchingFolders.some(f => f.path === folder)
+        if (isDuplicate) {
+          alert('This folder is already added!')
+          return
+        }
+        
         const newWatchingFolder: WatchingFolder = {
           id: generateUUID(),
           name: getFolderName(folder),
@@ -91,10 +98,8 @@ export function useOnboarding() {
   }
 
   const completeFirstTimeSetup = async () => {
-    // Save all watching folders to the store
-    tempWatchingFolders.forEach((folder) => {
-      addWatchingFolder(folder)
-    })
+    // Save to localStorage ONLY - don't add to store yet
+    localStorage.setItem('klin-watching-folders', JSON.stringify(tempWatchingFolders))
     
     setDestinationFolders(tempDestinations)
 
@@ -104,10 +109,23 @@ export function useOnboarding() {
     // Load files from all watching folders
     try {
       setLoading(true)
+      
+      // Now add to store (after localStorage is saved)
+      tempWatchingFolders.forEach((folder) => {
+        addWatchingFolder(folder)
+      })
+      
       const allFiles = []
       for (const folder of tempWatchingFolders) {
         const files = await readFolder(folder.path)
-        allFiles.push(...files)
+        // Add source folder info
+        const filesWithSource = files.map(file => ({
+          ...file,
+          sourceFolder: folder.path,
+          sourceFolderId: folder.id,
+          sourceFolderName: folder.name,
+        }))
+        allFiles.push(...filesWithSource)
       }
       setFiles(allFiles)
     } catch (error) {
@@ -127,21 +145,31 @@ export function useOnboarding() {
         await createFolder(folderPath)
       }
       
-      // Save watching folders to store
-      tempWatchingFolders.forEach((folder) => {
-        addWatchingFolder(folder)
-      })
+      // Save to localStorage ONLY - don't add to store yet
+      localStorage.setItem('klin-watching-folders', JSON.stringify(tempWatchingFolders))
       
       setDestinationFolders(aiFolderPaths)
 
       localStorage.setItem('klin-first-time-setup', 'completed')
       setIsFirstTimeSetup(false)
 
+      // Now add to store (after localStorage is saved)
+      tempWatchingFolders.forEach((folder) => {
+        addWatchingFolder(folder)
+      })
+
       // Load files from all watching folders
       const allFiles = []
       for (const folder of tempWatchingFolders) {
         const files = await readFolder(folder.path)
-        allFiles.push(...files)
+        // Add source folder info
+        const filesWithSource = files.map(file => ({
+          ...file,
+          sourceFolder: folder.path,
+          sourceFolderId: folder.id,
+          sourceFolderName: folder.name,
+        }))
+        allFiles.push(...filesWithSource)
       }
       setFiles(allFiles)
     } catch (error) {

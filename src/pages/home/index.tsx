@@ -40,7 +40,7 @@ import { useFileStore } from '@/store/useFileStore'
 
 export function HomePage() {
   // Initialize file loading
-  const { reloadFiles, watchedFolder } = useFileLoading()
+  const { reloadFiles } = useFileLoading()
   const navigate = useNavigate()
 
   // Get state from stores
@@ -83,9 +83,7 @@ export function HomePage() {
       deselectAllFiles()
       
       // Reload files after deletion
-      if (watchedFolder) {
-        await reloadFiles(watchedFolder)
-      }
+      await reloadFiles()
       
       setIsDeleteOpen(false)
     } catch (error) {

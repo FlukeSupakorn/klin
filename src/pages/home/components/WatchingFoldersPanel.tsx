@@ -2,7 +2,7 @@ import { useHomeStore, WatchingFolder } from '../store/useHomeStore'
 import { FolderOpen, Plus, X, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { selectFolder } from '@/lib/tauri-api'
+import { selectFolder, readFolder } from '@/lib/tauri-api'
 import { generateUUID } from '@/lib/uuid'
 
 export function WatchingFoldersPanel() {
@@ -12,6 +12,9 @@ export function WatchingFoldersPanel() {
   const selectAllFolders = useHomeStore((state) => state.selectAllFolders)
   const removeWatchingFolder = useHomeStore((state) => state.removeWatchingFolder)
   const addWatchingFolder = useHomeStore((state) => state.addWatchingFolder)
+  const updateWatchingFolder = useHomeStore((state) => state.updateWatchingFolder)
+  const setFiles = useHomeStore((state) => state.setFiles)
+  const files = useHomeStore((state) => state.files)
 
   const isAllSelected = selectedFolderIds.length === 0
   const isFolderSelected = (id: string) => {
@@ -22,18 +25,62 @@ export function WatchingFoldersPanel() {
     try {
       const folderPath = await selectFolder()
       if (folderPath) {
+        // Check for duplicates
+        const isDuplicate = watchingFolders.some(f => f.path === folderPath)
+        if (isDuplicate) {
+          alert('This folder is already being watched!')
+          return
+        }
+        
         const folderName = getFolderName(folderPath)
+        
+        // Load files from the new folder to get file count
+        const folderFiles = await readFolder(folderPath)
+        
         const newFolder: WatchingFolder = {
           id: generateUUID(),
           name: folderName,
           path: folderPath,
-          fileCount: 0, // Will be updated when files are loaded
+          fileCount: folderFiles.length,
         }
+        
         addWatchingFolder(newFolder)
+        
+        // Add files from new folder to existing files with source info
+        const filesWithSource = folderFiles.map(file => ({
+          ...file,
+          sourceFolder: folderPath,
+          sourceFolderId: newFolder.id,
+          sourceFolderName: folderName,
+        }))
+        
+        // If "All" is selected, add new files to the view
+        if (selectedFolderIds.length === 0) {
+          setFiles([...files, ...filesWithSource])
+        }
+        
+        // Save to localStorage
+        saveWatchingFolders([...watchingFolders, newFolder])
       }
     } catch (error) {
       console.error('Failed to select folder:', error)
     }
+  }
+
+  const handleRemoveFolder = (id: string) => {
+    removeWatchingFolder(id)
+    
+    // Remove files from this folder
+    const updatedFiles = files.filter(file => file.sourceFolderId !== id)
+    setFiles(updatedFiles)
+    
+    // Save to localStorage
+    const updatedFolders = watchingFolders.filter(f => f.id !== id)
+    saveWatchingFolders(updatedFolders)
+  }
+
+  const saveWatchingFolders = (folders: WatchingFolder[]) => {
+    localStorage.setItem('klin-watching-folders', JSON.stringify(folders))
   }
 
   const getFolderName = (path: string) => {
@@ -99,7 +146,7 @@ export function WatchingFoldersPanel() {
               <button
                 onClick={(e) => {
                   e.stopPropagation()
-                  removeWatchingFolder(folder.id)
+                  handleRemoveFolder(folder.id)
                 }}
                 className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-100 rounded"
               >

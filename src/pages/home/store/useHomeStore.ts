@@ -22,6 +22,7 @@ interface HomeState {
   // Folder Management - Updated for multiple watching folders
   watchingFolders: WatchingFolder[]
   selectedFolderIds: string[] // Empty array means "All" selected
+  setWatchingFolders: (folders: WatchingFolder[]) => void
   addWatchingFolder: (folder: WatchingFolder) => void
   removeWatchingFolder: (id: string) => void
   updateWatchingFolder: (id: string, updates: Partial<WatchingFolder>) => void
@@ -85,6 +86,8 @@ export const useHomeStore = create<HomeState>((set) => ({
   // Folder Management - Multiple watching folders
   watchingFolders: [],
   selectedFolderIds: [], // Empty = "All" selected
+  
+  setWatchingFolders: (folders) => set({ watchingFolders: folders }),
   
   addWatchingFolder: (folder) =>
     set((state) => ({
@@ -179,9 +182,12 @@ export const useHomeStore = create<HomeState>((set) => ({
   tempWatchingFolders: [],
   setTempWatchingFolders: (folders) => set({ tempWatchingFolders: folders }),
   addTempWatchingFolder: (folder) =>
-    set((state) => ({
-      tempWatchingFolders: [...state.tempWatchingFolders, folder],
-    })),
+    set((state) => {
+      // Prevent duplicates by checking if path already exists
+      const exists = state.tempWatchingFolders.some(f => f.path === folder.path)
+      if (exists) return state
+      return { tempWatchingFolders: [...state.tempWatchingFolders, folder] }
+    }),
   removeTempWatchingFolder: (id) =>
     set((state) => ({
       tempWatchingFolders: state.tempWatchingFolders.filter((f) => f.id !== id),
