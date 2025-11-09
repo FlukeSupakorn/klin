@@ -13,11 +13,15 @@
 import { Upload, Sparkles, Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 // Hooks
 import { useFileLoading } from './hooks/useFileLoading'
 import { useFileSelection } from './hooks/useFileSelection'
 import { useOrganize } from './hooks/useOrganize'
+
+// Tauri API
+import { deleteFile } from '@/lib/tauri-api'
 
 // Sub-feature components
 import { WatcherBanner } from './watcher/WatcherBanner'
@@ -29,8 +33,10 @@ import { OrganizeDialog } from './organize/OrganizeDialog'
 import { OrganizePreviewDialog } from './organize/OrganizePreviewDialog'
 import { ChangeWatcherDialog } from './watcher/ChangeWatcherDialog'
 import { ManageDestinationsDialog } from './destination/ManageDestinationsDialog'
+import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
 
 import { useHomeStore } from './store/useHomeStore'
+import { useFileStore } from '@/store/useFileStore'
 
 export function HomePage() {
   // Initialize file loading
@@ -52,7 +58,42 @@ export function HomePage() {
     isAllSelected,
   } = useFileSelection()
 
+  // Get deselectAllFiles from file store
+  const { deselectAllFiles } = useFileStore()
+
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
+
+  // Delete state
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  // Handle bulk delete
+  const handleDeleteClick = () => setIsDeleteOpen(true)
+  
+  const handleBulkDelete = async () => {
+    try {
+      setIsDeleting(true)
+      
+      // Delete all selected files
+      for (const file of selectedFiles) {
+        await deleteFile(file.path)
+      }
+      
+      // Clear selection after deletion
+      deselectAllFiles()
+      
+      // Reload files after deletion
+      if (watchedFolder) {
+        await reloadFiles(watchedFolder)
+      }
+      
+      setIsDeleteOpen(false)
+    } catch (error) {
+      console.error('Failed to delete files:', error)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   // Show first-time setup if needed
   if (isFirstTimeSetup) {
@@ -117,6 +158,7 @@ export function HomePage() {
           totalCount={filteredFiles.length}
           isAllSelected={isAllSelected}
           onSelectAll={handleSelectAll}
+          onDeleteClick={handleDeleteClick}
         />
 
         {/* File List */}
@@ -124,7 +166,6 @@ export function HomePage() {
           files={filteredFiles}
           selectedFileIds={selectedFileIds}
           onToggleSelection={toggleFileSelection}
-          onFileDeleted={() => watchedFolder && reloadFiles(watchedFolder)}
           loading={loading}
         />
       </div>
@@ -141,6 +182,16 @@ export function HomePage() {
       <OrganizePreviewDialog />
       <ChangeWatcherDialog />
       <ManageDestinationsDialog />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmActionDialog
+        isOpen={isDeleteOpen}
+        actionType="delete"
+        selectedFiles={selectedFiles}
+        onConfirm={handleBulkDelete}
+        onClose={() => setIsDeleteOpen(false)}
+        isLoading={isDeleting}
+      />
     </div>
   )
 }
