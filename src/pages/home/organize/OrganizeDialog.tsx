@@ -42,6 +42,7 @@ export function OrganizeDialog({
   const updateQueueItem = useActivityStore((state) => state.updateQueueItem)
   const setProcessing = useActivityStore((state) => state.setProcessing)
   const setProgress = useActivityStore((state) => state.setProgress)
+  const isCancelled = useActivityStore((state) => state.isCancelled)
 
   const [isOrganizing, setIsOrganizing] = useState(false)
 
@@ -86,7 +87,8 @@ export function OrganizeDialog({
     // Navigate to activity page
     navigate('/history')
 
-    // Set processing state
+    // Reset cancel flag and set processing state
+    useActivityStore.setState({ isCancelled: false })
     setProcessing(true)
     setProgress(0, selectedFiles.length)
     setIsOrganizing(true)
@@ -147,7 +149,9 @@ export function OrganizeDialog({
             // Update progress
             setProgress(current, total)
           }
-        }
+        },
+        // Check if user cancelled
+        () => useActivityStore.getState().isCancelled
       )
 
       // Finished processing

@@ -25,6 +25,7 @@ interface ActivityState {
   queue: ActivityItem[]
   // Processing state
   isProcessing: boolean
+  isCancelled: boolean
   currentIndex: number
   totalFiles: number
   // History of completed actions
@@ -37,6 +38,7 @@ interface ActivityState {
   clearQueue: () => void
   setProcessing: (isProcessing: boolean) => void
   setProgress: (current: number, total: number) => void
+  cancelProcessing: () => void
   
   // User actions
   approveItem: (id: string) => void
@@ -54,6 +56,7 @@ interface ActivityState {
 export const useActivityStore = create<ActivityState>((set, get) => ({
   queue: [],
   isProcessing: false,
+  isCancelled: false,
   currentIndex: 0,
   totalFiles: 0,
   history: [],
@@ -89,6 +92,14 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
     set({
       currentIndex: current,
       totalFiles: total,
+    }),
+
+  cancelProcessing: () =>
+    set({
+      isProcessing: false,
+      isCancelled: true,
+      currentIndex: 0,
+      totalFiles: 0,
     }),
 
   approveItem: (id) => {

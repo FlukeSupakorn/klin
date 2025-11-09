@@ -1,4 +1,4 @@
-import { Settings, Bell, CheckCircle2, X } from 'lucide-react'
+import { Settings, Bell, CheckCircle2, X, XCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useActivityStore } from './store/useActivityStore'
 import { SearchToolbar } from './components/SearchToolbar'
@@ -19,6 +19,7 @@ export function HistoryPage() {
   const rejectAll = useActivityStore((state) => state.rejectAll)
   const moveToHistory = useActivityStore((state) => state.moveToHistory)
   const removeFromQueue = useActivityStore((state) => state.removeFromQueue)
+  const cancelProcessing = useActivityStore((state) => state.cancelProcessing)
 
   const hasCompletedItems = queue.some((item) => item.status === 'completed')
 
@@ -81,12 +82,23 @@ export function HistoryPage() {
         {isProcessing && (
           <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-indigo-900">
-                Processing files...
-              </span>
-              <span className="text-sm text-indigo-700">
-                {currentIndex} / {totalFiles}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-indigo-900">
+                  Processing files...
+                </span>
+                <span className="text-sm text-indigo-700">
+                  {currentIndex} / {totalFiles}
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={cancelProcessing}
+                className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+              >
+                <XCircle className="h-4 w-4" />
+                Cancel
+              </Button>
             </div>
             <div className="w-full bg-indigo-200 rounded-full h-2">
               <div

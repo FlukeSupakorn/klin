@@ -83,14 +83,48 @@ export function useFileLoading() {
         const folders = JSON.parse(savedFolders)
         // Set all folders at once to prevent duplicates
         setWatchingFolders(folders)
+        
+        // Load files immediately using the folders we just loaded
+        await loadFilesFromFolders(folders)
       }
-      
-      // Load files from all watching folders
-      await loadFilesFromSelectedFolders()
     } catch (error) {
       console.error('Failed to load saved watching folders:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadFilesFromFolders = async (foldersToLoad: any[]) => {
+    try {
+      if (foldersToLoad.length === 0) {
+        setFiles([])
+        return
+      }
+      
+      // Load files from each folder
+      const allFiles: FileItem[] = []
+      for (const folder of foldersToLoad) {
+        try {
+          const files = await readFolder(folder.path)
+          // Add source folder info to each file
+          const filesWithSource = files.map(file => ({
+            ...file,
+            sourceFolder: folder.path,
+            sourceFolderId: folder.id,
+            sourceFolderName: folder.name,
+          }))
+          allFiles.push(...filesWithSource)
+          
+          // Update file count for this folder
+          updateWatchingFolder(folder.id, { fileCount: files.length })
+        } catch (error) {
+          console.error(`Failed to load files from ${folder.path}:`, error)
+        }
+      }
+      
+      setFiles(allFiles)
+    } catch (error) {
+      console.error('Failed to load files:', error)
     }
   }
 

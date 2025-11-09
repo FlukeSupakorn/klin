@@ -287,11 +287,18 @@ export const organizeFilesQueue = async (
   filePaths: string[],
   autoMove: boolean,
   autoRename: boolean,
-  onProgress?: (response: OrganizeFileResponse, current: number, total: number) => void
+  onProgress?: (response: OrganizeFileResponse, current: number, total: number) => void,
+  checkCancelled?: () => boolean
 ): Promise<OrganizeFileResponse[]> => {
   const results: OrganizeFileResponse[] = []
 
   for (let i = 0; i < filePaths.length; i++) {
+    // Check if cancelled before processing next file
+    if (checkCancelled && checkCancelled()) {
+      console.log('Organization cancelled by user')
+      break
+    }
+
     // Set status to processing before starting
     const processingUpdate: OrganizeFileResponse = {
       file_path: filePaths[i],
