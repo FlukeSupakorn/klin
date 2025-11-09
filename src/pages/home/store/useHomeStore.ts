@@ -1,6 +1,13 @@
 import { create } from 'zustand'
 import { FileItem } from '@/lib/tauri-api'
 
+export interface WatchingFolder {
+  id: string
+  name: string
+  path: string
+  fileCount: number
+}
+
 interface OrganizePreview {
   file: FileItem
   currentName: string
@@ -12,10 +19,21 @@ interface OrganizePreview {
 }
 
 interface HomeState {
-  // Folder Management
+  // Folder Management - Updated for multiple watching folders
+  watchingFolders: WatchingFolder[]
+  selectedFolderIds: string[] // Empty array means "All" selected
+  addWatchingFolder: (folder: WatchingFolder) => void
+  removeWatchingFolder: (id: string) => void
+  updateWatchingFolder: (id: string, updates: Partial<WatchingFolder>) => void
+  setSelectedFolders: (ids: string[]) => void
+  toggleFolderSelection: (id: string) => void
+  selectAllFolders: () => void
+  
+  // Legacy support (will be removed)
   watchedFolder: string
-  destinationFolders: string[]
   setWatchedFolder: (folder: string) => void
+  
+  destinationFolders: string[]
   setDestinationFolders: (folders: string[]) => void
   addDestinationFolder: (folder: string) => void
   removeDestinationFolder: (folder: string) => void
@@ -49,7 +67,11 @@ interface HomeState {
   setIsFirstTimeSetup: (setup: boolean) => void
   setupStep: 'welcome' | 'watching' | 'mode-selection' | 'ai-generated' | 'destinations'
   setSetupStep: (step: 'welcome' | 'watching' | 'mode-selection' | 'ai-generated' | 'destinations') => void
-  tempWatchingFolder: string
+  tempWatchingFolders: WatchingFolder[]
+  setTempWatchingFolders: (folders: WatchingFolder[]) => void
+  addTempWatchingFolder: (folder: WatchingFolder) => void
+  removeTempWatchingFolder: (id: string) => void
+  tempWatchingFolder: string // Legacy - for backward compatibility
   setTempWatchingFolder: (folder: string) => void
   tempDestinations: string[]
   setTempDestinations: (folders: string[]) => void
@@ -60,10 +82,49 @@ interface HomeState {
 }
 
 export const useHomeStore = create<HomeState>((set) => ({
-  // Folder Management
+  // Folder Management - Multiple watching folders
+  watchingFolders: [],
+  selectedFolderIds: [], // Empty = "All" selected
+  
+  addWatchingFolder: (folder) =>
+    set((state) => ({
+      watchingFolders: [...state.watchingFolders, folder],
+    })),
+    
+  removeWatchingFolder: (id) =>
+    set((state) => ({
+      watchingFolders: state.watchingFolders.filter((f) => f.id !== id),
+      selectedFolderIds: state.selectedFolderIds.filter((fid) => fid !== id),
+    })),
+    
+  updateWatchingFolder: (id, updates) =>
+    set((state) => ({
+      watchingFolders: state.watchingFolders.map((f) =>
+        f.id === id ? { ...f, ...updates } : f
+      ),
+    })),
+    
+  setSelectedFolders: (ids) => set({ selectedFolderIds: ids }),
+  
+  toggleFolderSelection: (id) =>
+    set((state) => {
+      const isSelected = state.selectedFolderIds.includes(id)
+      if (isSelected) {
+        // Deselect this folder
+        return { selectedFolderIds: state.selectedFolderIds.filter((fid) => fid !== id) }
+      } else {
+        // Select this folder
+        return { selectedFolderIds: [...state.selectedFolderIds, id] }
+      }
+    }),
+    
+  selectAllFolders: () => set({ selectedFolderIds: [] }),
+  
+  // Legacy support
   watchedFolder: '',
-  destinationFolders: [],
   setWatchedFolder: (folder) => set({ watchedFolder: folder }),
+  
+  destinationFolders: [],
   setDestinationFolders: (folders) => set({ destinationFolders: folders }),
   addDestinationFolder: (folder) =>
     set((state) => ({
@@ -115,7 +176,17 @@ export const useHomeStore = create<HomeState>((set) => ({
   setIsFirstTimeSetup: (setup) => set({ isFirstTimeSetup: setup }),
   setupStep: 'welcome',
   setSetupStep: (step) => set({ setupStep: step }),
-  tempWatchingFolder: '',
+  tempWatchingFolders: [],
+  setTempWatchingFolders: (folders) => set({ tempWatchingFolders: folders }),
+  addTempWatchingFolder: (folder) =>
+    set((state) => ({
+      tempWatchingFolders: [...state.tempWatchingFolders, folder],
+    })),
+  removeTempWatchingFolder: (id) =>
+    set((state) => ({
+      tempWatchingFolders: state.tempWatchingFolders.filter((f) => f.id !== id),
+    })),
+  tempWatchingFolder: '', // Legacy
   setTempWatchingFolder: (folder) => set({ tempWatchingFolder: folder }),
   tempDestinations: [],
   setTempDestinations: (folders) => set({ tempDestinations: folders }),

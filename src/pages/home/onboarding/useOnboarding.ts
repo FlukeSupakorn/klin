@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { selectFolder, readFolder, createFolder } from '@/lib/tauri-api'
-import { useHomeStore } from '../store/useHomeStore'
+import { useHomeStore, WatchingFolder } from '../store/useHomeStore'
+import { generateUUID } from '@/lib/uuid'
 
 // Mock AI-generated folder structure
 const generateAIFolders = (watchingFolder: string) => {
@@ -18,16 +19,19 @@ export function useOnboarding() {
   const {
     isFirstTimeSetup,
     setupStep,
-    tempWatchingFolder,
+    tempWatchingFolders,
+    tempWatchingFolder, // Legacy
     tempDestinations,
     destinationMode,
     setIsFirstTimeSetup,
     setSetupStep,
-    setTempWatchingFolder,
+    addTempWatchingFolder,
+    removeTempWatchingFolder,
+    setTempWatchingFolder, // Legacy
     setDestinationMode,
     addTempDestination,
     removeTempDestination,
-    setWatchedFolder,
+    addWatchingFolder,
     setDestinationFolders,
     setFiles,
     setLoading,
@@ -35,10 +39,18 @@ export function useOnboarding() {
 
   const [tempNewDestination, setTempNewDestination] = useState('')
 
-  // Generate AI folders based on watching folder
+  const getFolderName = (path: string) => {
+    const parts = path.split(/[\\/]/)
+    return parts[parts.length - 1] || path
+  }
+
+  // Generate AI folders based on first watching folder (legacy behavior)
   const aiGeneratedFolders = useMemo(
-    () => generateAIFolders(tempWatchingFolder),
-    [tempWatchingFolder]
+    () => {
+      const basePath = tempWatchingFolders[0]?.path || tempWatchingFolder
+      return basePath ? generateAIFolders(basePath) : []
+    },
+    [tempWatchingFolders, tempWatchingFolder]
   )
 
   const handleBrowseWatchingFolder = async () => {
@@ -47,7 +59,17 @@ export function useOnboarding() {
       const folder = await selectFolder('Select Folder to Watch')
       console.log('Folder selected:', folder)
       if (folder) {
-        setTempWatchingFolder(folder)
+        const newWatchingFolder: WatchingFolder = {
+          id: generateUUID(),
+          name: getFolderName(folder),
+          path: folder,
+          fileCount: 0,
+        }
+        addTempWatchingFolder(newWatchingFolder)
+        // Also update legacy field for backward compatibility
+        if (tempWatchingFolders.length === 0) {
+          setTempWatchingFolder(folder)
+        }
       }
     } catch (error) {
       console.error('Error selecting folder:', error)
@@ -69,16 +91,25 @@ export function useOnboarding() {
   }
 
   const completeFirstTimeSetup = async () => {
-    setWatchedFolder(tempWatchingFolder)
+    // Save all watching folders to the store
+    tempWatchingFolders.forEach((folder) => {
+      addWatchingFolder(folder)
+    })
+    
     setDestinationFolders(tempDestinations)
 
     localStorage.setItem('klin-first-time-setup', 'completed')
     setIsFirstTimeSetup(false)
 
+    // Load files from all watching folders
     try {
       setLoading(true)
-      const files = await readFolder(tempWatchingFolder)
-      setFiles(files)
+      const allFiles = []
+      for (const folder of tempWatchingFolders) {
+        const files = await readFolder(folder.path)
+        allFiles.push(...files)
+      }
+      setFiles(allFiles)
     } catch (error) {
       console.error('Failed to load files:', error)
     } finally {
@@ -96,16 +127,23 @@ export function useOnboarding() {
         await createFolder(folderPath)
       }
       
-      // Save to store
-      setWatchedFolder(tempWatchingFolder)
+      // Save watching folders to store
+      tempWatchingFolders.forEach((folder) => {
+        addWatchingFolder(folder)
+      })
+      
       setDestinationFolders(aiFolderPaths)
 
       localStorage.setItem('klin-first-time-setup', 'completed')
       setIsFirstTimeSetup(false)
 
-      // Load files from watching folder
-      const files = await readFolder(tempWatchingFolder)
-      setFiles(files)
+      // Load files from all watching folders
+      const allFiles = []
+      for (const folder of tempWatchingFolders) {
+        const files = await readFolder(folder.path)
+        allFiles.push(...files)
+      }
+      setFiles(allFiles)
     } catch (error) {
       console.error('Failed to create AI folders:', error)
     } finally {
@@ -116,6 +154,7 @@ export function useOnboarding() {
   return {
     isFirstTimeSetup,
     setupStep,
+    tempWatchingFolders,
     tempWatchingFolder,
     tempDestinations,
     tempNewDestination,
@@ -129,6 +168,7 @@ export function useOnboarding() {
     handleAddTempDestination,
     addTempDestination,
     removeTempDestination,
+    removeTempWatchingFolder,
     completeFirstTimeSetup,
     completeAISetup,
   }

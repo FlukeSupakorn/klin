@@ -24,8 +24,8 @@ import { useOrganize } from './hooks/useOrganize'
 import { deleteFile } from '@/lib/tauri-api'
 
 // Sub-feature components
-import { WatcherBanner } from './watcher/WatcherBanner'
 import { DestinationBanner } from './destination/DestinationBanner'
+import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
 import { FileListView } from './file-list/FileListView'
 import { FileToolbar, ViewSwitcher } from './file-list/FileToolbar'
 import { FirstTimeSetupDialog } from './onboarding/FirstTimeSetupDialog'
@@ -140,13 +140,15 @@ export function HomePage() {
 
         {/* Folder Watcher and Destination Banners */}
         <div className="mt-4 space-y-3">
-          <WatcherBanner />
           <DestinationBanner />
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-6 space-y-6">
+        {/* Watching Folders Panel */}
+        <WatchingFoldersPanel />
+
         {/* View Switcher - Above the toolbar box */}
         <ViewSwitcher />
 

@@ -1,4 +1,4 @@
-import { FolderOpen, ChevronRight } from 'lucide-react'
+import { FolderOpen, ChevronRight, Plus, X } from 'lucide-react'
 import {
   DialogDescription,
   DialogFooter,
@@ -6,53 +6,98 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { WatchingFolder } from '../../store/useHomeStore'
 
 interface WatchingStepProps {
-  tempWatchingFolder: string
-  onBrowseFolder: () => void
+  tempWatchingFolders: WatchingFolder[]
+  onAddFolder: () => void
+  onRemoveFolder: (id: string) => void
   onBack: () => void
   onNext: () => void
 }
 
 export function WatchingStep({
-  tempWatchingFolder,
-  onBrowseFolder,
+  tempWatchingFolders,
+  onAddFolder,
+  onRemoveFolder,
   onBack,
   onNext,
 }: WatchingStepProps) {
+  const getFolderName = (path: string) => {
+    const parts = path.split(/[\\/]/)
+    return parts[parts.length - 1] || path
+  }
+
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-xl">Select Watching Folder</DialogTitle>
+        <DialogTitle className="text-xl">Select Watching Folders</DialogTitle>
         <DialogDescription>
-          Choose a folder to watch for new files that need organizing.
+          Choose folders to watch for new files that need organizing. You can add multiple folders.
         </DialogDescription>
       </DialogHeader>
 
-      <div className="py-4">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-slate-700 mb-2">Folder Path</label>
-          <div className="flex gap-2">
-            <Input
-              value={tempWatchingFolder}
-              placeholder="Enter folder path (e.g., C:/Users/Downloads)"
-              className="flex-1 font-mono text-sm"
-              readOnly
-            />
+      <div className="py-4 space-y-4">
+        {/* Folder List */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <label className="block text-sm font-medium text-slate-700">
+              Watching Folders ({tempWatchingFolders.length})
+            </label>
             <Button
               type="button"
-              variant="outline"
-              onClick={onBrowseFolder}
-              className="gap-2 flex-shrink-0"
+              size="sm"
+              onClick={onAddFolder}
+              className="gap-2"
             >
-              <FolderOpen className="h-4 w-4" />
-              Browse
+              <Plus className="h-4 w-4" />
+              Add Folder
             </Button>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            Default: Your Downloads folder. You can change this later in settings.
-          </p>
+
+          {tempWatchingFolders.length === 0 ? (
+            <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
+              <FolderOpen className="h-10 w-10 mx-auto mb-2 text-slate-400" />
+              <p className="text-sm text-slate-600 mb-3">No folders added yet</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onAddFolder}
+                className="gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Your First Folder
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2 max-h-[200px] overflow-y-auto">
+              {tempWatchingFolders.map((folder) => (
+                <div
+                  key={folder.id}
+                  className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+                >
+                  <div className="flex-shrink-0 p-2 bg-indigo-100 rounded-lg">
+                    <FolderOpen className="h-5 w-5 text-indigo-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">
+                      {folder.name || getFolderName(folder.path)}
+                    </p>
+                    <p className="text-xs text-slate-500 truncate">{folder.path}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveFolder(folder.id)}
+                    className="flex-shrink-0 p-1.5 hover:bg-red-100 rounded transition-colors"
+                  >
+                    <X className="h-4 w-4 text-red-600" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -71,9 +116,10 @@ export function WatchingStep({
             <div>
               <p className="text-sm font-medium text-blue-900 mb-1">Tips:</p>
               <ul className="text-xs text-blue-700 space-y-1 ml-4 list-disc">
-                <li>Choose a folder where you frequently save downloads</li>
-                <li>KLIN will monitor this folder for new files</li>
-                <li>Files will be automatically organized based on your rules</li>
+                <li>Add folders where you frequently save downloads</li>
+                <li>KLIN will monitor all these folders for new files</li>
+                <li>You can add or remove folders later in settings</li>
+                <li>Recommended: Start with your Downloads folder</li>
               </ul>
             </div>
           </div>
@@ -84,7 +130,7 @@ export function WatchingStep({
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={onNext} disabled={!tempWatchingFolder.trim()}>
+        <Button onClick={onNext} disabled={tempWatchingFolders.length === 0}>
           Next: Choose Setup Mode
           <ChevronRight className="h-4 w-4 ml-2" />
         </Button>

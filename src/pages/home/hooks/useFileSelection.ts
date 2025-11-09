@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { useFileStore } from '@/store/useFileStore'
 import { useHomeStore } from '../store/useHomeStore'
-import { FileItem } from '@/lib/tauri-api'
 
 export function useFileSelection() {
-  const { selectedFileIds, toggleFileSelection, deselectAllFiles } = useFileStore()
+  const { selectedFileIds, toggleFileSelection, deselectAllFiles, selectAllFiles } = useFileStore()
   const { files } = useHomeStore()
   const [localSearch, setLocalSearch] = useState('')
 
@@ -13,30 +12,26 @@ export function useFileSelection() {
   )
 
   const selectedFiles = filteredFiles.filter((file) =>
-    selectedFileIds.includes(file.path)
+    selectedFileIds.has(file.path)
   )
 
   const handleSelectAll = () => {
-    if (selectedFileIds.length === filteredFiles.length) {
+    if (selectedFileIds.size === filteredFiles.length) {
       deselectAllFiles()
     } else {
       const allFileIds = filteredFiles.map((file) => file.path)
-      allFileIds.forEach((id) => {
-        if (!selectedFileIds.includes(id)) {
-          toggleFileSelection(id)
-        }
-      })
+      selectAllFiles(allFileIds)
     }
   }
 
-  const isAllSelected = filteredFiles.length > 0 && selectedFileIds.length === filteredFiles.length
+  const isAllSelected = filteredFiles.length > 0 && selectedFileIds.size === filteredFiles.length
 
   return {
     localSearch,
     setLocalSearch,
     filteredFiles,
     selectedFiles,
-    selectedFileIds,
+    selectedFileIds: Array.from(selectedFileIds), // Convert Set to Array for components
     toggleFileSelection,
     handleSelectAll,
     isAllSelected,

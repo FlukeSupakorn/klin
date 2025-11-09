@@ -12,6 +12,7 @@ export function FirstTimeSetupDialog() {
   const {
     isFirstTimeSetup,
     setupStep,
+    tempWatchingFolders,
     tempWatchingFolder,
     tempDestinations,
     tempNewDestination,
@@ -23,6 +24,7 @@ export function FirstTimeSetupDialog() {
     handleBrowseDestinationFolder,
     handleAddTempDestination,
     removeTempDestination,
+    removeTempWatchingFolder,
     completeFirstTimeSetup,
     completeAISetup,
   } = useOnboarding()
@@ -38,8 +40,9 @@ export function FirstTimeSetupDialog() {
         {/* Watching Folder Step */}
         {setupStep === 'watching' && (
           <WatchingStep
-            tempWatchingFolder={tempWatchingFolder}
-            onBrowseFolder={handleBrowseWatchingFolder}
+            tempWatchingFolders={tempWatchingFolders}
+            onAddFolder={handleBrowseWatchingFolder}
+            onRemoveFolder={removeTempWatchingFolder}
             onBack={() => setSetupStep('welcome')}
             onNext={() => setSetupStep('mode-selection')}
           />
