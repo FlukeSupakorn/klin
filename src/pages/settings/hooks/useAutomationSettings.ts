@@ -2,7 +2,6 @@ import { useState } from 'react'
 
 export function useAutomationSettings() {
   const [autoOrganize, setAutoOrganize] = useState(false)
-  const [autoRename, setAutoRename] = useState(false)
   const [isFirstTime, setIsFirstTime] = useState(
     () => localStorage.getItem('klin-first-time-setup') !== 'completed'
   )
@@ -20,8 +19,6 @@ export function useAutomationSettings() {
   return {
     autoOrganize,
     setAutoOrganize,
-    autoRename,
-    setAutoRename,
     isFirstTime,
     handleFirstTimeToggle,
   }

@@ -4,18 +4,14 @@ import { Sparkles } from 'lucide-react'
 
 interface AutomationSettingsProps {
   autoOrganize: boolean
-  autoRename: boolean
   isFirstTime: boolean
   onAutoOrganizeChange: (checked: boolean) => void
-  onAutoRenameChange: (checked: boolean) => void
   onFirstTimeChange: (checked: boolean) => void
 }
 
 export function AutomationSettings({
   autoOrganize,
-  autoRename,
   onAutoOrganizeChange,
-  onAutoRenameChange,
 }: AutomationSettingsProps) {
   return (
     <div className="max-w-2xl">
@@ -47,35 +43,6 @@ export function AutomationSettings({
             </div>
             <div className="ml-4">
               <Switch checked={autoOrganize} onCheckedChange={onAutoOrganizeChange} />
-            </div>
-          </div>
-        </div>
-
-        {/* Auto Rename */}
-        <div className="border border-slate-200 rounded-lg p-6 bg-white">
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <svg className="h-5 w-5 text-indigo-600" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                  <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                <h3 className="text-lg font-semibold text-slate-900">Auto Rename Files</h3>
-              </div>
-              <p className="text-sm text-slate-600 mb-4">
-                Automatically rename files with descriptive names based on content analysis and metadata. 
-                Improves file searchability and organization.
-              </p>
-              <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
-                <p className="text-xs text-amber-900 font-medium mb-1">Examples:</p>
-                <ul className="text-xs text-amber-700 space-y-1 ml-4 list-disc">
-                  <li>IMG_1234.jpg → photo_2024_11_08_sunset.jpg</li>
-                  <li>document.pdf → report_Q4_2024.pdf</li>
-                  <li>video.mp4 → meeting_recording_nov_8.mp4</li>
-                </ul>
-              </div>
-            </div>
-            <div className="ml-4">
-              <Switch checked={autoRename} onCheckedChange={onAutoRenameChange} />
             </div>
           </div>
         </div>

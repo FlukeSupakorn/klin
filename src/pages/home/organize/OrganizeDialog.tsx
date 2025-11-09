@@ -1,4 +1,5 @@
 import { Sparkles } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -8,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { FileIcon } from '@/components/file/file-icon'
 import { FileItem } from '@/lib/tauri-api'
 import { formatFileSize, getFileType } from '../file-list/utils'
@@ -27,6 +29,38 @@ export function OrganizeDialog({
   onGenerate,
   isLoading,
 }: OrganizeDialogProps) {
+  // Load saved preferences from localStorage, default to true
+  const [autoMove, setAutoMove] = useState(() => {
+    const saved = localStorage.getItem('organize-auto-move')
+    return saved !== null ? saved === 'true' : true
+  })
+  
+  const [autoRename, setAutoRename] = useState(() => {
+    const saved = localStorage.getItem('organize-auto-rename')
+    return saved !== null ? saved === 'true' : true
+  })
+
+  // Save preferences when they change
+  useEffect(() => {
+    localStorage.setItem('organize-auto-move', String(autoMove))
+  }, [autoMove])
+
+  useEffect(() => {
+    localStorage.setItem('organize-auto-rename', String(autoRename))
+  }, [autoRename])
+
+  const handleAutoMoveChange = (checked: boolean | 'indeterminate') => {
+    if (typeof checked === 'boolean') {
+      setAutoMove(checked)
+    }
+  }
+
+  const handleAutoRenameChange = (checked: boolean | 'indeterminate') => {
+    if (typeof checked === 'boolean') {
+      setAutoRename(checked)
+    }
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
@@ -66,6 +100,43 @@ export function OrganizeDialog({
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Options */}
+          <div className="mt-4 space-y-3">
+            <div className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+              <Checkbox
+                id="auto-move"
+                checked={autoMove}
+                onCheckedChange={handleAutoMoveChange}
+              />
+              <label
+                htmlFor="auto-move"
+                className="flex-1 cursor-pointer select-none"
+              >
+                <div className="text-sm font-medium text-slate-900">Auto Move Files</div>
+                <div className="text-xs text-slate-500">
+                  Automatically move files to organized folders
+                </div>
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+              <Checkbox
+                id="auto-rename"
+                checked={autoRename}
+                onCheckedChange={handleAutoRenameChange}
+              />
+              <label
+                htmlFor="auto-rename"
+                className="flex-1 cursor-pointer select-none"
+              >
+                <div className="text-sm font-medium text-slate-900">Auto Rename Files</div>
+                <div className="text-xs text-slate-500">
+                  Automatically rename files with descriptive names
+                </div>
+              </label>
             </div>
           </div>
         </div>

@@ -14,8 +14,6 @@ export function SettingsPage() {
   const {
     autoOrganize,
     setAutoOrganize,
-    autoRename,
-    setAutoRename,
     isFirstTime,
     handleFirstTimeToggle,
   } = useAutomationSettings()
@@ -43,10 +41,8 @@ export function SettingsPage() {
             {activeTab === 'automation' && (
               <AutomationSettings
                 autoOrganize={autoOrganize}
-                autoRename={autoRename}
                 isFirstTime={isFirstTime}
                 onAutoOrganizeChange={setAutoOrganize}
-                onAutoRenameChange={setAutoRename}
                 onFirstTimeChange={handleFirstTimeToggle}
               />
             )}
