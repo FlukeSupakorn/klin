@@ -120,6 +120,7 @@ datasets/
 *.parquet
 !package.json
 !tsconfig.json
+!tsconfig.node.json
 !tauri.conf.json
 
 # OCR specific
