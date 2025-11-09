@@ -3,6 +3,8 @@
 export interface OrganizeRequest {
   action: 'organize' | 'Borganize' | 'summary' | 'Bsummary'
   file_paths: string[]
+  auto_move?: boolean
+  auto_rename?: boolean
 }
 
 export interface FileOrganizeResult {
@@ -13,6 +15,18 @@ export interface FileOrganizeResult {
 
 export interface OrganizeResponse {
   result: Record<string, FileOrganizeResult>
+}
+
+// New interface for queue-based organization
+export interface OrganizeFileResponse {
+  file_path: string
+  original_name: string
+  original_folder: string
+  suggested_name: string
+  suggested_folder: string
+  status: 'pending' | 'processing' | 'completed' | 'approved' | 'rejected'
+  auto_move_applied?: boolean
+  auto_rename_applied?: boolean
 }
 
 // Helper function to get file extension
@@ -194,4 +208,114 @@ export const callOrganizeAPI = async (request: OrganizeRequest): Promise<Organiz
     default:
       throw new Error(`Unknown action: ${action}`)
   }
+}
+
+// ==================== New Queue-Based Organization API ====================
+
+// Simulate AI processing delay (2-5 seconds per file)
+const getRandomDelay = () => Math.floor(Math.random() * 3000) + 2000
+
+// Mock destination folders
+const mockDestinations = [
+  'Documents',
+  'Images',
+  'Videos',
+  'Music',
+  'Archives',
+  'Applications',
+  'Code',
+  'Others',
+]
+
+// Get a random destination folder based on file type
+const getSuggestedDestination = (filename: string): string => {
+  const category = getFileCategory(filename)
+  return category
+}
+
+// Generate a suggested name based on file type
+const generateSuggestedName = (originalName: string): string => {
+  const ext = getFileExtension(originalName)
+  const nameWithoutExt = originalName.replace(/\.[^/.]+$/, '')
+  
+  // Mock AI-generated descriptive names
+  const descriptiveNames = [
+    'Project_Report',
+    'Meeting_Notes',
+    'Vacation_Photo',
+    'Screenshot_Capture',
+    'Document_Scan',
+    'Invoice_Payment',
+    'Receipt_Purchase',
+    'Presentation_Slides',
+    'Data_Analysis',
+    'Code_Review',
+  ]
+  
+  const randomName = descriptiveNames[Math.floor(Math.random() * descriptiveNames.length)]
+  const timestamp = new Date().toISOString().split('T')[0]
+  
+  return ext ? `${randomName}_${timestamp}.${ext}` : `${randomName}_${timestamp}`
+}
+
+// Process a single file with AI simulation
+export const processFileOrganization = async (
+  filePath: string,
+  autoMove: boolean,
+  autoRename: boolean
+): Promise<OrganizeFileResponse> => {
+  // Simulate processing delay
+  await delay(getRandomDelay())
+
+  const fileName = filePath.split('\\').pop() || filePath.split('/').pop() || filePath
+  const folderPath = filePath.substring(0, filePath.lastIndexOf('\\') || filePath.lastIndexOf('/'))
+
+  return {
+    file_path: filePath,
+    original_name: fileName,
+    original_folder: folderPath,
+    suggested_name: generateSuggestedName(fileName),
+    suggested_folder: getSuggestedDestination(fileName),
+    status: 'completed',
+    auto_move_applied: autoMove,
+    auto_rename_applied: autoRename,
+  }
+}
+
+// Process multiple files with queue and progress tracking
+export const organizeFilesQueue = async (
+  filePaths: string[],
+  autoMove: boolean,
+  autoRename: boolean,
+  onProgress?: (response: OrganizeFileResponse, current: number, total: number) => void
+): Promise<OrganizeFileResponse[]> => {
+  const results: OrganizeFileResponse[] = []
+
+  for (let i = 0; i < filePaths.length; i++) {
+    // Set status to processing before starting
+    const processingUpdate: OrganizeFileResponse = {
+      file_path: filePaths[i],
+      original_name: filePaths[i].split('\\').pop() || filePaths[i].split('/').pop() || filePaths[i],
+      original_folder: '',
+      suggested_name: '',
+      suggested_folder: '',
+      status: 'processing',
+    }
+
+    if (onProgress) {
+      onProgress(processingUpdate, i, filePaths.length)
+    }
+
+    // Process the file
+    const response = await processFileOrganization(filePaths[i], autoMove, autoRename)
+
+    results.push(response)
+
+    // Call progress callback with completed result
+    if (onProgress) {
+      onProgress(response, i + 1, filePaths.length)
+    }
+  }
+
+  return results
 }

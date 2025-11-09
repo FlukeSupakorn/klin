@@ -1,5 +1,6 @@
 import { Sparkles } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,13 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { FileIcon } from '@/components/file/file-icon'
 import { FileItem } from '@/lib/tauri-api'
 import { formatFileSize, getFileType } from '../file-list/utils'
+import { organizeFilesQueue, OrganizeFileResponse } from '@/lib/mock-api'
+import { useActivityStore } from '@/pages/history/store/useActivityStore'
+
+// Simple UUID generator
+const generateId = () => {
+  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+}
 
 interface OrganizeDialogProps {
   isOpen: boolean
@@ -29,6 +37,14 @@ export function OrganizeDialog({
   onGenerate,
   isLoading,
 }: OrganizeDialogProps) {
+  const navigate = useNavigate()
+  const addToQueue = useActivityStore((state) => state.addToQueue)
+  const updateQueueItem = useActivityStore((state) => state.updateQueueItem)
+  const setProcessing = useActivityStore((state) => state.setProcessing)
+  const setProgress = useActivityStore((state) => state.setProgress)
+
+  const [isOrganizing, setIsOrganizing] = useState(false)
+
   // Load saved preferences from localStorage, default to true
   const [autoMove, setAutoMove] = useState(() => {
     const saved = localStorage.getItem('organize-auto-move')
@@ -58,6 +74,74 @@ export function OrganizeDialog({
   const handleAutoRenameChange = (checked: boolean | 'indeterminate') => {
     if (typeof checked === 'boolean') {
       setAutoRename(checked)
+    }
+  }
+
+  const handleConfirmOrganize = async () => {
+    if (selectedFiles.length === 0) return
+
+    // Close the dialog
+    onClose()
+
+    // Navigate to activity page
+    navigate('/history')
+
+    // Set processing state
+    setProcessing(true)
+    setProgress(0, selectedFiles.length)
+    setIsOrganizing(true)
+
+    // Start organizing files with queue
+    try {
+      const filePaths = selectedFiles.map((file) => file.path)
+
+      await organizeFilesQueue(
+        filePaths,
+        autoMove,
+        autoRename,
+        (response: OrganizeFileResponse, current: number, total: number) => {
+          // Create unique ID for queue item
+          const id = generateId()
+
+          if (response.status === 'processing') {
+            // Add to queue as processing
+            addToQueue({
+              ...response,
+              id,
+              timestamp: new Date(),
+              userAction: 'pending',
+            })
+          } else if (response.status === 'completed') {
+            // Update existing item or add new completed item
+            const existingItem = useActivityStore
+              .getState()
+              .queue.find((item) => item.file_path === response.file_path)
+
+            if (existingItem) {
+              updateQueueItem(existingItem.id, response)
+            } else {
+              addToQueue({
+                ...response,
+                id,
+                timestamp: new Date(),
+                userAction:
+                  autoMove && autoRename ? 'approved' : 'pending',
+              })
+            }
+
+            // Update progress
+            setProgress(current, total)
+          }
+        }
+      )
+
+      // Finished processing
+      setProcessing(false)
+      setIsOrganizing(false)
+    } catch (error) {
+      console.error('Error organizing files:', error)
+      setProcessing(false)
+      setIsOrganizing(false)
     }
   }
 
@@ -145,8 +229,8 @@ export function OrganizeDialog({
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={onGenerate} disabled={isLoading}>
-            {isLoading ? (
+          <Button onClick={handleConfirmOrganize} disabled={isOrganizing || selectedFiles.length === 0}>
+            {isOrganizing ? (
               <>
                 <svg
                   className="animate-spin -ml-1 mr-2 h-4 w-4"
