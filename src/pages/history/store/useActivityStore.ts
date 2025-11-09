@@ -60,7 +60,7 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
 
   addToQueue: (item) =>
     set((state) => ({
-      queue: [...state.queue, item],
+      queue: [item, ...state.queue],
     })),
 
   updateQueueItem: (id, updates) =>

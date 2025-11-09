@@ -119,14 +119,29 @@ export function OrganizeDialog({
 
             if (existingItem) {
               updateQueueItem(existingItem.id, response)
+              
+              // Auto-approve if both auto move and auto rename are enabled
+              if (autoMove && autoRename) {
+                setTimeout(() => {
+                  const store = useActivityStore.getState()
+                  store.approveItem(existingItem.id)
+                }, 500)
+              }
             } else {
               addToQueue({
                 ...response,
                 id,
                 timestamp: new Date(),
-                userAction:
-                  autoMove && autoRename ? 'approved' : 'pending',
+                userAction: 'pending',
               })
+              
+              // Auto-approve if both auto move and auto rename are enabled
+              if (autoMove && autoRename) {
+                setTimeout(() => {
+                  const store = useActivityStore.getState()
+                  store.approveItem(id)
+                }, 500)
+              }
             }
 
             // Update progress
