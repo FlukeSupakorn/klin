@@ -40,3 +40,12 @@ export async function openFile(filePath: string): Promise<void> {
     throw error
   }
 }
+
+export async function deleteFile(filePath: string): Promise<void> {
+  try {
+    await invoke('delete_file', { filePath })
+  } catch (error) {
+    console.error('Failed to delete file:', error)
+    throw error
+  }
+}

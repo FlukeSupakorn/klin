@@ -34,7 +34,7 @@ import { useHomeStore } from './store/useHomeStore'
 
 export function HomePage() {
   // Initialize file loading
-  useFileLoading()
+  const { reloadFiles, watchedFolder } = useFileLoading()
   const navigate = useNavigate()
 
   // Get state from stores
@@ -124,6 +124,7 @@ export function HomePage() {
           files={filteredFiles}
           selectedFileIds={selectedFileIds}
           onToggleSelection={toggleFileSelection}
+          onFileDeleted={() => watchedFolder && reloadFiles(watchedFolder)}
           loading={loading}
         />
       </div>

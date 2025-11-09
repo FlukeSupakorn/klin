@@ -105,12 +105,31 @@ fn open_file(file_path: String) -> Result<(), String> {
     Ok(())
 }
 
+#[tauri::command]
+fn delete_file(file_path: String) -> Result<(), String> {
+    let path = PathBuf::from(&file_path);
+    
+    if !path.exists() {
+        return Err("File does not exist".to_string());
+    }
+    
+    if path.is_dir() {
+        fs::remove_dir_all(&path)
+            .map_err(|e| format!("Failed to delete directory: {}", e))?;
+    } else {
+        fs::remove_file(&path)
+            .map_err(|e| format!("Failed to delete file: {}", e))?;
+    }
+    
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![greet, get_downloads_folder, read_folder, open_file])
+        .invoke_handler(tauri::generate_handler![greet, get_downloads_folder, read_folder, open_file, delete_file])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

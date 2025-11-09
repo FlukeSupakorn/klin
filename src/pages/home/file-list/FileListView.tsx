@@ -1,20 +1,31 @@
-import { FolderOpen } from 'lucide-react'
+import { FolderOpen, Trash2, MoreVertical } from 'lucide-react'
+import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FileIcon } from '@/components/file/file-icon'
 import { FileItem } from '@/lib/tauri-api'
-import { openFile } from '@/lib/tauri-api'
+import { openFile, deleteFile } from '@/lib/tauri-api'
 import { useFileStore } from '@/store/useFileStore'
 import { formatFileSize, formatDate, getFileType } from './utils'
+import { DeleteConfirmDialog } from './DeleteConfirmDialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface FileListViewProps {
   files: FileItem[]
   selectedFileIds: string[]
   onToggleSelection: (id: string) => void
+  onFileDeleted?: () => void
   loading: boolean
 }
 
-export function FileListView({ files, selectedFileIds, onToggleSelection, loading }: FileListViewProps) {
+export function FileListView({ files, selectedFileIds, onToggleSelection, onFileDeleted, loading }: FileListViewProps) {
   const { currentView } = useFileStore()
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [fileToDelete, setFileToDelete] = useState<{ path: string; name: string } | null>(null)
 
   const handleOpenFile = async (filePath: string) => {
     try {
@@ -23,6 +34,33 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
       console.error('Failed to open file:', error)
       // You could show a toast notification here
     }
+  }
+
+  const handleDeleteClick = (filePath: string, fileName: string) => {
+    setFileToDelete({ path: filePath, name: fileName })
+    setIsDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return
+
+    try {
+      await deleteFile(fileToDelete.path)
+      setIsDeleteDialogOpen(false)
+      setFileToDelete(null)
+      // Trigger file reload after successful deletion
+      if (onFileDeleted) {
+        onFileDeleted()
+      }
+    } catch (error) {
+      console.error('Failed to delete file:', error)
+      alert('Failed to delete file. Please try again.')
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false)
+    setFileToDelete(null)
   }
 
   if (loading) {
@@ -103,8 +141,15 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   <td className="py-4 px-4 text-sm text-slate-600">{formatFileSize(file.size)}</td>
                   <td className="py-4 px-4 text-sm text-slate-600">{formatDate(file.modified)}</td>
                   <td className="py-4 px-4">
-                    <button className="text-sm font-medium text-rose-500 hover:text-rose-600">
-                      Delete
+                    <button 
+                      className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteClick(file.path, file.name)
+                      }}
+                      title="Delete file"
+                    >
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   </td>
                 </tr>
@@ -134,11 +179,28 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     aria-label={`Select ${file.name}`}
                     onClick={(e) => e.stopPropagation()}
                   />
-                  <button className="text-slate-400 hover:text-slate-600">
-                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                    </svg>
-                  </button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button 
+                        className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-1 rounded transition-colors"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-rose-600 focus:text-rose-600 focus:bg-rose-50 cursor-pointer"
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation()
+                          handleDeleteClick(file.path, file.name)
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <div className="h-24 bg-slate-100 rounded-lg mb-4 flex items-center justify-center">
@@ -214,10 +276,14 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   </div>
 
                   <button
-                    className="text-sm font-medium text-rose-500 hover:text-rose-600 px-3 py-1"
-                    onClick={(e) => e.stopPropagation()}
+                    className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-lg transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDeleteClick(file.path, file.name)
+                    }}
+                    title="Delete file"
                   >
-                    Delete
+                    <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
               </div>
@@ -225,6 +291,14 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
           })}
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        fileName={fileToDelete?.name || ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   )
 }
