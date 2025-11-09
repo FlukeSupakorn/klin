@@ -3,7 +3,7 @@ import { Home, Activity, StickyNote, Settings, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
-  { icon: Home, label: 'Home', path: '/files', badge: '10' },
+  { icon: Home, label: 'Home', path: '/files' },
   { icon: Activity, label: 'Activity', path: '/history' },
   { icon: StickyNote, label: 'Note', path: '/note' },
   { icon: Settings, label: 'Settings', path: '/settings' },
@@ -66,11 +66,6 @@ export function Sidebar() {
                 <item.icon className="h-5 w-5" />
                 <span>{item.label}</span>
               </div>
-              {item.badge && (
-                <span className="px-2 py-0.5 text-xs font-semibold bg-indigo-100 text-indigo-700 rounded-full">
-                  {item.badge}
-                </span>
-              )}
             </Link>
           )
         })}
