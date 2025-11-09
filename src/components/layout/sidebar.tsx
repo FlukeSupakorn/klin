@@ -1,14 +1,12 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, FolderClock, StickyNote, Calendar, Settings, HelpCircle, LogOut } from 'lucide-react'
+import { Home, Activity, StickyNote, Settings, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
   { icon: Home, label: 'Home', path: '/files', badge: '10' },
-  { icon: FolderClock, label: 'History', path: '/history' },
+  { icon: Activity, label: 'Activity', path: '/history' },
   { icon: StickyNote, label: 'Note', path: '/note' },
-  { icon: Calendar, label: 'Calendar', path: '/calendar' },
   { icon: Settings, label: 'Settings', path: '/settings' },
-  { icon: HelpCircle, label: 'Help & Support', path: '/help' },
 ]
 
 export function Sidebar() {
