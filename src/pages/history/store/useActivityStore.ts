@@ -124,12 +124,14 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
     })
   },
 
-  rejectAll: () => {
-    const completedItems = get().queue.filter((item) => item.status === 'completed')
-    completedItems.forEach((item) => {
-      get().rejectItem(item.id)
-    })
-  },
+  rejectAll: () =>
+    set((state) => ({
+      queue: state.queue.map((item) =>
+        item.status === 'completed'
+          ? { ...item, userAction: 'rejected' as const }
+          : item
+      ),
+    })),
 
   editItemName: (id, newName) =>
     set((state) => ({

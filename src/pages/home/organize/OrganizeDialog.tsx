@@ -109,7 +109,7 @@ export function OrganizeDialog({
               ...response,
               id,
               timestamp: new Date(),
-              userAction: 'pending',
+              userAction: 'approved', // Default to approved
             })
           } else if (response.status === 'completed') {
             // Update existing item or add new completed item
@@ -132,7 +132,7 @@ export function OrganizeDialog({
                 ...response,
                 id,
                 timestamp: new Date(),
-                userAction: 'pending',
+                userAction: 'approved', // Default to approved
               })
               
               // Auto-approve if both auto move and auto rename are enabled

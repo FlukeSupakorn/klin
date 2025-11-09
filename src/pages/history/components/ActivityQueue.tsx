@@ -12,8 +12,7 @@ interface ActivityQueueProps {
 
 export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
   const queue = useActivityStore((state) => state.queue)
-  const approveItem = useActivityStore((state) => state.approveItem)
-  const rejectItem = useActivityStore((state) => state.rejectItem)
+  const updateQueueItem = useActivityStore((state) => state.updateQueueItem)
   const editItemName = useActivityStore((state) => state.editItemName)
   const editItemFolder = useActivityStore((state) => state.editItemFolder)
 
@@ -50,6 +49,15 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
     setEditingField(null)
   }
 
+  const handleCardClick = (item: ActivityItem) => {
+    if (item.status !== 'completed') return
+    if (editingId) return // Don't toggle while editing
+
+    // Toggle between approved and rejected
+    const newAction = item.userAction === 'approved' ? 'rejected' : 'approved'
+    updateQueueItem(item.id, { userAction: newAction })
+  }
+
   const canEditName = (item: ActivityItem) => {
     return !item.auto_rename_applied && item.status === 'completed'
   }
@@ -58,26 +66,21 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
     return !item.auto_move_applied && item.status === 'completed'
   }
 
-  const needsUserAction = (item: ActivityItem) => {
-    return (
-      item.status === 'completed' &&
-      (!item.auto_move_applied || !item.auto_rename_applied) &&
-      !item.userAction
-    )
-  }
-
   return (
     <div className="space-y-3">
       {filteredQueue.map((item) => (
         <div
           key={item.id}
+          onClick={() => handleCardClick(item)}
           className={`bg-white border rounded-lg p-4 transition-all ${
             item.status === 'processing'
               ? 'border-indigo-300 bg-indigo-50'
-              : item.status === 'approved'
-              ? 'border-green-300 bg-green-50'
-              : item.status === 'rejected'
-              ? 'border-red-300 bg-red-50'
+              : item.userAction === 'approved'
+              ? 'border-green-300 bg-green-50 cursor-pointer hover:border-green-400'
+              : item.userAction === 'rejected'
+              ? 'border-red-300 bg-red-50 cursor-pointer hover:border-red-400'
+              : item.status === 'completed'
+              ? 'border-slate-200 cursor-pointer hover:border-slate-300'
               : 'border-slate-200'
           }`}
         >
@@ -192,39 +195,23 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                 </>
               )}
 
-              {item.status === 'approved' && (
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span className="text-sm font-medium">Approved</span>
-                </div>
-              )}
-
-              {item.status === 'rejected' && (
-                <div className="flex items-center gap-2 text-red-600">
-                  <XCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">Rejected</span>
+              {/* User Action Status Badge */}
+              {item.status === 'completed' && (
+                <div className="mt-2">
+                  {item.userAction === 'approved' ? (
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-green-100 border border-green-300 rounded text-xs text-green-700">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>Approved (click to reject)</span>
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-red-100 border border-red-300 rounded text-xs text-red-700">
+                      <XCircle className="h-3 w-3" />
+                      <span>Rejected (click to approve)</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-
-            {/* Actions */}
-            {needsUserAction(item) && (
-              <div className="flex-shrink-0 flex gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => rejectItem(item.id)}
-                  className="gap-1"
-                >
-                  <XCircle className="h-4 w-4" />
-                  Reject
-                </Button>
-                <Button size="sm" onClick={() => approveItem(item.id)} className="gap-1">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Approve
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       ))}

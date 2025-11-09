@@ -1,4 +1,4 @@
-import { Settings, Bell, CheckCircle2, XCircle } from 'lucide-react'
+import { Settings, Bell, CheckCircle2, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useActivityStore } from './store/useActivityStore'
 import { SearchToolbar } from './components/SearchToolbar'
@@ -16,10 +16,33 @@ export function HistoryPage() {
   const isProcessing = useActivityStore((state) => state.isProcessing)
   const currentIndex = useActivityStore((state) => state.currentIndex)
   const totalFiles = useActivityStore((state) => state.totalFiles)
-  const approveAll = useActivityStore((state) => state.approveAll)
   const rejectAll = useActivityStore((state) => state.rejectAll)
+  const moveToHistory = useActivityStore((state) => state.moveToHistory)
+  const removeFromQueue = useActivityStore((state) => state.removeFromQueue)
 
   const hasCompletedItems = queue.some((item) => item.status === 'completed')
+
+  const handleConfirm = () => {
+    // Move all items to history with their current userAction
+    const completedItems = queue.filter((item) => item.status === 'completed')
+    completedItems.forEach((item) => {
+      moveToHistory(item)
+      removeFromQueue(item.id)
+    })
+  }
+
+  const handleRejectAll = () => {
+    rejectAll()
+    // Auto-confirm after rejecting all - move all to history
+    setTimeout(() => {
+      const currentQueue = useActivityStore.getState().queue
+      const completedItems = currentQueue.filter((item) => item.status === 'completed')
+      completedItems.forEach((item) => {
+        moveToHistory(item)
+        removeFromQueue(item.id)
+      })
+    }, 100)
+  }
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
@@ -87,19 +110,19 @@ export function HistoryPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={rejectAll}
-                    className="gap-2"
+                    onClick={handleRejectAll}
+                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
-                    <XCircle className="h-4 w-4" />
+                    <X className="h-4 w-4" />
                     Reject All
                   </Button>
                   <Button
                     size="sm"
-                    onClick={approveAll}
+                    onClick={handleConfirm}
                     className="gap-2"
                   >
                     <CheckCircle2 className="h-4 w-4" />
-                    Approve All
+                    Confirm
                   </Button>
                 </div>
               )}
