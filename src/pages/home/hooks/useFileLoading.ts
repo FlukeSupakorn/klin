@@ -40,17 +40,27 @@ export function useFileLoading() {
 
   const loadDefaultFolders = async () => {
     try {
+      // Check if there are saved watching folders (for dev mode)
+      const savedFolders = localStorage.getItem('klin-watching-folders')
+      
+      if (savedFolders) {
+        // Load existing folders into temp state for setup
+        const folders = JSON.parse(savedFolders)
+        setTempWatchingFolders(folders)
+      } else {
+        // First time ever - load Downloads as default
+        const downloadsPath = await getDownloadsFolder()
+        const folderName = getFolderName(downloadsPath)
+        
+        addTempWatchingFolder({
+          id: generateUUID(),
+          name: folderName,
+          path: downloadsPath,
+          fileCount: 0,
+        })
+      }
+      
       const downloadsPath = await getDownloadsFolder()
-      const folderName = getFolderName(downloadsPath)
-      
-      // Add default Downloads folder to temp watching folders
-      addTempWatchingFolder({
-        id: generateUUID(),
-        name: folderName,
-        path: downloadsPath,
-        fileCount: 0,
-      })
-      
       setTempDestinations([
         `${downloadsPath}/Documents`,
         `${downloadsPath}/Images`,

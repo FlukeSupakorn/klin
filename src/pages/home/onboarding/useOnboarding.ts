@@ -98,26 +98,17 @@ export function useOnboarding() {
   }
 
   const completeFirstTimeSetup = async () => {
-    // Save to localStorage ONLY - don't add to store yet
-    localStorage.setItem('klin-watching-folders', JSON.stringify(tempWatchingFolders))
-    
-    setDestinationFolders(tempDestinations)
-
-    localStorage.setItem('klin-first-time-setup', 'completed')
-    setIsFirstTimeSetup(false)
-
     // Load files from all watching folders
     try {
       setLoading(true)
       
-      // Now add to store (after localStorage is saved)
-      tempWatchingFolders.forEach((folder) => {
-        addWatchingFolder(folder)
-      })
-      
       const allFiles = []
+      const foldersWithFileCounts = []
+      
+      // Load files and update file counts
       for (const folder of tempWatchingFolders) {
         const files = await readFolder(folder.path)
+        
         // Add source folder info
         const filesWithSource = files.map(file => ({
           ...file,
@@ -126,7 +117,26 @@ export function useOnboarding() {
           sourceFolderName: folder.name,
         }))
         allFiles.push(...filesWithSource)
+        
+        // Update folder with actual file count
+        foldersWithFileCounts.push({
+          ...folder,
+          fileCount: files.length,
+        })
       }
+      
+      // Save to localStorage with updated file counts
+      localStorage.setItem('klin-watching-folders', JSON.stringify(foldersWithFileCounts))
+      
+      setDestinationFolders(tempDestinations)
+      localStorage.setItem('klin-first-time-setup', 'completed')
+      setIsFirstTimeSetup(false)
+
+      // Now add to store with correct file counts
+      foldersWithFileCounts.forEach((folder) => {
+        addWatchingFolder(folder)
+      })
+      
       setFiles(allFiles)
     } catch (error) {
       console.error('Failed to load files:', error)
@@ -145,23 +155,13 @@ export function useOnboarding() {
         await createFolder(folderPath)
       }
       
-      // Save to localStorage ONLY - don't add to store yet
-      localStorage.setItem('klin-watching-folders', JSON.stringify(tempWatchingFolders))
-      
-      setDestinationFolders(aiFolderPaths)
-
-      localStorage.setItem('klin-first-time-setup', 'completed')
-      setIsFirstTimeSetup(false)
-
-      // Now add to store (after localStorage is saved)
-      tempWatchingFolders.forEach((folder) => {
-        addWatchingFolder(folder)
-      })
-
-      // Load files from all watching folders
       const allFiles = []
+      const foldersWithFileCounts = []
+      
+      // Load files and update file counts
       for (const folder of tempWatchingFolders) {
         const files = await readFolder(folder.path)
+        
         // Add source folder info
         const filesWithSource = files.map(file => ({
           ...file,
@@ -170,7 +170,26 @@ export function useOnboarding() {
           sourceFolderName: folder.name,
         }))
         allFiles.push(...filesWithSource)
+        
+        // Update folder with actual file count
+        foldersWithFileCounts.push({
+          ...folder,
+          fileCount: files.length,
+        })
       }
+      
+      // Save to localStorage with updated file counts
+      localStorage.setItem('klin-watching-folders', JSON.stringify(foldersWithFileCounts))
+      
+      setDestinationFolders(aiFolderPaths)
+      localStorage.setItem('klin-first-time-setup', 'completed')
+      setIsFirstTimeSetup(false)
+
+      // Now add to store with correct file counts
+      foldersWithFileCounts.forEach((folder) => {
+        addWatchingFolder(folder)
+      })
+      
       setFiles(allFiles)
     } catch (error) {
       console.error('Failed to create AI folders:', error)
