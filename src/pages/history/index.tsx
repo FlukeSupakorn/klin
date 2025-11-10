@@ -1,7 +1,7 @@
 import { Settings, Bell, CheckCircle2, X, XCircle } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useActivityStore } from './store/useActivityStore'
-import { SearchToolbar } from './components/SearchToolbar'
+import { SearchToolbar, FilterType } from './components/SearchToolbar'
 import { ActivityQueue } from './components/ActivityQueue'
 import { HistoryList } from './components/HistoryList'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { useState } from 'react'
 export function HistoryPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
   
   const queue = useActivityStore((state) => state.queue)
   const history = useActivityStore((state) => state.history)
@@ -22,6 +23,42 @@ export function HistoryPage() {
   const cancelProcessing = useActivityStore((state) => state.cancelProcessing)
 
   const hasCompletedItems = queue.some((item) => item.status === 'completed')
+
+  // Calculate filtered history count
+  const getFilteredHistoryCount = () => {
+    return history.filter((item) => {
+      const matchesSearch = item.original_name.toLowerCase().includes(searchQuery.toLowerCase())
+      if (!matchesSearch) return false
+
+      if (activeFilter === 'approved' && item.action !== 'approved') return false
+      if (activeFilter === 'rejected' && item.action !== 'rejected') return false
+
+      const now = new Date()
+      const itemDate = new Date(item.timestamp)
+      
+      if (activeFilter === 'today') {
+        const isToday = 
+          itemDate.getDate() === now.getDate() &&
+          itemDate.getMonth() === now.getMonth() &&
+          itemDate.getFullYear() === now.getFullYear()
+        if (!isToday) return false
+      }
+      
+      if (activeFilter === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        if (itemDate < weekAgo) return false
+      }
+      
+      if (activeFilter === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        if (itemDate < monthAgo) return false
+      }
+
+      return true
+    }).length
+  }
+
+  const filteredCount = getFilteredHistoryCount()
 
   const handleConfirm = () => {
     // Move all items to history with their current userAction
@@ -73,6 +110,8 @@ export function HistoryPage() {
         <SearchToolbar 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
         />
       </div>
 
@@ -147,7 +186,7 @@ export function HistoryPage() {
         {/* History Section */}
         <div>
           <h2 className="text-xl font-semibold text-slate-900 mb-4">
-            History ({history.length})
+            History ({activeFilter !== 'all' || searchQuery ? `${filteredCount} / ` : ''}{history.length})
           </h2>
           
           {history.length === 0 && queue.length === 0 ? (
@@ -171,7 +210,7 @@ export function HistoryPage() {
               </p>
             </div>
           ) : (
-            <HistoryList searchQuery={searchQuery} />
+            <HistoryList searchQuery={searchQuery} activeFilter={activeFilter} />
           )}
         </div>
       </div>

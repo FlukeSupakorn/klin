@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
+import { ToastContainer } from './components/ui/toast'
 import HomePage from './pages/home'
 import HistoryPage from './pages/history'
 import NotePage from './pages/note'
@@ -26,6 +27,7 @@ function App() {
             <Route path="/help" element={<HelpSupportPage />} />
           </Routes>
         </main>
+        <ToastContainer />
       </div>
     </BrowserRouter>
   )
