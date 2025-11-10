@@ -35,8 +35,8 @@ export const useToastStore = create<ToastState>((set) => ({
     const id = generateId()
     const newToast: Toast = {
       id,
-      duration: 2000, // Default 2 seconds
       ...toast,
+      duration: toast.duration !== undefined ? toast.duration : 2000, // Default 2 seconds if not provided
     }
 
     set((state) => ({
