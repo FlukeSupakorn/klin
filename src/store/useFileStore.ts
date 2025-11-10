@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type ViewMode = 'grid' | 'list'
+export type ViewMode = 'grid' | 'list' | 'tab'
 
 interface FileStore {
   selectedFileIds: Set<string>

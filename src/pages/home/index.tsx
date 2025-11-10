@@ -19,6 +19,7 @@ import { useState } from 'react'
 import { useFileLoading } from './hooks/useFileLoading'
 import { useFileSelection } from './hooks/useFileSelection'
 import { useOrganize } from './hooks/useOrganize'
+import { useToast } from '@/components/ui/toast'
 
 // Tauri API
 import { deleteFile } from '@/lib/tauri-api'
@@ -62,6 +63,8 @@ export function HomePage() {
   const { deselectAllFiles } = useFileStore()
 
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
+  
+  const toast = useToast()
 
   // Delete state
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
@@ -73,6 +76,8 @@ export function HomePage() {
   const handleBulkDelete = async () => {
     try {
       setIsDeleting(true)
+      
+      const fileCount = selectedFiles.length
       
       // Delete all selected files
       for (const file of selectedFiles) {
@@ -86,8 +91,15 @@ export function HomePage() {
       await reloadFiles()
       
       setIsDeleteOpen(false)
+      
+      // Show success toast
+      toast.info(
+        'Files Deleted',
+        `${fileCount} ${fileCount === 1 ? 'file has' : 'files have'} been deleted successfully`
+      )
     } catch (error) {
       console.error('Failed to delete files:', error)
+      toast.error('Delete Failed', 'An error occurred while deleting files')
     } finally {
       setIsDeleting(false)
     }

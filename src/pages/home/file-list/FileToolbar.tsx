@@ -21,7 +21,7 @@ export function ViewSwitcher() {
   
   return (
     <div className="mb-4">
-      <Tabs value={currentView} onValueChange={(v) => setCurrentView(v as 'tab' | 'grid' | 'list')}>
+      <Tabs value={currentView} onValueChange={(v) => setCurrentView(v as any)}>
         <TabsList>
           <TabsTrigger value="tab">Tab View</TabsTrigger>
           <TabsTrigger value="grid">Grid View</TabsTrigger>

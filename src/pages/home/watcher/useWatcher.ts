@@ -14,7 +14,7 @@ export function useWatcher() {
     const folder = await selectFolder('Select New Watching Folder')
     if (folder) {
       setWatchedFolder(folder)
-      await reloadFiles(folder)
+      await reloadFiles()
       setIsChangeFolderOpen(false)
     }
   }
