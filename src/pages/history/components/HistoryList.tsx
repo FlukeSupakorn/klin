@@ -3,17 +3,49 @@ import { FileIcon } from '@/components/file/file-icon'
 import { CheckCircle2, XCircle, FolderOpen, ArrowRight } from 'lucide-react'
 import { getFileType } from '@/pages/home/file-list/utils'
 import { formatDistanceToNow } from 'date-fns'
+import { FilterType } from './SearchToolbar'
 
 interface HistoryListProps {
   searchQuery: string
+  activeFilter?: FilterType
 }
 
-export function HistoryList({ searchQuery }: HistoryListProps) {
+export function HistoryList({ searchQuery, activeFilter = 'all' }: HistoryListProps) {
   const history = useActivityStore((state) => state.history)
 
-  const filteredHistory = history.filter((item) =>
-    item.original_name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredHistory = history.filter((item) => {
+    // Search filter
+    const matchesSearch = item.original_name.toLowerCase().includes(searchQuery.toLowerCase())
+    if (!matchesSearch) return false
+
+    // Status filter
+    if (activeFilter === 'approved' && item.action !== 'approved') return false
+    if (activeFilter === 'rejected' && item.action !== 'rejected') return false
+
+    // Date filters
+    const now = new Date()
+    const itemDate = new Date(item.timestamp)
+    
+    if (activeFilter === 'today') {
+      const isToday = 
+        itemDate.getDate() === now.getDate() &&
+        itemDate.getMonth() === now.getMonth() &&
+        itemDate.getFullYear() === now.getFullYear()
+      if (!isToday) return false
+    }
+    
+    if (activeFilter === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      if (itemDate < weekAgo) return false
+    }
+    
+    if (activeFilter === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      if (itemDate < monthAgo) return false
+    }
+
+    return true
+  })
 
   return (
     <div className="space-y-2">
