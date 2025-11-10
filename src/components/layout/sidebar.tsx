@@ -24,31 +24,8 @@ export function Sidebar() {
         </div>
       </div>
       
-      {/* Search */}
-      <div className="px-6 py-4">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="w-full pl-9 pr-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
-          />
-          <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-      </div>
-      
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-2 space-y-1">
-        {menuItems.map((item) => {
+      <nav className="flex-1 px-3 py-2 space-y-1 mt-4">{menuItems.map((item) => {
           const isActive = location.pathname === item.path || 
                           (item.path === '/files' && location.pathname.startsWith('/files'))
           return (

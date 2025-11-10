@@ -10,7 +10,7 @@
  * - Minimal logic in this file - just composition
  */
 
-import { Upload, Sparkles, Settings, Bell } from 'lucide-react'
+import { Sparkles, Settings, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -140,11 +140,6 @@ export function HomePage() {
             <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
               <Bell className="h-5 w-5 text-slate-600" />
             </button>
-
-            <Button className="gap-2">
-              <Upload className="h-4 w-4" />
-              Upload File
-            </Button>
           </div>
         </div>
 
