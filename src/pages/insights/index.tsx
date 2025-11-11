@@ -15,6 +15,8 @@ import { FileExplorer } from './components/FileExplorer'
 import { NotePreviewPanel } from './components/NotePreviewPanel'
 import { useFeaturedFolders, useFileTree, useHorizontalScroll } from './hooks/useInsights'
 import { useNotePreview } from './hooks/useNotePreview'
+import { useHomeStore } from '@/pages/home/store/useHomeStore'
+import { selectFolder } from '@/lib/tauri-api'
 
 export function InsightsPage() {
   // Business logic from hooks
@@ -22,13 +24,27 @@ export function InsightsPage() {
   const { fileTree, expandedFolders, toggleFolder, isLoading: isLoadingTree } = useFileTree()
   const { scrollLeft, scrollRight } = useHorizontalScroll()
   const { selectedItem, notePreview, isLoading: isLoadingNote, onSelectItem } = useNotePreview()
+  
+  // Destination folder management
+  const addDestinationFolder = useHomeStore((state) => state.addDestinationFolder)
+  
+  const handleSelectFolder = async () => {
+    try {
+      const folder = await selectFolder('Select Destination Folder')
+      if (folder) {
+        addDestinationFolder(folder)
+      }
+    } catch (error) {
+      console.error('Failed to select folder:', error)
+    }
+  }
 
   return (
     <div className="flex flex-col h-screen bg-slate-50">
       <InsightsHeader />
 
       {!hasDestinations ? (
-        <EmptyState />
+        <EmptyState onSelectFolder={handleSelectFolder} />
       ) : (
         <div className="flex-1 overflow-hidden flex flex-col p-6 gap-6">
           {/* Featured Folders - Horizontal Scroll */}

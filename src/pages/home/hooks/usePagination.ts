@@ -25,7 +25,7 @@ export function usePagination<T>({
   const [displayedCount, setDisplayedCount] = useState(itemsPerPage)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const observerRef = useRef<IntersectionObserver | null>(null)
-  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const loadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Calculate displayed items
   const displayedItems = enabled ? items.slice(0, displayedCount) : items

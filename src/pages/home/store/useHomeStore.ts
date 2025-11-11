@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { FileItem } from '@/lib/tauri-api'
 
 export interface WatchingFolder {
@@ -82,7 +83,9 @@ interface HomeState {
   setDestinationMode: (mode: 'ai' | 'custom' | null) => void
 }
 
-export const useHomeStore = create<HomeState>((set) => ({
+export const useHomeStore = create<HomeState>()(
+  persist(
+    (set) => ({
   // Folder Management - Multiple watching folders
   watchingFolders: [],
   selectedFolderIds: [], // Empty = "All" selected
@@ -208,4 +211,14 @@ export const useHomeStore = create<HomeState>((set) => ({
     })),
   destinationMode: null,
   setDestinationMode: (mode) => set({ destinationMode: mode }),
-}))
+    }),
+    {
+      name: 'klin-home-storage',
+      partialize: (state) => ({
+        watchingFolders: state.watchingFolders,
+        destinationFolders: state.destinationFolders,
+        destinationMode: state.destinationMode,
+      }),
+    }
+  )
+)
