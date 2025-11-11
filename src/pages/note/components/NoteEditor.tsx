@@ -4,6 +4,7 @@ import { X, Save, Download, Edit2, Check } from 'lucide-react'
 import { useNoteStore } from '../store/useNoteStore'
 import { useToast } from '@/components/ui/toast'
 import MDEditor from '@uiw/react-md-editor'
+import { useTheme } from '@/context/theme-context'
 
 export function NoteEditor() {
   const currentNote = useNoteStore((state) => state.currentNote)
@@ -17,6 +18,10 @@ export function NoteEditor() {
   const [isRenaming, setIsRenaming] = useState(false)
   const [newTitle, setNewTitle] = useState('')
   const toast = useToast()
+  const { theme } = useTheme()
+  
+  // Determine if dark mode
+  const isDark = theme === 'dark'
 
   useEffect(() => {
     if (currentNote) {
@@ -89,7 +94,7 @@ export function NoteEditor() {
   if (!currentNote) return null
 
   return (
-    <div className="fixed inset-0 bg-theme-background z-50 flex flex-col" data-color-mode="light">
+    <div className="fixed inset-0 bg-theme-background z-50 flex flex-col" data-color-mode={isDark ? 'dark' : 'light'}>
       {/* Header */}
       <div className="border-b border-theme px-6 py-4 bg-theme-background">
         <div className="flex items-center justify-between mb-3">

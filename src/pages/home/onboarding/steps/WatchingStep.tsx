@@ -41,7 +41,7 @@ export function WatchingStep({
         {/* Folder List */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <label className="block text-sm font-medium text-slate-700">
+            <label className="block text-sm font-medium text-theme-text">
               Watching Folders ({tempWatchingFolders.length})
             </label>
             <Button
@@ -56,9 +56,9 @@ export function WatchingStep({
           </div>
 
           {tempWatchingFolders.length === 0 ? (
-            <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
-              <FolderOpen className="h-10 w-10 mx-auto mb-2 text-slate-400" />
-              <p className="text-sm text-slate-600 mb-3">No folders added yet</p>
+            <div className="border-2 border-dashed border-theme rounded-lg p-8 text-center">
+              <FolderOpen className="h-10 w-10 mx-auto mb-2 text-theme-muted" />
+              <p className="text-sm text-theme-secondary mb-3">No folders added yet</p>
               <Button
                 type="button"
                 variant="outline"
@@ -75,23 +75,23 @@ export function WatchingStep({
               {tempWatchingFolders.map((folder) => (
                 <div
                   key={folder.id}
-                  className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+                  className="flex items-center gap-3 p-3 bg-theme-secondary border border-theme rounded-lg hover:bg-theme-tertiary transition-colors"
                 >
-                  <div className="flex-shrink-0 p-2 bg-indigo-100 rounded-lg">
-                    <FolderOpen className="h-5 w-5 text-indigo-600" />
+                  <div className="flex-shrink-0 p-2 bg-theme-primary-light rounded-lg">
+                    <FolderOpen className="h-5 w-5 text-theme-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-theme-text truncate">
                       {folder.name || getFolderName(folder.path)}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{folder.path}</p>
+                    <p className="text-xs text-theme-muted truncate">{folder.path}</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => onRemoveFolder(folder.id)}
-                    className="flex-shrink-0 p-1.5 hover:bg-red-100 rounded transition-colors"
+                    className="flex-shrink-0 p-1.5 hover:bg-red-100 dark:hover:bg-red-950/30 rounded transition-colors"
                   >
-                    <X className="h-4 w-4 text-red-600" />
+                    <X className="h-4 w-4 text-red-600 dark:text-red-400" />
                   </button>
                 </div>
               ))}

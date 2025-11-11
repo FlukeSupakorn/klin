@@ -54,9 +54,9 @@ export function DeveloperSettings() {
                   <li><strong>Clear all folders</strong> - No restrictions on emptying folder lists</li>
                 </ul>
               </div>
-              <div className="mt-3 bg-white border border-indigo-300 rounded-md p-3">
-                <p className="text-xs text-indigo-900 font-medium mb-1">Current Status:</p>
-                <p className="text-xs text-indigo-700">
+              <div className="mt-3 bg-theme-secondary border border-theme rounded-md p-3">
+                <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
+                <p className="text-xs text-theme-secondary">
                   {devMode ? (
                     <span className="font-semibold">✅ Dev Mode is ACTIVE - Navigate to Home to test setup</span>
                   ) : (
@@ -75,20 +75,20 @@ export function DeveloperSettings() {
         </div>
 
         {/* Simulate First Time Setup Toggle */}
-        <div className="border border-purple-200 rounded-lg p-6 bg-purple-50">
+        <div className="border border-theme rounded-lg p-6 bg-theme-background">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Code className="h-5 w-5 text-purple-600" />
-                <h3 className="text-lg font-semibold text-slate-900">Simulate First Time Setup</h3>
+                <Code className="h-5 w-5 text-theme-primary" />
+                <h3 className="text-lg font-semibold text-theme-text">Simulate First Time Setup</h3>
               </div>
-              <p className="text-sm text-slate-600 mb-4">
+              <p className="text-sm text-theme-secondary mb-4">
                 Toggle this to immediately show the first-time setup wizard. When enabled, 
                 navigating to Home page will display the welcome dialog.
               </p>
-              <div className="bg-white border border-purple-300 rounded-md p-3">
-                <p className="text-xs text-purple-900 font-medium mb-1">Current Status:</p>
-                <p className="text-xs text-purple-700">
+              <div className="bg-theme-secondary border border-theme rounded-md p-3">
+                <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
+                <p className="text-xs text-theme-secondary">
                   {isFirstTime ? (
                     <span className="font-semibold">⚠️ First time mode is ACTIVE - Navigate to Home to see setup wizard</span>
                   ) : (
@@ -107,14 +107,14 @@ export function DeveloperSettings() {
         </div>
 
         {/* Info Box */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <svg className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="h-5 w-5 text-amber-600 dark:text-amber-500 mt-0.5 flex-shrink-0" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
               <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <div>
-              <p className="text-sm font-medium text-amber-900 mb-1">Developer Mode Notice</p>
-              <ul className="text-xs text-amber-700 space-y-1 ml-4 list-disc">
+              <p className="text-sm font-medium text-amber-900 dark:text-amber-200 mb-1">Developer Mode Notice</p>
+              <ul className="text-xs text-amber-700 dark:text-amber-300 space-y-1 ml-4 list-disc">
                 <li>These settings are for testing purposes only</li>
                 <li>Changes take effect immediately</li>
                 <li>You may need to refresh the page to see some changes</li>
@@ -125,8 +125,8 @@ export function DeveloperSettings() {
         </div>
 
         {/* Quick Actions */}
-        <div className="border-t border-slate-200 pt-6">
-          <h3 className="text-sm font-semibold text-slate-900 mb-3">Quick Actions</h3>
+        <div className="border-t border-theme pt-6">
+          <h3 className="text-sm font-semibold text-theme-text mb-3">Quick Actions</h3>
           <div className="flex gap-2">
             <Button 
               variant="outline" 

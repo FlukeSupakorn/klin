@@ -41,15 +41,15 @@ export function DestinationsStep({
       </DialogHeader>
 
       <div className="py-4">
-        <h3 className="text-sm font-semibold text-slate-900 mb-3">
+        <h3 className="text-sm font-semibold text-theme-text mb-3">
           Destination Folders ({tempDestinations.length})
         </h3>
 
         {/* Folder List */}
         {tempDestinations.length === 0 ? (
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center mb-4">
+          <div className="bg-theme-secondary border border-theme rounded-lg p-6 text-center mb-4">
             <svg
-              className="h-12 w-12 text-slate-400 mx-auto mb-2"
+              className="h-12 w-12 text-theme-muted mx-auto mb-2"
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -59,19 +59,19 @@ export function DestinationsStep({
             >
               <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
             </svg>
-            <p className="text-sm text-slate-600">No destination folders yet</p>
-            <p className="text-xs text-slate-500 mt-1">Add at least one folder below</p>
+            <p className="text-sm text-theme-secondary">No destination folders yet</p>
+            <p className="text-xs text-theme-muted mt-1">Add at least one folder below</p>
           </div>
         ) : (
           <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
             {tempDestinations.map((folder, index) => (
               <div
                 key={index}
-                className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg p-3 hover:border-slate-300 transition-colors"
+                className="flex items-center gap-3 bg-theme-background border border-theme rounded-lg p-3 hover:border-theme-primary transition-colors"
               >
-                <div className="h-8 w-8 rounded bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                <div className="h-8 w-8 rounded bg-emerald-100 dark:bg-emerald-950/30 flex items-center justify-center flex-shrink-0">
                   <svg
-                    className="h-4 w-4 text-emerald-600"
+                    className="h-4 w-4 text-emerald-600 dark:text-emerald-400"
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -83,13 +83,13 @@ export function DestinationsStep({
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-900 font-mono truncate" title={folder}>
+                  <p className="text-sm text-theme-text font-mono truncate" title={folder}>
                     {folder}
                   </p>
                 </div>
                 <button
                   onClick={() => onRemoveDestination(folder)}
-                  className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0"
+                  className="h-8 w-8 rounded-lg flex items-center justify-center text-theme-muted hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors flex-shrink-0"
                   title="Remove folder"
                 >
                   <X className="h-4 w-4" />
@@ -100,8 +100,8 @@ export function DestinationsStep({
         )}
 
         {/* Add New Folder Form */}
-        <div className="border-t border-slate-200 pt-4">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+        <div className="border-t border-theme pt-4">
+          <label className="block text-sm font-medium text-theme-text mb-2">
             Add New Folder
           </label>
           <div className="flex gap-2">
@@ -136,14 +136,14 @@ export function DestinationsStep({
           </div>
         </div>
 
-        <p className="text-xs text-slate-500 mt-3">
+        <p className="text-xs text-theme-muted mt-3">
           We've added some default folders for you. You can add more or remove them.
         </p>
         
         {/* Dev Mode Notice */}
         {isDevMode && (
-          <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-md p-2">
-            <p className="text-xs text-indigo-700">
+          <div className="mt-3 bg-theme-primary-light border border-theme-primary rounded-md p-2">
+            <p className="text-xs text-theme-secondary">
               <span className="font-semibold">Dev Mode:</span> You can complete setup with 0 folders
             </p>
           </div>

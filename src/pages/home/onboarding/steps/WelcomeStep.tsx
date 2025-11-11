@@ -27,8 +27,8 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
       </DialogHeader>
 
       <div className="py-6">
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold text-slate-900 mb-4">
+        <div className="bg-theme-primary-light rounded-lg p-6 mb-6 border border-theme-primary">
+          <h3 className="text-lg font-semibold text-theme-text mb-4">
             What KLIN can do for you:
           </h3>
           <div className="space-y-3">
@@ -43,8 +43,8 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
                 </svg>
               </div>
               <div>
-                <p className="font-medium text-slate-900">Automatically Organize Files</p>
-                <p className="text-sm text-slate-600">
+                <p className="font-medium text-theme-text">Automatically Organize Files</p>
+                <p className="text-sm text-theme-secondary">
                   Watch folders and organize files by type, date, or custom rules
                 </p>
               </div>
@@ -60,8 +60,8 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
                 </svg>
               </div>
               <div>
-                <p className="font-medium text-slate-900">Smart Renaming</p>
-                <p className="text-sm text-slate-600">
+                <p className="font-medium text-theme-text">Smart Renaming</p>
+                <p className="text-sm text-theme-secondary">
                   Rename files with meaningful names based on content analysis
                 </p>
               </div>
@@ -77,8 +77,8 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
                 </svg>
               </div>
               <div>
-                <p className="font-medium text-slate-900">AI-Powered Summaries</p>
-                <p className="text-sm text-slate-600">
+                <p className="font-medium text-theme-text">AI-Powered Summaries</p>
+                <p className="text-sm text-theme-secondary">
                   Generate summaries and insights for your documents
                 </p>
               </div>
@@ -86,7 +86,7 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
           </div>
         </div>
 
-        <p className="text-sm text-slate-600 text-center">
+        <p className="text-sm text-theme-secondary text-center">
           This quick setup will take less than a minute. Let's configure your folders!
         </p>
       </div>

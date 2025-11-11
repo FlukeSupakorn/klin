@@ -86,7 +86,7 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
         >
           <div className="flex items-start gap-4">
             {/* File Icon */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 text-slate-700 dark:text-slate-300">
               <FileIcon type={getFileType(item.original_name, false)} />
             </div>
 
@@ -94,8 +94,8 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
             <div className="flex-1 min-w-0">
               {/* Original Name */}
               <div className="mb-2">
-                <span className="text-xs text-theme-muted">Original:</span>
-                <p className="text-sm font-medium text-theme-text truncate">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Original:</span>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                   {item.original_name}
                 </p>
               </div>
@@ -113,12 +113,15 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                   {/* New Name */}
                   <div className="mb-2">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-theme-muted">
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                         {item.auto_rename_applied ? 'Renamed to:' : 'Suggested name:'}
                       </span>
                       {canEditName(item) && (
                         <button
-                          onClick={() => handleStartEdit(item, 'name')}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleStartEdit(item, 'name')
+                          }}
                           className="text-theme-primary hover:text-theme-primary-hover"
                         >
                           <Edit2 className="h-3 w-3" />
@@ -126,7 +129,7 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                       )}
                     </div>
                     {editingId === item.id && editingField === 'name' ? (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         <Input
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
@@ -141,7 +144,7 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                         </Button>
                       </div>
                     ) : (
-                      <p className="text-sm text-theme-secondary truncate">
+                      <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                         {item.editedName || item.suggested_name}
                         {item.auto_rename_applied && (
                           <span className="ml-2 text-xs text-green-600 dark:text-green-400">✓ Applied</span>
@@ -153,12 +156,15 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                   {/* New Folder */}
                   <div className="mb-2">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-theme-muted">
+                      <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                         {item.auto_move_applied ? 'Moved to:' : 'Suggested folder:'}
                       </span>
                       {canEditFolder(item) && (
                         <button
-                          onClick={() => handleStartEdit(item, 'folder')}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleStartEdit(item, 'folder')
+                          }}
                           className="text-theme-primary hover:text-theme-primary-hover"
                         >
                           <Edit2 className="h-3 w-3" />
@@ -166,7 +172,7 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                       )}
                     </div>
                     {editingId === item.id && editingField === 'folder' ? (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                         <Input
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value)}
@@ -182,8 +188,8 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <FolderOpen className="h-4 w-4 text-theme-muted" />
-                        <p className="text-sm text-theme-secondary truncate">
+                        <FolderOpen className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                        <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                           {item.editedFolder || item.suggested_folder}
                           {item.auto_move_applied && (
                             <span className="ml-2 text-xs text-green-600 dark:text-green-400">✓ Applied</span>

@@ -37,7 +37,7 @@ export function OrganizePreviewDialog() {
       <DialogContent className="sm:max-w-[900px] max-h-[80vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="h-5 w-5 text-indigo-600" />
+            <Sparkles className="h-5 w-5 text-theme-primary" />
             Organization Preview
           </DialogTitle>
           <DialogDescription className="text-base pt-2">
@@ -52,10 +52,10 @@ export function OrganizePreviewDialog() {
                 key={preview.file.path}
                 className={`border-2 rounded-lg p-4 transition-all ${
                   preview.status === 'approved'
-                    ? 'border-green-500 bg-green-50'
+                    ? 'border-green-500 dark:border-green-600 bg-green-50 dark:bg-green-950/30'
                     : preview.status === 'rejected'
-                    ? 'border-red-500 bg-red-50'
-                    : 'border-slate-200 bg-white'
+                    ? 'border-red-500 dark:border-red-600 bg-red-50 dark:bg-red-950/30'
+                    : 'border-theme bg-theme-background'
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -64,20 +64,20 @@ export function OrganizePreviewDialog() {
                     <div
                       className={`h-12 w-12 rounded-lg flex items-center justify-center ${
                         preview.status === 'approved'
-                          ? 'bg-green-100'
+                          ? 'bg-green-100 dark:bg-green-900/50'
                           : preview.status === 'rejected'
-                          ? 'bg-red-100'
-                          : 'bg-slate-100'
+                          ? 'bg-red-100 dark:bg-red-900/50'
+                          : 'bg-theme-secondary'
                       }`}
                     >
                       <FileIcon
                         type={getFileType(preview.file.name, preview.file.is_dir)}
                         className={`h-6 w-6 ${
                           preview.status === 'approved'
-                            ? 'text-green-600'
+                            ? 'text-green-600 dark:text-green-400'
                             : preview.status === 'rejected'
-                            ? 'text-red-600'
-                            : 'text-indigo-600'
+                            ? 'text-red-600 dark:text-red-400'
+                            : 'text-theme-primary'
                         }`}
                       />
                     </div>
@@ -88,7 +88,7 @@ export function OrganizePreviewDialog() {
                     {editingIndex === index ? (
                       <div className="space-y-3">
                         <div>
-                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                          <label className="block text-xs font-medium text-theme-text mb-1">
                             New Name
                           </label>
                           <Input
@@ -98,7 +98,7 @@ export function OrganizePreviewDialog() {
                           />
                         </div>
                         <div>
-                          <label className="block text-xs font-medium text-slate-700 mb-1">
+                          <label className="block text-xs font-medium text-theme-text mb-1">
                             Destination Folder
                           </label>
                           <Input
@@ -121,20 +121,20 @@ export function OrganizePreviewDialog() {
                         {/* Name Change */}
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <div className="text-xs font-medium text-slate-500 mb-1">
+                            <div className="text-xs font-medium text-theme-muted mb-1">
                               Current Name
                             </div>
-                            <div className="text-sm text-slate-900 font-mono bg-slate-50 px-2 py-1 rounded border border-slate-200 truncate">
+                            <div className="text-sm text-theme-text font-mono bg-theme-secondary px-2 py-1 rounded border border-theme truncate">
                               {preview.currentName}
                             </div>
                           </div>
                           <div>
-                            <div className="text-xs font-medium text-slate-500 mb-1">New Name</div>
+                            <div className="text-xs font-medium text-theme-muted mb-1">New Name</div>
                             <div
                               className={`text-sm font-mono px-2 py-1 rounded border truncate ${
                                 preview.currentName !== preview.newName
-                                  ? 'text-indigo-900 bg-indigo-50 border-indigo-200 font-semibold'
-                                  : 'text-slate-900 bg-slate-50 border-slate-200'
+                                  ? 'text-theme-primary bg-theme-primary-light border-theme-primary font-semibold'
+                                  : 'text-theme-text bg-theme-secondary border-theme'
                               }`}
                             >
                               {preview.newName}
@@ -144,13 +144,13 @@ export function OrganizePreviewDialog() {
 
                         {/* Folder Change */}
                         <div>
-                          <div className="text-xs font-medium text-slate-500 mb-1">Move To</div>
+                          <div className="text-xs font-medium text-theme-muted mb-1">Move To</div>
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 text-xs text-slate-600 font-mono bg-slate-50 px-2 py-1 rounded border border-slate-200 truncate">
+                            <div className="flex-1 text-xs text-theme-secondary font-mono bg-theme-secondary px-2 py-1 rounded border border-theme truncate">
                               {preview.currentFolder}
                             </div>
                             <svg
-                              className="h-4 w-4 text-slate-400 flex-shrink-0"
+                              className="h-4 w-4 text-theme-muted flex-shrink-0"
                               fill="none"
                               strokeLinecap="round"
                               strokeLinejoin="round"
@@ -160,7 +160,7 @@ export function OrganizePreviewDialog() {
                             >
                               <path d="M9 5l7 7-7 7" />
                             </svg>
-                            <div className="flex-1 text-xs text-indigo-900 font-mono bg-indigo-50 px-2 py-1 rounded border border-indigo-200 font-semibold truncate">
+                            <div className="flex-1 text-xs text-theme-primary font-mono bg-theme-primary-light px-2 py-1 rounded border border-theme-primary font-semibold truncate">
                               {preview.destinationFolder}
                             </div>
                           </div>
@@ -171,10 +171,10 @@ export function OrganizePreviewDialog() {
                           <span
                             className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                               preview.status === 'approved'
-                                ? 'bg-green-100 text-green-700'
+                                ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400'
                                 : preview.status === 'rejected'
-                                ? 'bg-red-100 text-red-700'
-                                : 'bg-slate-100 text-slate-700'
+                                ? 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400'
+                                : 'bg-theme-secondary text-theme-text'
                             }`}
                           >
                             {preview.status === 'approved' && (
@@ -217,10 +217,10 @@ export function OrganizePreviewDialog() {
                       onClick={() => toggleStatus(index)}
                       className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                         preview.status === 'approved'
-                          ? 'bg-green-600 text-white hover:bg-green-700'
+                          ? 'bg-green-600 dark:bg-green-700 text-white hover:bg-green-700 dark:hover:bg-green-600'
                           : preview.status === 'rejected'
-                          ? 'bg-red-600 text-white hover:bg-red-700'
-                          : 'bg-slate-600 text-white hover:bg-slate-700'
+                          ? 'bg-red-600 dark:bg-red-700 text-white hover:bg-red-700 dark:hover:bg-red-600'
+                          : 'bg-theme-primary text-white hover:bg-theme-primary-hover'
                       }`}
                     >
                       {preview.status === 'approved'

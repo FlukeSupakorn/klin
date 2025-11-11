@@ -27,20 +27,20 @@ export function ModeSelectionStep({ onSelectAI, onSelectCustom, onBack }: ModeSe
         {/* AI Generated Option */}
         <button
           onClick={onSelectAI}
-          className="w-full p-6 border-2 border-slate-200 rounded-xl hover:border-indigo-600 hover:bg-indigo-50/50 transition-all text-left group"
+          className="w-full p-6 border-2 border-theme rounded-xl hover:border-theme-primary hover:bg-theme-primary-light transition-all text-left group"
         >
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center flex-shrink-0">
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 mb-1 group-hover:text-indigo-600">
+              <h3 className="text-lg font-semibold text-theme-text mb-1 group-hover:text-theme-primary">
                 AI Generated Folders
               </h3>
-              <p className="text-sm text-slate-600 mb-3">
+              <p className="text-sm text-theme-secondary mb-3">
                 Let AI automatically create an organized folder structure based on common file types
               </p>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="flex items-center gap-2 text-xs text-theme-muted">
                 <svg className="h-4 w-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -60,27 +60,27 @@ export function ModeSelectionStep({ onSelectAI, onSelectCustom, onBack }: ModeSe
                 <span>Recommended for beginners</span>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-indigo-600" />
+            <ChevronRight className="h-5 w-5 text-theme-muted group-hover:text-theme-primary" />
           </div>
         </button>
 
         {/* Custom Option */}
         <button
           onClick={onSelectCustom}
-          className="w-full p-6 border-2 border-slate-200 rounded-xl hover:border-indigo-600 hover:bg-indigo-50/50 transition-all text-left group"
+          className="w-full p-6 border-2 border-theme rounded-xl hover:border-theme-primary hover:bg-theme-primary-light transition-all text-left group"
         >
           <div className="flex items-start gap-4">
             <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center flex-shrink-0">
               <SettingsIcon className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-slate-900 mb-1 group-hover:text-indigo-600">
+              <h3 className="text-lg font-semibold text-theme-text mb-1 group-hover:text-theme-primary">
                 Customize Destination Folders
               </h3>
-              <p className="text-sm text-slate-600 mb-3">
+              <p className="text-sm text-theme-secondary mb-3">
                 Manually configure your own folder structure and organization rules
               </p>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
+              <div className="flex items-center gap-2 text-xs text-theme-muted">
                 <svg className="h-4 w-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -100,7 +100,7 @@ export function ModeSelectionStep({ onSelectAI, onSelectCustom, onBack }: ModeSe
                 <span>Advanced users</span>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-indigo-600" />
+            <ChevronRight className="h-5 w-5 text-theme-muted group-hover:text-theme-primary" />
           </div>
         </button>
       </div>
