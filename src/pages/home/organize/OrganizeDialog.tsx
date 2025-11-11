@@ -178,7 +178,7 @@ export function OrganizeDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="h-5 w-5 text-indigo-600" />
+            <Sparkles className="h-5 w-5 text-theme-primary" />
             Organize Files
           </DialogTitle>
           <DialogDescription className="text-base pt-2">
@@ -187,27 +187,27 @@ export function OrganizeDialog({
         </DialogHeader>
 
         <div className="py-4">
-          <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-            <p className="text-sm font-medium text-slate-700">
+          <div className="bg-theme-secondary rounded-lg p-4 space-y-2">
+            <p className="text-sm font-medium text-theme-text">
               Selected files ({selectedFiles.length}):
             </p>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {selectedFiles.map((file) => (
                 <div
                   key={file.path}
-                  className="flex items-center gap-3 bg-white rounded-md p-2 border border-slate-200 overflow-hidden"
+                  className="flex items-center gap-3 bg-theme-background rounded-md p-2 border border-theme overflow-hidden"
                 >
                   <FileIcon
                     type={getFileType(file.name, file.is_dir)}
-                    className="h-4 w-4 text-indigo-600 flex-shrink-0"
+                    className="h-4 w-4 text-theme-primary flex-shrink-0"
                   />
                   <span
-                    className="text-sm text-slate-900 truncate flex-1 min-w-0 max-w-[250px]"
+                    className="text-sm text-theme-text truncate flex-1 min-w-0 max-w-[250px]"
                     title={file.name}
                   >
                     {file.name}
                   </span>
-                  <span className="text-xs text-slate-500 flex-shrink-0 whitespace-nowrap">
+                  <span className="text-xs text-theme-secondary flex-shrink-0 whitespace-nowrap">
                     {formatFileSize(file.size)}
                   </span>
                 </div>
@@ -217,7 +217,7 @@ export function OrganizeDialog({
 
           {/* Options */}
           <div className="mt-4 space-y-3">
-            <div className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+            <div className="flex items-center gap-3 p-3 bg-theme-background border border-theme rounded-lg hover-bg-theme-secondary transition-colors">
               <Checkbox
                 id="auto-move"
                 checked={autoMove}
@@ -227,14 +227,14 @@ export function OrganizeDialog({
                 htmlFor="auto-move"
                 className="flex-1 cursor-pointer select-none"
               >
-                <div className="text-sm font-medium text-slate-900">Auto Move Files</div>
-                <div className="text-xs text-slate-500">
+                <div className="text-sm font-medium text-theme-text">Auto Move Files</div>
+                <div className="text-xs text-theme-secondary">
                   Automatically move files to organized folders
                 </div>
               </label>
             </div>
 
-            <div className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+            <div className="flex items-center gap-3 p-3 bg-theme-background border border-theme rounded-lg hover-bg-theme-secondary transition-colors">
               <Checkbox
                 id="auto-rename"
                 checked={autoRename}
@@ -244,8 +244,8 @@ export function OrganizeDialog({
                 htmlFor="auto-rename"
                 className="flex-1 cursor-pointer select-none"
               >
-                <div className="text-sm font-medium text-slate-900">Auto Rename Files</div>
-                <div className="text-xs text-slate-500">
+                <div className="text-sm font-medium text-theme-text">Auto Rename Files</div>
+                <div className="text-xs text-theme-secondary">
                   Automatically rename files with descriptive names
                 </div>
               </label>

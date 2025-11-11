@@ -103,10 +103,10 @@ export function NotePage() {
               placeholder="Search notes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 pl-10 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              className="w-full px-4 py-3 pl-10 border border-theme rounded-lg focus:outline-none focus:ring-2 focus:ring-theme-primary bg-theme-background text-theme-text"
             />
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-theme-muted"
               fill="none"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -123,17 +123,17 @@ export function NotePage() {
         <div className="flex-1 overflow-auto px-8 py-6">
           {isLoading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="text-slate-500">Loading notes...</div>
+              <div className="text-theme-secondary">Loading notes...</div>
             </div>
           ) : filteredNotes.length === 0 ? (
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-200 mb-4">
-                <StickyNote className="h-8 w-8 text-slate-400" />
+            <div className="bg-theme-secondary border border-theme rounded-lg p-12 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-theme-tertiary mb-4">
+                <StickyNote className="h-8 w-8 text-theme-muted" />
               </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-1">
+              <h3 className="text-lg font-medium text-theme-text mb-1">
                 {notes.length === 0 ? 'No notes yet' : 'No notes found'}
               </h3>
-              <p className="text-sm text-slate-500 mb-4">
+              <p className="text-sm text-theme-secondary mb-4">
                 {notes.length === 0 
                   ? 'Create your first note to get started'
                   : 'Try adjusting your search query'}

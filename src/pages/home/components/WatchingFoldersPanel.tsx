@@ -89,12 +89,12 @@ export function WatchingFoldersPanel() {
 
   if (watchingFolders.length === 0) {
     return (
-      <div className="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
-        <FolderOpen className="h-12 w-12 mx-auto mb-3 text-slate-400" />
-        <h3 className="text-lg font-medium text-slate-900 mb-1">
+      <div className="bg-theme-secondary border-2 border-dashed border-theme rounded-lg p-8 text-center">
+        <FolderOpen className="h-12 w-12 mx-auto mb-3 text-theme-muted" />
+        <h3 className="text-lg font-medium text-theme-text mb-1">
           No watching folders
         </h3>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-theme-secondary mb-4">
           Add folders to watch for automatic organization
         </p>
         <Button onClick={handleAddFolder} className="gap-2">
@@ -108,7 +108,7 @@ export function WatchingFoldersPanel() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-900">
+        <h2 className="text-lg font-semibold text-theme-text">
           Watching Folders ({watchingFolders.length})
         </h2>
         <div className="flex items-center gap-2">
@@ -135,10 +135,10 @@ export function WatchingFoldersPanel() {
             <div
               key={folder.id}
               onClick={() => toggleFolderSelection(folder.id)}
-              className={`relative bg-white border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md group ${
+              className={`relative bg-theme-background border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md group ${
                 isSelected
-                  ? 'border-indigo-500 bg-indigo-50'
-                  : 'border-slate-200 hover:border-slate-300'
+                  ? 'border-theme-primary bg-theme-primary-light'
+                  : 'border-theme hover:border-theme-border-light'
               }`}
             >
               {/* Remove button */}
@@ -155,7 +155,7 @@ export function WatchingFoldersPanel() {
               {/* Selected indicator */}
               {isSelected && !isAllSelected && (
                 <div className="absolute top-2 left-2">
-                  <div className="bg-indigo-600 rounded-full p-1">
+                  <div className="bg-theme-primary rounded-full p-1">
                     <Check className="h-3 w-3 text-white" />
                   </div>
                 </div>
@@ -164,20 +164,20 @@ export function WatchingFoldersPanel() {
               {/* Folder icon and info */}
               <div className="flex items-start gap-3 mt-2">
                 <div className={`flex-shrink-0 p-2 rounded-lg ${
-                  isSelected ? 'bg-indigo-100' : 'bg-slate-100'
+                  isSelected ? 'bg-theme-primary-light' : 'bg-theme-tertiary'
                 }`}>
                   <FolderOpen className={`h-6 w-6 ${
-                    isSelected ? 'text-indigo-600' : 'text-slate-600'
+                    isSelected ? 'text-theme-primary' : 'text-theme-secondary'
                   }`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <h3 className={`text-sm font-medium truncate mb-1 ${
-                    isSelected ? 'text-indigo-900' : 'text-slate-900'
+                    isSelected ? 'text-theme-primary-dark' : 'text-theme-text'
                   }`}>
                     {folder.name || getFolderName(folder.path)}
                   </h3>
-                  <p className="text-xs text-slate-500 truncate mb-2">
+                  <p className="text-xs text-theme-secondary truncate mb-2">
                     {folder.path}
                   </p>
                   <Badge variant="secondary" className="text-xs">

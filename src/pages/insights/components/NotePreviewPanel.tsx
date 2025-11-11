@@ -1,6 +1,7 @@
 import { FileText } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { FileNode } from './FileTreeNode'
 
 interface NotePreviewPanelProps {
@@ -69,24 +70,229 @@ interface MarkdownPreviewProps {
 }
 
 function MarkdownPreview({ content }: MarkdownPreviewProps) {
+  const components = {
+    // Headings with theme colors
+    h1: ({ node, ...props }: any) => (
+      <h1 
+        style={{ color: 'var(--color-text)' }}
+        className="text-3xl font-bold mb-4 mt-6" 
+        {...props} 
+      />
+    ),
+    h2: ({ node, ...props }: any) => (
+      <h2 
+        style={{ color: 'var(--color-text)' }}
+        className="text-2xl font-bold mb-3 mt-8" 
+        {...props} 
+      />
+    ),
+    h3: ({ node, ...props }: any) => (
+      <h3 
+        style={{ color: 'var(--color-text)' }}
+        className="text-xl font-bold mb-2 mt-6" 
+        {...props} 
+      />
+    ),
+    h4: ({ node, ...props }: any) => (
+      <h4 
+        style={{ color: 'var(--color-text)' }}
+        className="text-lg font-semibold mb-2 mt-4" 
+        {...props} 
+      />
+    ),
+    h5: ({ node, ...props }: any) => (
+      <h5 
+        style={{ color: 'var(--color-text)' }}
+        className="text-base font-semibold mb-2 mt-4" 
+        {...props} 
+      />
+    ),
+    h6: ({ node, ...props }: any) => (
+      <h6 
+        style={{ color: 'var(--color-text)' }}
+        className="text-sm font-semibold mb-2 mt-4" 
+        {...props} 
+      />
+    ),
+    
+    // Paragraphs with theme colors
+    p: ({ node, ...props }: any) => (
+      <p 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="text-base leading-relaxed my-3" 
+        {...props} 
+      />
+    ),
+    
+    // Strong/Bold text
+    strong: ({ node, ...props }: any) => (
+      <strong 
+        style={{ color: 'var(--color-text)' }}
+        className="font-semibold" 
+        {...props} 
+      />
+    ),
+    
+    // Emphasis/Italic text
+    em: ({ node, ...props }: any) => (
+      <em 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="italic" 
+        {...props} 
+      />
+    ),
+    
+    // Links
+    a: ({ node, ...props }: any) => (
+      <a 
+        style={{ color: 'var(--color-primary)' }}
+        className="hover:underline no-underline" 
+        {...props} 
+      />
+    ),
+    
+    // Lists
+    ul: ({ node, ...props }: any) => (
+      <ul 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="list-disc pl-6 my-4" 
+        {...props} 
+      />
+    ),
+    ol: ({ node, ...props }: any) => (
+      <ol 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="list-decimal pl-6 my-4" 
+        {...props} 
+      />
+    ),
+    li: ({ node, ...props }: any) => (
+      <li 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="my-1" 
+        {...props} 
+      />
+    ),
+    
+    // Code blocks
+    code: ({ node, inline, ...props }: any) => {
+      if (inline) {
+        return (
+          <code 
+            style={{ 
+              color: 'var(--color-primary)',
+              backgroundColor: 'var(--color-primary-light)'
+            }}
+            className="px-1.5 py-0.5 rounded text-sm font-mono" 
+            {...props} 
+          />
+        )
+      }
+      return (
+        <code 
+          style={{ 
+            color: 'var(--color-text)',
+            backgroundColor: 'var(--color-background-tertiary)'
+          }}
+          className="block p-4 rounded-lg overflow-x-auto my-4 text-sm font-mono" 
+          {...props} 
+        />
+      )
+    },
+    
+    // Pre blocks (code block container)
+    pre: ({ node, ...props }: any) => (
+      <pre 
+        style={{ 
+          color: 'var(--color-text)',
+          backgroundColor: 'var(--color-background-tertiary)'
+        }}
+        className="p-4 rounded-lg overflow-x-auto my-4" 
+        {...props} 
+      />
+    ),
+    
+    // Blockquotes
+    blockquote: ({ node, ...props }: any) => (
+      <blockquote 
+        style={{ 
+          color: 'var(--color-text-secondary)',
+          borderLeftColor: 'var(--color-primary)'
+        }}
+        className="border-l-4 pl-4 italic my-4" 
+        {...props} 
+      />
+    ),
+    
+    // Horizontal rule
+    hr: ({ node, ...props }: any) => (
+      <hr 
+        style={{ borderColor: 'var(--color-border)' }}
+        className="my-8" 
+        {...props} 
+      />
+    ),
+    
+    // Tables
+    table: ({ node, ...props }: any) => (
+      <table 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="w-full border-collapse my-4" 
+        {...props} 
+      />
+    ),
+    thead: ({ node, ...props }: any) => (
+      <thead 
+        style={{ 
+          color: 'var(--color-text)',
+          borderColor: 'var(--color-border)'
+        }}
+        className="border-b" 
+        {...props} 
+      />
+    ),
+    tbody: ({ node, ...props }: any) => (
+      <tbody 
+        style={{ 
+          color: 'var(--color-text-secondary)',
+          borderColor: 'var(--color-border)'
+        }}
+        className="divide-y" 
+        {...props} 
+      />
+    ),
+    tr: ({ node, ...props }: any) => (
+      <tr {...props} />
+    ),
+    th: ({ node, ...props }: any) => (
+      <th 
+        style={{ color: 'var(--color-text)' }}
+        className="px-4 py-2 text-left font-semibold" 
+        {...props} 
+      />
+    ),
+    td: ({ node, ...props }: any) => (
+      <td 
+        style={{ color: 'var(--color-text-secondary)' }}
+        className="px-4 py-2" 
+        {...props} 
+      />
+    ),
+    
+    // Images
+    img: ({ node, ...props }: any) => (
+      <img className="rounded-lg shadow-md my-4" {...props} />
+    ),
+  }
+
   return (
-    <div className="prose prose-slate max-w-none
-      prose-headings:font-bold prose-headings:tracking-tight
-      prose-h1:text-3xl prose-h1:text-slate-900 prose-h1:mb-4
-      prose-h2:text-2xl prose-h2:text-slate-800 prose-h2:mt-8 prose-h2:mb-3
-      prose-h3:text-xl prose-h3:text-slate-700 prose-h3:mt-6 prose-h3:mb-2
-      prose-p:text-base prose-p:text-slate-600 prose-p:leading-relaxed prose-p:my-3
-      prose-strong:text-slate-900 prose-strong:font-semibold
-      prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
-      prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
-      prose-li:text-slate-600 prose-li:my-1
-      prose-code:text-indigo-700 prose-code:bg-indigo-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
-      prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
-      prose-blockquote:border-l-4 prose-blockquote:border-indigo-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-600
-      prose-hr:border-slate-200 prose-hr:my-8
-      prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
-      prose-img:rounded-lg prose-img:shadow-md">
-      <ReactMarkdown>{content}</ReactMarkdown>
+    <div className="prose max-w-none">
+      <ReactMarkdown 
+        remarkPlugins={[remarkGfm]}
+        components={components}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   )
 }
