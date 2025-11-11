@@ -159,9 +159,36 @@ The app supports multiple languages:
 
 Translation files located in `src/i18n/`
 
+## 🎨 Theming System
+
+Klin includes a comprehensive theming system with 6 pre-configured themes:
+
+### Available Themes
+- **KLIN** (default) - Brand theme with indigo accents
+- **Light** - Clean and bright interface
+- **Dark** - Easy on the eyes with dark backgrounds
+- **Blue** - Ocean blue theme
+- **Green** - Forest green theme
+- **Purple** - Creative purple theme
+
+### Theme Documentation
+- **[THEMING.md](./THEMING.md)** - Complete theming guide with examples
+- **[THEME_IMPLEMENTATION.md](./THEME_IMPLEMENTATION.md)** - Implementation details
+- **[THEME_QUICK_REFERENCE.md](./THEME_QUICK_REFERENCE.md)** - Quick reference for developers
+
+### Using Themes
+Users can change themes in **Settings → Appearance**. Developers can use theme colors in three ways:
+
+1. **CSS Classes**: `className="bg-theme-primary text-white"`
+2. **Hook**: `const colors = useThemeColors()`
+3. **CSS Variables**: `background-color: var(--color-primary)`
+
+Theme preferences are automatically saved and persist across sessions.
+
 ---
 
 For detailed API documentation and implementation details, please refer to:
 - [Frontend Documentation](./docs/FRONTEND.md)
 - [Backend Documentation](./docs/BACKEND.md)
+- [Theming Guide](./THEMING.md)
 

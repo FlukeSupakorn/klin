@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import '@uiw/react-md-editor/markdown-editor.css';
 @import '@uiw/react-markdown-preview/markdown.css';
+@import './styles/theme-variables.css';
 
 @tailwind base;
 @tailwind components;
@@ -68,7 +69,9 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: var(--color-background);
+    color: var(--color-text);
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   }
 }

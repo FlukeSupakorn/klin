@@ -1,0 +1,189 @@
+/* Theme CSS Variables */
+:root {
+  /* Default light theme colors */
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-primary-light: #EEF2FF;
+  --color-primary-dark: #3730A3;
+  
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F8FAFC;
+  --color-background-tertiary: #F1F5F9;
+  
+  --color-text: #1E293B;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+  
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  
+  --color-accent: #10B981;
+  --color-accent-light: #D1FAE5;
+  
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+}
+
+/* Theme utility classes */
+.bg-theme-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-theme-primary-light {
+  background-color: var(--color-primary-light);
+}
+
+.bg-theme-background {
+  background-color: var(--color-background);
+}
+
+.bg-theme-background-secondary {
+  background-color: var(--color-background-secondary);
+}
+
+.bg-theme-background-tertiary {
+  background-color: var(--color-background-tertiary);
+}
+
+.text-theme-primary {
+  color: var(--color-primary);
+}
+
+.text-theme-text {
+  color: var(--color-text);
+}
+
+.text-theme-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+/* Shorter aliases */
+.text-theme-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-theme-muted {
+  color: var(--color-text-muted);
+}
+
+.bg-theme-secondary {
+  background-color: var(--color-background-secondary);
+}
+
+.bg-theme-tertiary {
+  background-color: var(--color-background-tertiary);
+}
+
+.text-theme-text-muted {
+  color: var(--color-text-muted);
+}
+
+.border-theme {
+  border-color: var(--color-border);
+}
+
+.border-theme-light {
+  border-color: var(--color-border-light);
+}
+
+.text-theme-accent {
+  color: var(--color-accent);
+}
+
+.bg-theme-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-theme-accent-light {
+  background-color: var(--color-accent-light);
+}
+
+/* Status colors */
+.text-theme-success {
+  color: var(--color-success);
+}
+
+.text-theme-warning {
+  color: var(--color-warning);
+}
+
+.text-theme-error {
+  color: var(--color-error);
+}
+
+.text-theme-info {
+  color: var(--color-info);
+}
+
+.bg-theme-success {
+  background-color: var(--color-success);
+}
+
+.bg-theme-warning {
+  background-color: var(--color-warning);
+}
+
+.bg-theme-error {
+  background-color: var(--color-error);
+}
+
+.bg-theme-info {
+  background-color: var(--color-info);
+}
+
+/* Hover states */
+.hover-bg-theme-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.hover-bg-theme-secondary:hover {
+  background-color: var(--color-background-secondary);
+}
+
+.hover-bg-theme-tertiary:hover {
+  background-color: var(--color-background-tertiary);
+}
+
+.hover-text-theme-primary:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Focus states */
+.focus-ring-theme-primary:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.ring-theme-primary {
+  --tw-ring-color: var(--color-primary);
+}
+
+/* Button styles with theme colors */
+.btn-theme-primary {
+  background-color: var(--color-primary);
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.btn-theme-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.btn-theme-primary:active {
+  background-color: var(--color-primary-dark);
+}
+
+.btn-theme-outline {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  transition: all 0.2s;
+}
+
+.btn-theme-outline:hover {
+  background-color: var(--color-background-secondary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}

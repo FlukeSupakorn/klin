@@ -17,12 +17,12 @@ export function SettingsPage() {
   } = useAutomationSettings()
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-slate-200">
+      <div className="px-8 py-6 border-b border-theme">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Settings</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage your account settings and preferences</p>
+          <h1 className="text-3xl font-bold text-theme-text">Settings</h1>
+          <p className="text-sm text-theme-secondary mt-1">Manage your account settings and preferences</p>
         </div>
       </div>
 
@@ -32,7 +32,7 @@ export function SettingsPage() {
           <SettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
           {/* Content Area */}
-          <div className="flex-1 p-8">
+          <div className="flex-1 p-8 bg-theme-background">
             {activeTab === 'profile' && <ProfileSettings />}
             {activeTab === 'security' && <SecuritySettings />}
             {activeTab === 'appearance' && <AppearanceSettings />}

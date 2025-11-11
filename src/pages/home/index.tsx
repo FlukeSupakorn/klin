@@ -148,13 +148,13 @@ export function HomePage() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-theme-background">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-8 py-6">
+      <div className="bg-theme-background border-b border-theme px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">My Files</h1>
-            <p className="text-sm text-slate-500 mt-1">Manage and organize your files</p>
+            <h1 className="text-3xl font-bold text-theme-text">My Files</h1>
+            <p className="text-sm text-theme-secondary mt-1">Manage and organize your files</p>
           </div>
 
           <div className="flex items-center gap-3">
@@ -169,13 +169,13 @@ export function HomePage() {
             </Button>
 
             <button 
-              className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
               onClick={() => navigate('/settings')}
             >
-              <Settings className="h-5 w-5 text-slate-600" />
+              <Settings className="h-5 w-5 text-theme-secondary" />
             </button>
-            <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
-              <Bell className="h-5 w-5 text-slate-600" />
+            <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
+              <Bell className="h-5 w-5 text-theme-secondary" />
             </button>
           </div>
         </div>
@@ -187,7 +187,7 @@ export function HomePage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-auto p-6 space-y-6">
+      <div className="flex-1 overflow-auto p-6 space-y-6 bg-theme-background">
         {/* Watching Folders Panel */}
         <WatchingFoldersPanel />
 
