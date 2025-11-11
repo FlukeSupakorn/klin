@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { X, Plus, FolderOpen } from 'lucide-react'
+import { X, Plus, FolderOpen, Sparkles } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { selectFolder } from '@/lib/tauri-api'
+import { useHomeStore } from '@/pages/home/store/useHomeStore'
 
 interface DestinationFoldersDialogProps {
   open: boolean
@@ -21,6 +22,7 @@ interface DestinationFoldersDialogProps {
   description?: string
   minFolders?: number
   showTips?: boolean
+  showAIGenerate?: boolean
 }
 
 export function DestinationFoldersDialog({
@@ -32,9 +34,15 @@ export function DestinationFoldersDialog({
   description = 'Add folders where organized files will be moved.',
   minFolders = 1,
   showTips = false,
+  showAIGenerate = false,
 }: DestinationFoldersDialogProps) {
   const [tempFolders, setTempFolders] = useState<string[]>(currentFolders)
   const [newFolderPath, setNewFolderPath] = useState('')
+  
+  // Get watching folders - use actual watching folders if available, otherwise use temp (for setup)
+  const watchingFolders = useHomeStore((state) => state.watchingFolders)
+  const tempWatchingFolders = useHomeStore((state) => state.tempWatchingFolders)
+  const foldersToUse = watchingFolders.length > 0 ? watchingFolders : tempWatchingFolders
 
   // Sync with currentFolders when they change
   useEffect(() => {
@@ -43,6 +51,31 @@ export function DestinationFoldersDialog({
       setNewFolderPath('')
     }
   }, [open, currentFolders])
+
+  const generateAIFolders = () => {
+    const basePath = foldersToUse[0]?.path
+    if (!basePath) {
+      alert('Please add a watching folder first')
+      return
+    }
+    
+    const aiFolders = [
+      `${basePath}/Organized/Documents`,
+      `${basePath}/Organized/Images`,
+      `${basePath}/Organized/Videos`,
+      `${basePath}/Organized/Music`,
+      `${basePath}/Organized/Archives`,
+      `${basePath}/Organized/Applications`,
+    ]
+    
+    // Add AI folders that don't already exist in tempFolders
+    const newFolders = aiFolders.filter(folder => !tempFolders.includes(folder))
+    if (newFolders.length > 0) {
+      setTempFolders([...tempFolders, ...newFolders])
+    } else {
+      alert('All AI-generated folders are already added!')
+    }
+  }
 
   const handleBrowseFolder = async () => {
     try {
@@ -196,8 +229,34 @@ export function DestinationFoldersDialog({
             </div>
           </div>
 
-          {/* Tips Section (optional) */}
-          {showTips && (
+          {/* AI Generate Folders Button (replaces tips) */}
+          {showAIGenerate && (
+            <div className="mt-6 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="h-5 w-5 text-indigo-600" />
+                    <p className="text-sm font-semibold text-indigo-900">AI-Generated Folders</p>
+                  </div>
+                  <p className="text-xs text-indigo-700 mb-3">
+                    Let AI create organized folders based on your watching folder: Documents, Images, Videos, Music, Archives, and Applications
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={generateAIFolders}
+                    className="w-full border-indigo-300 text-indigo-700 hover:bg-indigo-100 gap-2"
+                  >
+                    <Sparkles className="h-4 w-4" />
+                    Add AI-Generated Folders
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tips Section (optional, shows when not using AI Generate) */}
+          {showTips && !showAIGenerate && (
             <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <svg

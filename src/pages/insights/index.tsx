@@ -112,7 +112,7 @@ export function InsightsPage() {
         onSave={handleSaveFolders}
         title="Select Destination Folders"
         description="Choose multiple folders where your organized files will be stored."
-        showTips={true}
+        showAIGenerate={true}
       />
     </div>
   )

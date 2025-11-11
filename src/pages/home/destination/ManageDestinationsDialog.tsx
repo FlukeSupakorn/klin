@@ -21,7 +21,7 @@ export function ManageDestinationsDialog() {
       onSave={handleSave}
       title="Manage Destination Folders"
       description="Configure multiple destination folders where organized files will be moved."
-      showTips={true}
+      showAIGenerate={true}
     />
   )
 }
