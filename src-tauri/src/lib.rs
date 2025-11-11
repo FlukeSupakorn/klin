@@ -19,6 +19,7 @@ pub fn run() {
             delete_file, 
             create_folder,
             read_file_content,
+            read_file_binary,
             list_notes,
             create_note,
             read_note,

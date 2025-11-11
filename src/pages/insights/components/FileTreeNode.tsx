@@ -1,4 +1,5 @@
 import { ChevronRight, File, Folder } from 'lucide-react'
+import { openFile } from '@/lib/tauri-api'
 
 export interface FileNode {
   name: string
@@ -35,6 +36,20 @@ export function FileTreeNode({
     return null
   }
 
+  const handleClick = async () => {
+    if (node.isDir) {
+      onToggle(node.path)
+      onSelect(node)
+    } else {
+      // For files: open with system application
+      try {
+        await openFile(node.path)
+      } catch (error) {
+        console.error('Failed to open file:', error)
+      }
+    }
+  }
+
   return (
     <div>
       <div
@@ -42,12 +57,7 @@ export function FileTreeNode({
           selected ? 'bg-indigo-50 hover:bg-indigo-100' : ''
         }`}
         style={{ paddingLeft: `${level * 20 + 8}px` }}
-        onClick={() => {
-          if (node.isDir) {
-            onToggle(node.path)
-          }
-          onSelect(node)
-        }}
+        onClick={handleClick}
       >
         {node.isDir && (
           <ChevronRight

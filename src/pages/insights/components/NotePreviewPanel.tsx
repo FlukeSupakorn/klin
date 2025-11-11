@@ -2,7 +2,6 @@ import { FileText } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import ReactMarkdown from 'react-markdown'
 import { FileNode } from './FileTreeNode'
-import { FilePreview } from './FilePreview'
 
 interface NotePreviewPanelProps {
   selectedItem: FileNode | null
@@ -15,9 +14,6 @@ export function NotePreviewPanel({
   notePreview,
   isLoading,
 }: NotePreviewPanelProps) {
-  // Check if we should show file preview instead of markdown
-  const shouldShowFilePreview = selectedItem && !selectedItem.isDir && canPreviewFile(selectedItem.name)
-  
   return (
     <div className="w-1/2 bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
       <div className="p-4 border-b border-slate-200">
@@ -27,37 +23,17 @@ export function NotePreviewPanel({
         </div>
       </div>
 
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-auto p-6">
         {!selectedItem ? (
-          <div className="p-6">
-            <EmptyPreview />
-          </div>
+          <EmptyPreview />
         ) : isLoading ? (
-          <div className="p-6">
-            <PreviewSkeleton />
-          </div>
-        ) : shouldShowFilePreview ? (
-          <FilePreview file={selectedItem} />
+          <PreviewSkeleton />
         ) : (
-          <div className="overflow-auto p-6 h-full">
-            <MarkdownPreview content={notePreview} />
-          </div>
+          <MarkdownPreview content={notePreview} />
         )}
       </div>
     </div>
   )
-}
-
-// Helper function to check if file can be previewed
-function canPreviewFile(filename: string): boolean {
-  const ext = filename.split('.').pop()?.toLowerCase()
-  const previewableFormats = [
-    'pdf',
-    'jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp', 'ico',
-    'mp4', 'webm', 'ogg', 'mov',
-    'mp3', 'wav', 'flac', 'm4a'
-  ]
-  return previewableFormats.includes(ext || '')
 }
 
 function EmptyPreview() {
