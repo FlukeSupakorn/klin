@@ -9,15 +9,16 @@
  * - Minimal logic in this file - just composition
  */
 
+import { useState } from 'react'
 import { InsightsHeader, EmptyState } from './components/InsightsHeader'
 import { FeaturedFolders } from './components/FeaturedFolders'
 import { FileExplorer } from './components/FileExplorer'
 import { NotePreviewPanel } from './components/NotePreviewPanel'
 import { FileNode } from './components/FileTreeNode'
+import { DestinationFoldersModal } from '@/components/shared/DestinationFoldersModal'
 import { useFeaturedFolders, useFileTree, useHorizontalScroll } from './hooks/useInsights'
 import { useNotePreview } from './hooks/useNotePreview'
 import { useHomeStore } from '@/pages/home/store/useHomeStore'
-import { selectFolder } from '@/lib/tauri-api'
 
 export function InsightsPage() {
   // Business logic from hooks
@@ -27,17 +28,18 @@ export function InsightsPage() {
   const { selectedItem, notePreview, isLoading: isLoadingNote, onSelectItem } = useNotePreview()
   
   // Destination folder management
-  const addDestinationFolder = useHomeStore((state) => state.addDestinationFolder)
+  const destinationFolders = useHomeStore((state) => state.destinationFolders)
+  const setDestinationFolders = useHomeStore((state) => state.setDestinationFolders)
   
-  const handleSelectFolder = async () => {
-    try {
-      const folder = await selectFolder('Select Destination Folder')
-      if (folder) {
-        addDestinationFolder(folder)
-      }
-    } catch (error) {
-      console.error('Failed to select folder:', error)
-    }
+  // Modal state
+  const [showDestinationModal, setShowDestinationModal] = useState(false)
+  
+  const handleSelectFolder = () => {
+    setShowDestinationModal(true)
+  }
+  
+  const handleSaveFolders = (folders: string[]) => {
+    setDestinationFolders(folders)
   }
 
   const handleFeaturedFolderClick = (folderPath: string) => {
@@ -101,6 +103,16 @@ export function InsightsPage() {
           </div>
         </div>
       )}
+
+      {/* Destination Folders Modal */}
+      <DestinationFoldersModal
+        open={showDestinationModal}
+        onOpenChange={setShowDestinationModal}
+        currentFolders={destinationFolders}
+        onSave={handleSaveFolders}
+        title="Select Destination Folders"
+        description="Choose multiple folders where your organized files will be stored."
+      />
     </div>
   )
 }
