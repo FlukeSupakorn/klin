@@ -110,7 +110,7 @@ export function FileToolbar({
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 border-rose-200"
+              className="gap-2 text-rose-600 hover:text-rose-700 dark:text-rose-400 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/30 border-rose-300 hover:border-rose-400 dark:border-rose-700 dark:hover:border-rose-600"
               onClick={onDeleteClick}
             >
               <Trash2 className="h-4 w-4" />

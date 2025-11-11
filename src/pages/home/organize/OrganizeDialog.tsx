@@ -15,7 +15,7 @@ import { FileIcon } from '@/components/file/file-icon'
 import { FileItem } from '@/lib/tauri-api'
 import { formatFileSize, getFileType } from '../file-list/utils'
 import { organizeFilesQueue, OrganizeFileResponse } from '@/lib/mock-api'
-import { useActivityStore } from '@/pages/history/store/useActivityStore'
+import { useActivityStore } from '@/pages/activity/store/useActivityStore'
 import { useToast } from '@/components/ui/toast'
 
 // Simple UUID generator

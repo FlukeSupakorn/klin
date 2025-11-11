@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { useActivityStore } from './store/useActivityStore'
 import { SearchToolbar, FilterType } from './components/SearchToolbar'
 import { ActivityQueue } from './components/ActivityQueue'
-import { HistoryList } from './components/HistoryList'
+import { ActivityList } from './components/ActivityList'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
-export function HistoryPage() {
+export function ActivityPage() {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
@@ -83,9 +83,9 @@ export function HistoryPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-theme">
+      <div className="px-8 py-6 border-b border-theme bg-theme-background">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="text-3xl font-bold text-theme-text">Activity</h1>
@@ -116,16 +116,16 @@ export function HistoryPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto px-8 py-6">
+      <div className="flex-1 overflow-auto px-8 py-6 bg-theme-background">
         {/* Processing Progress */}
         {isProcessing && (
-          <div className="mb-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+          <div className="mb-6 bg-theme-primary-light border border-theme-primary rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-indigo-900">
+                <span className="text-sm font-medium text-theme-text">
                   Processing files...
                 </span>
-                <span className="text-sm text-indigo-700">
+                <span className="text-sm text-theme-secondary">
                   {currentIndex} / {totalFiles}
                 </span>
               </div>
@@ -133,15 +133,15 @@ export function HistoryPage() {
                 size="sm"
                 variant="outline"
                 onClick={cancelProcessing}
-                className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                className="gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-300 dark:border-red-700"
               >
                 <XCircle className="h-4 w-4" />
                 Cancel
               </Button>
             </div>
-            <div className="w-full bg-indigo-200 rounded-full h-2">
+            <div className="w-full bg-theme-secondary rounded-full h-2">
               <div
-                className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+                className="bg-theme-primary h-2 rounded-full transition-all duration-300"
                 style={{ width: `${(currentIndex / totalFiles) * 100}%` }}
               />
             </div>
@@ -162,7 +162,7 @@ export function HistoryPage() {
                     size="sm"
                     variant="outline"
                     onClick={handleRejectAll}
-                    className="gap-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                    className="gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-300 dark:border-red-700"
                   >
                     <X className="h-4 w-4" />
                     Reject All
@@ -210,7 +210,7 @@ export function HistoryPage() {
               </p>
             </div>
           ) : (
-            <HistoryList searchQuery={searchQuery} activeFilter={activeFilter} />
+            <ActivityList searchQuery={searchQuery} activeFilter={activeFilter} />
           )}
         </div>
       </div>
@@ -218,4 +218,4 @@ export function HistoryPage() {
   )
 }
 
-export default HistoryPage
+export default ActivityPage

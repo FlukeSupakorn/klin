@@ -5,12 +5,12 @@ import { getFileType } from '@/pages/home/file-list/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { FilterType } from './SearchToolbar'
 
-interface HistoryListProps {
+interface ActivityListProps {
   searchQuery: string
   activeFilter?: FilterType
 }
 
-export function HistoryList({ searchQuery, activeFilter = 'all' }: HistoryListProps) {
+export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
   const history = useActivityStore((state) => state.history)
 
   const filteredHistory = history.filter((item) => {

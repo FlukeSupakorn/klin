@@ -72,16 +72,16 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
         <div
           key={item.id}
           onClick={() => handleCardClick(item)}
-          className={`bg-white border rounded-lg p-4 transition-all ${
+          className={`bg-theme-background border rounded-lg p-4 transition-all ${
             item.status === 'processing'
-              ? 'border-indigo-300 bg-indigo-50'
+              ? 'border-theme-primary bg-theme-primary-light'
               : item.userAction === 'approved'
-              ? 'border-green-300 bg-green-50 cursor-pointer hover:border-green-400'
+              ? 'border-green-400 dark:border-green-600 bg-green-50 dark:bg-green-950/30 cursor-pointer hover:border-green-500 dark:hover:border-green-500'
               : item.userAction === 'rejected'
-              ? 'border-red-300 bg-red-50 cursor-pointer hover:border-red-400'
+              ? 'border-red-400 dark:border-red-600 bg-red-50 dark:bg-red-950/30 cursor-pointer hover:border-red-500 dark:hover:border-red-500'
               : item.status === 'completed'
-              ? 'border-slate-200 cursor-pointer hover:border-slate-300'
-              : 'border-slate-200'
+              ? 'border-theme cursor-pointer hover:border-theme-primary'
+              : 'border-theme'
           }`}
         >
           <div className="flex items-start gap-4">
@@ -94,15 +94,15 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
             <div className="flex-1 min-w-0">
               {/* Original Name */}
               <div className="mb-2">
-                <span className="text-xs text-slate-500">Original:</span>
-                <p className="text-sm font-medium text-slate-900 truncate">
+                <span className="text-xs text-theme-muted">Original:</span>
+                <p className="text-sm font-medium text-theme-text truncate">
                   {item.original_name}
                 </p>
               </div>
 
               {/* Status */}
               {item.status === 'processing' && (
-                <div className="flex items-center gap-2 text-indigo-600 mb-2">
+                <div className="flex items-center gap-2 text-theme-primary mb-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm font-medium">Processing...</span>
                 </div>
@@ -113,13 +113,13 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                   {/* New Name */}
                   <div className="mb-2">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-theme-muted">
                         {item.auto_rename_applied ? 'Renamed to:' : 'Suggested name:'}
                       </span>
                       {canEditName(item) && (
                         <button
                           onClick={() => handleStartEdit(item, 'name')}
-                          className="text-indigo-600 hover:text-indigo-700"
+                          className="text-theme-primary hover:text-theme-primary-hover"
                         >
                           <Edit2 className="h-3 w-3" />
                         </button>
@@ -141,10 +141,10 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                         </Button>
                       </div>
                     ) : (
-                      <p className="text-sm text-slate-700 truncate">
+                      <p className="text-sm text-theme-secondary truncate">
                         {item.editedName || item.suggested_name}
                         {item.auto_rename_applied && (
-                          <span className="ml-2 text-xs text-green-600">✓ Applied</span>
+                          <span className="ml-2 text-xs text-green-600 dark:text-green-400">✓ Applied</span>
                         )}
                       </p>
                     )}
@@ -153,13 +153,13 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                   {/* New Folder */}
                   <div className="mb-2">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-theme-muted">
                         {item.auto_move_applied ? 'Moved to:' : 'Suggested folder:'}
                       </span>
                       {canEditFolder(item) && (
                         <button
                           onClick={() => handleStartEdit(item, 'folder')}
-                          className="text-indigo-600 hover:text-indigo-700"
+                          className="text-theme-primary hover:text-theme-primary-hover"
                         >
                           <Edit2 className="h-3 w-3" />
                         </button>
@@ -182,11 +182,11 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <FolderOpen className="h-4 w-4 text-slate-400" />
-                        <p className="text-sm text-slate-700 truncate">
+                        <FolderOpen className="h-4 w-4 text-theme-muted" />
+                        <p className="text-sm text-theme-secondary truncate">
                           {item.editedFolder || item.suggested_folder}
                           {item.auto_move_applied && (
-                            <span className="ml-2 text-xs text-green-600">✓ Applied</span>
+                            <span className="ml-2 text-xs text-green-600 dark:text-green-400">✓ Applied</span>
                           )}
                         </p>
                       </div>
@@ -199,12 +199,12 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
               {item.status === 'completed' && (
                 <div className="mt-2">
                   {item.userAction === 'approved' ? (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-green-100 border border-green-300 rounded text-xs text-green-700">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-green-100 dark:bg-green-950/50 border border-green-400 dark:border-green-600 rounded text-xs text-green-700 dark:text-green-400">
                       <CheckCircle2 className="h-3 w-3" />
                       <span>Approved (click to reject)</span>
                     </div>
                   ) : (
-                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-red-100 border border-red-300 rounded text-xs text-red-700">
+                    <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-red-100 dark:bg-red-950/50 border border-red-400 dark:border-red-600 rounded text-xs text-red-700 dark:text-red-400">
                       <XCircle className="h-3 w-3" />
                       <span>Rejected (click to approve)</span>
                     </div>

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
 import { ToastContainer } from './components/ui/toast'
 import HomePage from './pages/home'
-import HistoryPage from './pages/history'
+import ActivityPage from './pages/activity'
 import NotePage from './pages/note'
 import InsightsPage from './pages/insights'
 import CalendarPage from './pages/calendar'
@@ -13,14 +13,14 @@ import './index.css'
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex h-screen bg-white overflow-hidden">
+      <div className="flex h-screen bg-theme-background overflow-hidden">
         <Sidebar />
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 flex flex-col overflow-hidden bg-theme-background">
           <Routes>
             <Route path="/" element={<Navigate to="/files" replace />} />
             <Route path="/files" element={<HomePage />} />
             <Route path="/insights" element={<InsightsPage />} />
-            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/history" element={<ActivityPage />} />
             <Route path="/note" element={<NotePage />} />
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/settings" element={<SettingsPage />} />
