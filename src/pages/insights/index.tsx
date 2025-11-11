@@ -1,135 +1,18 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, FolderOpen, FileText, ChevronRight, TrendingUp, ChevronLeft, File, Folder } from 'lucide-react'
+import { Sparkles, FolderOpen, FileText, ChevronRight, TrendingUp, ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useNavigate } from 'react-router-dom'
 import { getFeaturedFolders, generateFolderNote, generateFileNote, type FolderInsight } from '@/lib/ai-api'
-
-// Mock destination folders - in real app, get from settings
-const mockDestinationFolders = [
-  'C:\\Documents\\Projects',
-  'C:\\Documents\\Reports',
-  'C:\\Downloads\\Research',
-]
-
-interface FileNode {
-  name: string
-  path: string
-  isDir: boolean
-  children?: FileNode[]
-}
-
-// Mock file tree structure
-const createMockFileTree = (rootPath: string): FileNode => {
-  const rootName = rootPath.split(/[\\/]/).pop() || rootPath
-  
-  return {
-    name: rootName,
-    path: rootPath,
-    isDir: true,
-    children: [
-      {
-        name: '2024 Planning',
-        path: `${rootPath}\\2024 Planning`,
-        isDir: true,
-        children: [
-          { name: 'Q1_Strategy.pdf', path: `${rootPath}\\2024 Planning\\Q1_Strategy.pdf`, isDir: false },
-          { name: 'Budget_2024.xlsx', path: `${rootPath}\\2024 Planning\\Budget_2024.xlsx`, isDir: false },
-          { name: 'Team_Goals.docx', path: `${rootPath}\\2024 Planning\\Team_Goals.docx`, isDir: false },
-        ],
-      },
-      {
-        name: 'Archive',
-        path: `${rootPath}\\Archive`,
-        isDir: true,
-        children: [
-          { name: 'Old_Reports.pdf', path: `${rootPath}\\Archive\\Old_Reports.pdf`, isDir: false },
-          { name: 'Legacy_Data.csv', path: `${rootPath}\\Archive\\Legacy_Data.csv`, isDir: false },
-        ],
-      },
-      { name: 'README.txt', path: `${rootPath}\\README.txt`, isDir: false },
-      { name: 'Summary.md', path: `${rootPath}\\Summary.md`, isDir: false },
-      { name: 'Data_Analysis.xlsx', path: `${rootPath}\\Data_Analysis.xlsx`, isDir: false },
-    ],
-  }
-}
-
-// File Tree Node Component
-interface FileTreeNodeProps {
-  node: FileNode
-  level: number
-  expanded: Set<string>
-  onToggle: (path: string) => void
-  onSelect: (node: FileNode) => void
-  selectedPath: string | null
-  searchQuery: string
-}
-
-function FileTreeNode({ node, level, expanded, onToggle, onSelect, selectedPath, searchQuery }: FileTreeNodeProps) {
-  const isExpanded = expanded.has(node.path)
-  const selected = selectedPath === node.path
-  const matchesSearch = searchQuery === '' || node.name.toLowerCase().includes(searchQuery.toLowerCase())
-
-  // Hide non-matching files (but always show folders that might contain matches)
-  if (!matchesSearch && !node.isDir) {
-    return null
-  }
-
-  return (
-    <div>
-      <div
-        className={`flex items-center gap-2 py-2 px-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors ${
-          selected ? 'bg-indigo-50 hover:bg-indigo-100' : ''
-        }`}
-        style={{ paddingLeft: `${level * 20 + 8}px` }}
-        onClick={() => {
-          if (node.isDir) {
-            onToggle(node.path)
-          }
-          onSelect(node)
-        }}
-      >
-        {node.isDir && (
-          <ChevronRight
-            className={`h-4 w-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-          />
-        )}
-        {!node.isDir && <div className="w-4" />}
-        
-        {node.isDir ? (
-          <Folder className="h-4 w-4 text-indigo-600 flex-shrink-0" />
-        ) : (
-          <File className="h-4 w-4 text-slate-400 flex-shrink-0" />
-        )}
-        
-        <span className={`text-sm truncate ${selected ? 'font-medium text-indigo-900' : 'text-slate-700'}`}>
-          {node.name}
-        </span>
-      </div>
-
-      {node.isDir && isExpanded && node.children && (
-        <div>
-          {node.children.map((child) => (
-            <FileTreeNode
-              key={child.path}
-              node={child}
-              level={level + 1}
-              expanded={expanded}
-              onToggle={onToggle}
-              onSelect={onSelect}
-              selectedPath={selectedPath}
-              searchQuery={searchQuery}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
+import { useHomeStore } from '@/pages/home/store/useHomeStore'
+import ReactMarkdown from 'react-markdown'
+import { FileTreeNode, type FileNode } from './components/FileTreeNode'
+import { createMockFileTree } from './utils/fileTree'
 
 export function InsightsPage() {
   const navigate = useNavigate()
+  const destinationFolders = useHomeStore((state) => state.destinationFolders)
   const [searchQuery, setSearchQuery] = useState('')
   const [featuredFolders, setFeaturedFolders] = useState<FolderInsight[]>([])
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(true)
@@ -143,14 +26,16 @@ export function InsightsPage() {
   const [isLoadingNote, setIsLoadingNote] = useState(false)
 
   useEffect(() => {
-    loadFeaturedFolders()
-    loadFileTree()
-  }, [])
+    if (destinationFolders.length > 0) {
+      loadFeaturedFolders()
+      loadFileTree()
+    }
+  }, [destinationFolders])
 
   const loadFeaturedFolders = async () => {
     setIsLoadingFeatured(true)
     try {
-      const featured = await getFeaturedFolders(mockDestinationFolders)
+      const featured = await getFeaturedFolders(destinationFolders)
       setFeaturedFolders(featured)
     } catch (error) {
       console.error('Failed to load featured folders:', error)
@@ -160,7 +45,7 @@ export function InsightsPage() {
   }
 
   const loadFileTree = () => {
-    const tree = mockDestinationFolders.map(createMockFileTree)
+    const tree = destinationFolders.map(createMockFileTree)
     setFileTree(tree)
   }
 
@@ -194,11 +79,23 @@ export function InsightsPage() {
     
     try {
       if (item.isDir) {
+        // For folders, show AI-generated note
         const note = await generateFolderNote(item.path, item.name)
         setNotePreview(note)
       } else {
+        // For files, check if we can preview the actual file content
+        // const ext = item.name.split('.').pop()?.toLowerCase()
+        
+        // TODO: Add real file preview for supported formats
+        // For now, show AI-generated note for all files
         const note = await generateFileNote(item.path, item.name)
         setNotePreview(note)
+        
+        // Future: Handle different file types
+        // if (ext === 'pdf') { /* Use PDF viewer */ }
+        // if (ext === 'xlsx' || ext === 'xls') { /* Use Excel viewer */ }
+        // if (ext === 'docx' || ext === 'doc') { /* Use Word viewer */ }
+        // if (ext === 'txt' || ext === 'md') { /* Use text viewer */ }
       }
     } catch (error) {
       console.error('Failed to load note:', error)
@@ -252,7 +149,21 @@ export function InsightsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-hidden flex flex-col p-6 gap-6">
+      {destinationFolders.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center max-w-md">
+            <FolderOpen className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No Destination Folders</h2>
+            <p className="text-slate-600 mb-6">
+              Configure your destination folders in settings to start analyzing your files with AI.
+            </p>
+            <Button onClick={() => navigate('/home')}>
+              Go to Settings
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-hidden flex flex-col p-6 gap-6">
         {/* Featured Folders - Horizontal Scroll */}
         <div>
           <div className="flex items-center justify-between mb-4">
@@ -414,14 +325,15 @@ export function InsightsPage() {
                   </div>
                 </div>
               ) : (
-                <div className="prose prose-sm max-w-none">
-                  <div className="markdown-preview whitespace-pre-wrap">{notePreview}</div>
+                <div className="prose prose-sm max-w-none prose-headings:text-slate-900 prose-p:text-slate-600 prose-strong:text-slate-700 prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+                  <ReactMarkdown>{notePreview}</ReactMarkdown>
                 </div>
               )}
             </div>
           </div>
         </div>
       </div>
+      )}
     </div>
   )
 }
