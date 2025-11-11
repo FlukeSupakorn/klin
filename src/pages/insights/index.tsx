@@ -19,7 +19,7 @@ import { useNotePreview } from './hooks/useNotePreview'
 export function InsightsPage() {
   // Business logic from hooks
   const { featuredFolders, isLoading, reload, hasDestinations } = useFeaturedFolders()
-  const { fileTree, expandedFolders, toggleFolder } = useFileTree()
+  const { fileTree, expandedFolders, toggleFolder, isLoading: isLoadingTree } = useFileTree()
   const { scrollLeft, scrollRight } = useHorizontalScroll()
   const { selectedItem, notePreview, isLoading: isLoadingNote, onSelectItem } = useNotePreview()
 
@@ -48,6 +48,7 @@ export function InsightsPage() {
               selectedPath={selectedItem?.path || null}
               onToggle={toggleFolder}
               onSelect={onSelectItem}
+              isLoading={isLoadingTree}
             />
 
             <NotePreviewPanel

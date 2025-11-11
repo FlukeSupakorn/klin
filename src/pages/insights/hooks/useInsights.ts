@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useHomeStore } from '@/pages/home/store/useHomeStore'
 import { getFeaturedFolders, type FolderInsight } from '@/lib/ai-api'
-import { createMockFileTree } from '../utils/fileTree'
+import { createFileTree } from '../utils/fileTree'
 import { FileNode } from '../components/FileTreeNode'
 
 /**
@@ -15,6 +15,8 @@ export function useFeaturedFolders() {
   useEffect(() => {
     if (destinationFolders.length > 0) {
       loadFeaturedFolders()
+    } else {
+      setIsLoading(false)
     }
   }, [destinationFolders])
 
@@ -45,16 +47,31 @@ export function useFileTree() {
   const destinationFolders = useHomeStore((state) => state.destinationFolders)
   const [fileTree, setFileTree] = useState<FileNode[]>([])
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (destinationFolders.length > 0) {
       loadFileTree()
+    } else {
+      setFileTree([])
+      setIsLoading(false)
     }
   }, [destinationFolders])
 
-  const loadFileTree = () => {
-    const tree = destinationFolders.map(createMockFileTree)
-    setFileTree(tree)
+  const loadFileTree = async () => {
+    setIsLoading(true)
+    try {
+      // Load real file trees from all destination folders
+      const trees = await Promise.all(
+        destinationFolders.map((folder) => createFileTree(folder))
+      )
+      setFileTree(trees)
+    } catch (error) {
+      console.error('Failed to load file trees:', error)
+      setFileTree([])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const toggleFolder = (path: string) => {
@@ -71,6 +88,7 @@ export function useFileTree() {
     fileTree,
     expandedFolders,
     toggleFolder,
+    isLoading,
   }
 }
 

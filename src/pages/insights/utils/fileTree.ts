@@ -1,62 +1,65 @@
+import { invoke } from '@tauri-apps/api/core'
 import { FileNode } from '../components/FileTreeNode'
 
+interface FileItem {
+  name: string
+  path: string
+  is_dir: boolean
+  size: number
+  modified: string | null
+}
+
 /**
- * Creates a mock file tree structure for a destination folder
- * This simulates AI-generated folder organization with realistic file names
+ * Creates a real file tree structure from a destination folder
+ * Uses Tauri to read actual files from the filesystem
  */
-export function createMockFileTree(rootPath: string): FileNode {
+export async function createFileTree(rootPath: string): Promise<FileNode> {
   const rootName = rootPath.split(/[\\/]/).pop() || rootPath
   
-  // Generate realistic mock files based on AI organization patterns
-  const mockCategories = [
-    {
-      name: '📊 Reports & Analytics',
-      files: [
-        'Q4_Financial_Report.pdf',
-        'Sales_Analytics_2024.xlsx',
-        'Market_Research.docx',
-        'Performance_Dashboard.pdf',
-      ],
-    },
-    {
-      name: '📋 Planning & Strategy',
-      files: [
-        'Project_Roadmap.pdf',
-        'Budget_Planning_2025.xlsx',
-        'Strategic_Goals.docx',
-        'Team_Objectives.txt',
-      ],
-    },
-    {
-      name: '📁 Archive',
-      files: [
-        'Legacy_Documents.pdf',
-        'Old_Reports_2023.zip',
-        'Historical_Data.csv',
-      ],
-    },
-  ]
-
-  return {
-    name: rootName,
-    path: rootPath,
-    isDir: true,
-    children: [
-      ...mockCategories.map((category) => ({
-        name: category.name,
-        path: `${rootPath}\\${category.name}`,
-        isDir: true,
-        children: category.files.map((file) => ({
-          name: file,
-          path: `${rootPath}\\${category.name}\\${file}`,
-          isDir: false,
-        })),
-      })),
-      // Add some root-level files
-      { name: 'README.md', path: `${rootPath}\\README.md`, isDir: false },
-      { name: 'Summary.txt', path: `${rootPath}\\Summary.txt`, isDir: false },
-      { name: 'Index.xlsx', path: `${rootPath}\\Index.xlsx`, isDir: false },
-    ],
+  try {
+    const items = await invoke<FileItem[]>('read_folder', { folderPath: rootPath })
+    
+    // Recursively build tree for subdirectories
+    const children: FileNode[] = await Promise.all(
+      items.map(async (item) => {
+        if (item.is_dir) {
+          // Recursively read subdirectories
+          try {
+            const subTree = await createFileTree(item.path)
+            return subTree
+          } catch {
+            // If can't read subdirectory, return as empty folder
+            return {
+              name: item.name,
+              path: item.path,
+              isDir: true,
+              children: [],
+            }
+          }
+        } else {
+          return {
+            name: item.name,
+            path: item.path,
+            isDir: false,
+          }
+        }
+      })
+    )
+    
+    return {
+      name: rootName,
+      path: rootPath,
+      isDir: true,
+      children,
+    }
+  } catch (error) {
+    console.error('Failed to read folder:', rootPath, error)
+    return {
+      name: rootName,
+      path: rootPath,
+      isDir: true,
+      children: [],
+    }
   }
 }
 

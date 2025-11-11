@@ -70,7 +70,22 @@ interface MarkdownPreviewProps {
 
 function MarkdownPreview({ content }: MarkdownPreviewProps) {
   return (
-    <div className="prose prose-sm max-w-none prose-headings:text-slate-900 prose-p:text-slate-600 prose-strong:text-slate-700 prose-code:text-indigo-600 prose-code:bg-indigo-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+    <div className="prose prose-slate max-w-none
+      prose-headings:font-bold prose-headings:tracking-tight
+      prose-h1:text-3xl prose-h1:text-slate-900 prose-h1:mb-4
+      prose-h2:text-2xl prose-h2:text-slate-800 prose-h2:mt-8 prose-h2:mb-3
+      prose-h3:text-xl prose-h3:text-slate-700 prose-h3:mt-6 prose-h3:mb-2
+      prose-p:text-base prose-p:text-slate-600 prose-p:leading-relaxed prose-p:my-3
+      prose-strong:text-slate-900 prose-strong:font-semibold
+      prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
+      prose-ol:my-4 prose-ol:list-decimal prose-ol:pl-6
+      prose-li:text-slate-600 prose-li:my-1
+      prose-code:text-indigo-700 prose-code:bg-indigo-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+      prose-pre:bg-slate-900 prose-pre:text-slate-100 prose-pre:p-4 prose-pre:rounded-lg prose-pre:overflow-x-auto
+      prose-blockquote:border-l-4 prose-blockquote:border-indigo-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-slate-600
+      prose-hr:border-slate-200 prose-hr:my-8
+      prose-a:text-indigo-600 prose-a:no-underline hover:prose-a:underline
+      prose-img:rounded-lg prose-img:shadow-md">
       <ReactMarkdown>{content}</ReactMarkdown>
     </div>
   )

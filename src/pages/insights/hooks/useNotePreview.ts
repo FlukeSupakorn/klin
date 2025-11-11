@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { generateFolderNote, generateFileNote } from '@/lib/ai-api'
+import { invoke } from '@tauri-apps/api/core'
+import { generateFolderNote } from '@/lib/ai-api'
 import { FileNode } from '../components/FileTreeNode'
 
 /**
@@ -21,23 +22,30 @@ export function useNotePreview() {
         const note = await generateFolderNote(item.path, item.name)
         setNotePreview(note)
       } else {
-        // For files, check if we can preview the actual file content
-        // const ext = item.name.split('.').pop()?.toLowerCase()
-        
-        // TODO: Add real file preview for supported formats
-        // For now, show AI-generated note for all files
-        const note = await generateFileNote(item.path, item.name)
-        setNotePreview(note)
-        
-        // Future: Handle different file types
-        // if (ext === 'pdf') { /* Use PDF viewer */ }
-        // if (ext === 'xlsx' || ext === 'xls') { /* Use Excel viewer */ }
-        // if (ext === 'docx' || ext === 'doc') { /* Use Word viewer */ }
-        // if (ext === 'txt' || ext === 'md') { /* Use text viewer */ }
+        // For files, try to read actual file content
+        try {
+          const content = await invoke<string>('read_file_content', { filePath: item.path })
+          
+          // Check if it's a text file (can display directly)
+          const ext = item.name.split('.').pop()?.toLowerCase()
+          const textFormats = ['txt', 'md', 'json', 'xml', 'csv', 'log', 'html', 'css', 'js', 'ts', 'tsx', 'jsx', 'py', 'java', 'c', 'cpp', 'h', 'rs', 'go']
+          
+          if (textFormats.includes(ext || '')) {
+            // Display text content directly
+            setNotePreview(`# 📄 ${item.name}\n\n**Path:** ${item.path}\n\n---\n\n${content}`)
+          } else {
+            // For binary files, show file info and preview not available
+            setNotePreview(`# 📄 ${item.name}\n\n**Path:** ${item.path}\n\n---\n\n## File Preview\n\nThis file type requires external viewer.\n\n**File Extension:** ${ext}\n**Content Length:** ${content.length} bytes\n\n### Actions\n\n- Use your system's default application to open this file\n- Supported formats: PDF, Excel, Word, Images, Videos, etc.\n\n*Click to open with default application*`)
+          }
+        } catch (error) {
+          // If can't read file, show error message
+          console.error('Failed to read file:', error)
+          setNotePreview(`# ⚠️ Unable to Read File\n\n**File:** ${item.name}\n**Path:** ${item.path}\n\n---\n\n## Error\n\nCould not read file content. This file may be:\n- Binary format (image, video, application)\n- Locked or in use by another application\n- Access restricted\n\n### Recommendation\n\nTry opening the file with your system's default application.`)
+        }
       }
     } catch (error) {
-      console.error('Failed to load note:', error)
-      setNotePreview('Failed to generate preview note.')
+      console.error('Failed to load preview:', error)
+      setNotePreview('Failed to generate preview.')
     } finally {
       setIsLoading(false)
     }

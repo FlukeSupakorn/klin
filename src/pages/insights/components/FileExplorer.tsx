@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FolderOpen } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import { FileTreeNode, FileNode } from './FileTreeNode'
 
 interface FileExplorerProps {
@@ -9,6 +10,7 @@ interface FileExplorerProps {
   selectedPath: string | null
   onToggle: (path: string) => void
   onSelect: (node: FileNode) => void
+  isLoading?: boolean
 }
 
 export function FileExplorer({
@@ -17,6 +19,7 @@ export function FileExplorer({
   selectedPath,
   onToggle,
   onSelect,
+  isLoading = false,
 }: FileExplorerProps) {
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -35,18 +38,28 @@ export function FileExplorer({
       </div>
 
       <div className="flex-1 overflow-auto p-4">
-        {fileTree.map((root) => (
-          <FileTreeNode
-            key={root.path}
-            node={root}
-            level={0}
-            expanded={expandedFolders}
-            onToggle={onToggle}
-            onSelect={onSelect}
-            selectedPath={selectedPath}
-            searchQuery={searchQuery}
-          />
-        ))}
+        {isLoading ? (
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-8 w-5/6 ml-4" />
+            <Skeleton className="h-8 w-4/6 ml-8" />
+            <Skeleton className="h-8 w-5/6 ml-4" />
+            <Skeleton className="h-8 w-full" />
+          </div>
+        ) : (
+          fileTree.map((root) => (
+            <FileTreeNode
+              key={root.path}
+              node={root}
+              level={0}
+              expanded={expandedFolders}
+              onToggle={onToggle}
+              onSelect={onSelect}
+              selectedPath={selectedPath}
+              searchQuery={searchQuery}
+            />
+          ))
+        )}
       </div>
     </div>
   )

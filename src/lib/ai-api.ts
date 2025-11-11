@@ -22,7 +22,9 @@ export interface FolderInsight {
 }
 
 // Mock AI response delay
-const AI_DELAY = 1500
+import { getSpecificFolderNote } from './folder-notes'
+
+const AI_DELAY = 800 // Simulated AI processing delay in ms
 
 // Mock data generators
 const mockSummaries: Record<string, string[]> = {
@@ -237,6 +239,13 @@ export async function generateFolderNote(folderPath: string, folderName: string)
   // Simulate AI processing delay
   await new Promise(resolve => setTimeout(resolve, AI_DELAY * 0.5))
 
+  // Check if we have a specific note for this folder
+  const specificNote = getSpecificFolderNote(folderPath, folderName)
+  if (specificNote) {
+    return specificNote
+  }
+
+  // Generic folder note (fallback)
   const mockFileCount = Math.floor(Math.random() * 50) + 5
   const mockCategories = categories.sort(() => Math.random() - 0.5).slice(0, 3)
   
