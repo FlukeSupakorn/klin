@@ -138,7 +138,7 @@ export function WatchingFoldersPanel() {
               className={`relative bg-theme-background border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md group ${
                 isSelected
                   ? 'border-theme-primary bg-theme-primary-light'
-                  : 'border-theme hover:border-theme-border-light'
+                  : 'border-theme hover:border-theme-primary'
               }`}
             >
               {/* Remove button */}

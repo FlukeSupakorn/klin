@@ -94,15 +94,15 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
             <div className="flex-1 min-w-0">
               {/* Original Name */}
               <div className="mb-2">
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Original:</span>
-                <p className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
+                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Original:</span>
+                <p className="text-sm font-medium text-slate-100 dark:text-slate-200 truncate">
                   {item.original_name}
                 </p>
               </div>
 
               {/* Status */}
               {item.status === 'processing' && (
-                <div className="flex items-center gap-2 text-theme-primary mb-2">
+                <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 mb-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm font-medium">Processing...</span>
                 </div>

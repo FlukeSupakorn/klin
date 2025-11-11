@@ -61,24 +61,24 @@ export const themeConfig: Record<ThemeName, ThemeColors> = {
   },
   
   light: {
-    primary: '#4F46E5',        // Indigo-600
-    primaryHover: '#4338CA',   // Indigo-700
-    primaryLight: '#EEF2FF',   // Indigo-50
-    primaryDark: '#3730A3',    // Indigo-800
+    primary: '#71717A',        // Zinc-500 - Neutral gray instead of indigo
+    primaryHover: '#52525B',   // Zinc-600
+    primaryLight: '#F4F4F5',   // Zinc-100
+    primaryDark: '#27272A',    // Zinc-800
     
     background: '#FFFFFF',
-    backgroundSecondary: '#F8FAFC',  // Slate-50
-    backgroundTertiary: '#F1F5F9',   // Slate-100
+    backgroundSecondary: '#FAFAFA',  // Zinc-50
+    backgroundTertiary: '#F4F4F5',   // Zinc-100
     
-    text: '#1E293B',           // Slate-900
-    textSecondary: '#475569',  // Slate-600
-    textMuted: '#94A3B8',      // Slate-400
+    text: '#18181B',           // Zinc-900
+    textSecondary: '#52525B',  // Zinc-600
+    textMuted: '#A1A1AA',      // Zinc-400
     
-    border: '#E2E8F0',         // Slate-200
-    borderLight: '#F1F5F9',    // Slate-100
+    border: '#E4E4E7',         // Zinc-200
+    borderLight: '#F4F4F5',    // Zinc-100
     
-    accent: '#10B981',         // Emerald-500
-    accentLight: '#D1FAE5',    // Emerald-100
+    accent: '#14B8A6',         // Teal-500 - Pop of color
+    accentLight: '#CCFBF1',    // Teal-100
     
     success: '#10B981',        // Emerald-500
     warning: '#F59E0B',        // Amber-500
