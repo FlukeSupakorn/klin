@@ -15,7 +15,7 @@ interface UsePaginationReturn<T> {
   observerRef: (node: HTMLElement | null) => void
 }
 
-const ITEMS_PER_PAGE = 20
+const ITEMS_PER_PAGE = 100
 
 export function usePagination<T>({
   items,

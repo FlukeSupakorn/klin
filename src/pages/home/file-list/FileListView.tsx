@@ -18,7 +18,7 @@ interface FileListViewProps {
 export function FileListView({ files, selectedFileIds, onToggleSelection, loading }: FileListViewProps) {
   const { currentView } = useFileStore()
 
-  // Pagination with 20 items per page
+  // Pagination with 100 items per page
   const {
     displayedItems: displayedFiles,
     hasMore,
@@ -26,7 +26,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
     observerRef,
   } = usePagination({
     items: files,
-    itemsPerPage: 20,
+    itemsPerPage: 100,
     enabled: !loading,
   })
 
@@ -43,9 +43,9 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
     return (
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
         <div className="p-6">
-          {currentView === 'grid' && <GridSkeleton count={20} />}
-          {currentView === 'list' && <ListSkeleton count={20} />}
-          {currentView === 'tab' && <TabSkeleton count={20} />}
+          {currentView === 'grid' && <GridSkeleton count={100} />}
+          {currentView === 'list' && <ListSkeleton count={100} />}
+          {currentView === 'tab' && <TabSkeleton count={100} />}
         </div>
       </div>
     )
