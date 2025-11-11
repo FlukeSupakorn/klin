@@ -190,17 +190,6 @@ export function WatchingFoldersPanel() {
           )
         })}
       </div>
-
-      {/* Selection info */}
-      <div className="text-sm text-slate-600">
-        {isAllSelected ? (
-          <p>Viewing files from <strong>all folders</strong></p>
-        ) : selectedFolderIds.length === 1 ? (
-          <p>Viewing files from <strong>1 folder</strong></p>
-        ) : (
-          <p>Viewing files from <strong>{selectedFolderIds.length} folders</strong></p>
-        )}
-      </div>
     </div>
   )
 }
