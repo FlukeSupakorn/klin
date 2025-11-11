@@ -20,8 +20,16 @@ interface FileToolbarProps {
   onDeleteClick: () => void
 }
 
-// View Switcher Component (displayed above the toolbar box)
-export function ViewSwitcher() {
+// Combined Toolbar Component (single line with all controls)
+export function FileToolbar({
+  localSearch,
+  setLocalSearch,
+  selectedCount,
+  totalCount,
+  isAllSelected,
+  onSelectAll,
+  onDeleteClick,
+}: FileToolbarProps) {
   const { currentView, setCurrentView } = useFileStore()
   
   const viewOptions = [
@@ -32,89 +40,82 @@ export function ViewSwitcher() {
   
   const currentOption = viewOptions.find(opt => opt.value === currentView) || viewOptions[0]
   const Icon = currentOption.icon
-  
-  return (
-    <div className="mb-4">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
-            className="gap-2 h-10 px-4 bg-white hover:bg-slate-50"
-          >
-            <Icon className="h-4 w-4" />
-            <span>{currentOption.label}</span>
-            <ChevronDown className="h-4 w-4 opacity-50" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-48">
-          {viewOptions.map((option) => {
-            const OptionIcon = option.icon
-            return (
-              <DropdownMenuItem
-                key={option.value}
-                onClick={() => setCurrentView(option.value as any)}
-                className="gap-2 cursor-pointer"
-              >
-                <OptionIcon className="h-4 w-4" />
-                <span>{option.label}</span>
-                {currentView === option.value && (
-                  <span className="ml-auto text-blue-600">✓</span>
-                )}
-              </DropdownMenuItem>
-            )
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  )
-}
 
-// Toolbar Component (contains select all, delete button, and search)
-export function FileToolbar({
-  localSearch,
-  setLocalSearch,
-  selectedCount,
-  totalCount,
-  isAllSelected,
-  onSelectAll,
-  onDeleteClick,
-}: FileToolbarProps) {
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-4">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-sm text-slate-600">
-            <Checkbox checked={isAllSelected} onCheckedChange={onSelectAll} aria-label="Select all" />
-            <span>Select All</span>
-          </div>
-          <span className="text-sm text-slate-600">•</span>
-          <span className="text-sm text-slate-600">
-            {selectedCount} of {totalCount} selected
-          </span>
-          
-          {selectedCount > 0 && (
-            <>
-              <span className="text-sm text-slate-600">•</span>
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 border-rose-200"
-                onClick={onDeleteClick}
-              >
-                <Trash2 className="h-4 w-4" />
-                Delete Selected
-              </Button>
-            </>
-          )}
+    <div className="flex items-center justify-between gap-4 mb-6">
+      {/* Left side: View dropdown, Select all, and Delete */}
+      <div className="flex items-center gap-3">
+        {/* View Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="gap-2 h-10 px-4 bg-white hover:bg-slate-50"
+            >
+              <Icon className="h-4 w-4" />
+              <span>{currentOption.label}</span>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            {viewOptions.map((option) => {
+              const OptionIcon = option.icon
+              return (
+                <DropdownMenuItem
+                  key={option.value}
+                  onClick={() => setCurrentView(option.value as any)}
+                  className="gap-2 cursor-pointer"
+                >
+                  <OptionIcon className="h-4 w-4" />
+                  <span>{option.label}</span>
+                  {currentView === option.value && (
+                    <span className="ml-auto text-blue-600">✓</span>
+                  )}
+                </DropdownMenuItem>
+              )
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <span className="text-sm text-slate-300">|</span>
+
+        {/* Select All Checkbox */}
+        <div className="flex items-center gap-2 text-sm text-slate-600">
+          <Checkbox checked={isAllSelected} onCheckedChange={onSelectAll} aria-label="Select all" />
+          <span>Select All</span>
         </div>
 
-        <div className="w-72">
-          <Input
-            placeholder="Search..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-          />
-        </div>
+        <span className="text-sm text-slate-600">•</span>
+
+        {/* Selected Count */}
+        <span className="text-sm text-slate-600">
+          {selectedCount} of {totalCount} selected
+        </span>
+        
+        {/* Delete Button (shows when items are selected) */}
+        {selectedCount > 0 && (
+          <>
+            <span className="text-sm text-slate-600">•</span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 border-rose-200"
+              onClick={onDeleteClick}
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete Selected
+            </Button>
+          </>
+        )}
+      </div>
+
+      {/* Right side: Search */}
+      <div className="w-72">
+        <Input
+          placeholder="Search..."
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
+        />
       </div>
     </div>
   )

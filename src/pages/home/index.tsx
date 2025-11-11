@@ -28,7 +28,7 @@ import { deleteFile } from '@/lib/tauri-api'
 import { DestinationBanner } from './destination/DestinationBanner'
 import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
 import { FileListView } from './file-list/FileListView'
-import { FileToolbar, ViewSwitcher } from './file-list/FileToolbar'
+import { FileToolbar } from './file-list/FileToolbar'
 import { FirstTimeSetupDialog } from './onboarding/FirstTimeSetupDialog'
 import { OrganizeDialog } from './organize/OrganizeDialog'
 import { OrganizePreviewDialog } from './organize/OrganizePreviewDialog'
@@ -154,10 +154,7 @@ export function HomePage() {
         {/* Watching Folders Panel */}
         <WatchingFoldersPanel />
 
-        {/* View Switcher - Above the toolbar box */}
-        <ViewSwitcher />
-
-        {/* Toolbar - Contains only select all and search */}
+        {/* Toolbar - View switcher, select all, delete, and search in one line */}
         <FileToolbar
           localSearch={localSearch}
           setLocalSearch={setLocalSearch}
