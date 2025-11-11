@@ -37,7 +37,7 @@ export function HistoryTable({ files, selectedFile, onSelectFile }: HistoryTable
             <tr
               key={file.id}
               className={`hover-bg-theme-secondary cursor-pointer transition-colors ${selectedFile?.id === file.id ? 'bg-theme-primary-light' : ''}`}
-              onClick={() => setSelectedFile(file)}
+              onClick={() => onSelectFile(file)}
             >
               <td className="py-4 px-6">
                 <div className="flex items-center gap-3">
