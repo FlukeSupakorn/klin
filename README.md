@@ -1,124 +1,167 @@
-# Klin - File Manager UI
+# Klin - AI-Powered File Manager
 
-A pixel-perfect desktop file management UI built with Vite, React 18, TypeScript, TailwindCSS, and shadcn/ui.
+A modern desktop file management application with AI-powered insights, built with Tauri, React, and TypeScript.
 
-## Features
+## 🚀 Features
 
-- 🎨 **Pixel-perfect design** - Matches Figma designs exactly
-- 🗂️ **Two main views**:
-  - My Files List View - Table layout with file management
-  - Secret Folder - Advanced view with carousel, stats, and insights
-- 🔄 **Interactive UI** - Tabs, search, checkboxes, filters
-- 📊 **File insights** - Charts, stats, and analytics
-- 💾 **Mock data** - Zustand store with realistic file data
-- 🎯 **Reusable components** - Built with shadcn/ui and Radix UI primitives
+- 📁 **Smart File Management** - Browse and organize files with an intuitive interface
+- 🤖 **AI Insights** - Get AI-generated notes and insights for your folders
+- 📝 **Integrated Notes** - Create, edit, and manage markdown notes
+- 🏠 **Folder Watching** - Monitor and track important folders
+- 🎯 **Featured Folders** - Quick access to your most important directories
+- 🎨 **Modern UI** - Clean, responsive interface with Radix UI components
+- � **Cross-Platform** - Built with Tauri for Windows, macOS, and Linux
 
-## Tech Stack
+## 🛠️ Tech Stack
 
-- **Framework**: Vite + React 18 + TypeScript
-- **Styling**: TailwindCSS with Plus Jakarta Sans font
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **Icons**: lucide-react
-- **State Management**: Zustand
+### Frontend
+- **Framework**: React 19 + TypeScript + Vite
+- **Styling**: TailwindCSS + Tailwind Typography
+- **UI Components**: Radix UI primitives
+- **Icons**: Lucide React
+- **State Management**: Zustand with persistence
 - **Routing**: React Router v6
-- **Charts**: Recharts
+- **Markdown**: React Markdown + Remark GFM
+- **Markdown Editor**: UIW React MD Editor
+
+### Backend
+- **Runtime**: Tauri v2 (Rust)
+- **File Operations**: Native Rust filesystem APIs
+- **Plugins**: tauri-plugin-dialog, tauri-plugin-opener
+
+### Development Tools
 - **Package Manager**: Bun
+- **Type Checking**: TypeScript 5.8
+- **Build Tool**: Vite 7
 
-## Getting Started
+## 📦 Setup and Start App
 
-### Install Dependencies
+### Prerequisites
+- [Bun](https://bun.sh/) installed on your system
+- [Rust](https://www.rust-lang.org/) installed (for Tauri)
 
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/FlukeSupakorn/klin.git
+   cd klin
+   ```
+
+2. **Install dependencies**
+   ```bash
+   bun install
+   ```
+
+### Running the Application
+
+**Start development server:**
 ```bash
-bun install
+bun tauri dev
 ```
 
-### Run Development Server
+This will:
+- Build the Rust backend
+- Start the Vite dev server
+- Launch the Tauri application window
 
+### Building for Production
+
+**Create production build:**
 ```bash
-bun run dev
+bun tauri build
 ```
 
-Navigate to `http://localhost:1420`
+This will generate platform-specific installers in `src-tauri/target/release/`
 
-### Build for Production
+This will generate platform-specific installers in `src-tauri/target/release/`
 
-```bash
-bun run build
+## 📚 Documentation
+
+For detailed information about the architecture and APIs:
+
+- **[Frontend Documentation](./docs/FRONTEND.md)** - React components, state management, routing, and UI details
+- **[Backend Documentation](./docs/BACKEND.md)** - Tauri commands, file operations, note management, and Rust APIs
+
+## 🗂️ Project Structure
+
+```
+klin/
+├── src/                          # Frontend source code
+│   ├── components/
+│   │   ├── ui/                  # Radix UI components
+│   │   └── layout/              # Layout components (Sidebar, Header)
+│   ├── pages/
+│   │   ├── home/                # Home page with folder selection
+│   │   ├── insights/            # AI insights and file explorer
+│   │   └── notes/               # Notes management
+│   ├── lib/                     # Utilities and helpers
+│   │   ├── tauri-api.ts        # Tauri API wrappers
+│   │   ├── ai-api.ts           # AI integration
+│   │   └── utils.ts            # Common utilities
+│   ├── i18n/                    # Internationalization
+│   │   ├── en.json             # English translations
+│   │   └── th.json             # Thai translations
+│   └── App.tsx                 # Main app component
+│
+├── src-tauri/                   # Tauri backend (Rust)
+│   ├── src/
+│   │   ├── lib.rs              # Main entry point
+│   │   ├── file_ops.rs         # File system operations
+│   │   └── note_ops.rs         # Note management operations
+│   ├── Cargo.toml              # Rust dependencies
+│   └── tauri.conf.json         # Tauri configuration
+│
+├── docs/                        # Documentation
+│   ├── FRONTEND.md             # Frontend documentation
+│   └── BACKEND.md              # Backend documentation
+│
+└── public/                      # Static assets
 ```
 
-## Project Structure
+## 🎯 Key Features
 
-```
-src/
-├── components/
-│   ├── ui/              # shadcn/ui components (Button, Badge, Input, etc.)
-│   ├── layout/          # Sidebar, Header
-│   └── file/            # FileIcon, AvatarGroup, PermissionBadge, etc.
-├── pages/
-│   ├── my-files-page.tsx       # /files route
-│   └── secret-folder-page.tsx  # /files/secret route
-├── store/
-│   └── useFileStore.ts  # Zustand mock data store
-├── types/
-│   └── file.ts          # TypeScript types
-├── lib/
-│   └── utils.ts         # Utility functions (cn)
-├── App.tsx              # Main app with routing
-└── main.tsx             # Entry point
-```
+### Home Page
+- Select watching folders to monitor
+- Choose destination folders for organization
+- Toggle between "Any" and "All" destination modes
+- Persistent folder configuration (saved to localStorage)
 
-## Routes
+### Insights Page
+- **Featured Folders** - Quick navigation to important folders with AI insights
+- **File Explorer** - Tree view of destination folders with expand/collapse
+- **AI Note Preview** - AI-generated overview notes for selected folders
+- Files open with system default application
 
-- `/` - Redirects to `/files`
-- `/files` - My Files List View (table with 8 files)
-- `/files/secret` - Secret Folder (carousel + table + insights sidebar)
-- `/tasks` - Placeholder
-- `/users` - Placeholder
-- `/apis` - Placeholder
-- `/subscription` - Placeholder
-- `/settings` - Placeholder
-- `/help` - Placeholder
+### Notes Page
+- Create and edit markdown notes
+- Live markdown preview
+- Auto-save functionality
+- Export notes to file system
+- Organized note list with search
 
-## Features by Page
+## 🔧 Configuration
 
-### My Files (`/files`)
-- Tab/Grid/List view switcher
-- Searchable file table
-- Checkbox selection (select all/individual)
-- Avatar groups showing users with permissions
-- File type icons
-- Delete/Edit actions
-- Storage progress bar (17.2gb / 20gb used)
+### Environment Variables
+No environment variables required for basic usage.
 
-### Secret Folder (`/files/secret`)
-- Large search bar with Go Pro badge
-- Recent Files carousel (5 files)
-- Public Files table with permission badges
-- Right sidebar with 3 cards:
-  - File Details (preview + metadata)
-  - File Overview (views, edits, comments, shares, deletes)
-  - File Insights (weekly bar chart with trend)
+### Tauri Configuration
+Main configuration in `src-tauri/tauri.conf.json`:
+- App identifier: `com.klin.app`
+- Window size: 1200x800 (default)
+- Security: CSP configured for development
 
-## Mock Data
+## 🌐 Internationalization
 
-All data is stored in `src/store/useFileStore.ts`:
-- 8 files in My Files (Images, GIFs, Memes, Videos, Documents, Clouds, Work, Important)
-- 7 files in Secret Folder with permissions (Editor/View Only/Administrator)
-- 4 recent files for carousel
-- File stats with weekly insights
+The app supports multiple languages:
+- English (en)
+- Thai (th)
 
-## Customization
+Translation files located in `src/i18n/`
 
-### Colors
-Primary colors are defined in `tailwind.config.ts` and `src/index.css`:
-- Primary: indigo-600/700
-- Secondary: slate-100/200
-- Progress bar: rose-500 to pink-500 gradient
+---
 
-### Fonts
-Using Plus Jakarta Sans from Google Fonts (weights: 400, 500, 600, 700, 800)
-
-## License
-
-MIT
+For detailed API documentation and implementation details, please refer to:
+- [Frontend Documentation](./docs/FRONTEND.md)
+- [Backend Documentation](./docs/BACKEND.md)
 

@@ -18,6 +18,7 @@ pub fn run() {
             open_file, 
             delete_file, 
             create_folder,
+            read_file_content,
             list_notes,
             create_note,
             read_note,

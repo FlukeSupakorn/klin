@@ -133,3 +133,19 @@ pub fn create_folder(folder_path: String) -> Result<(), String> {
     
     Ok(())
 }
+
+#[tauri::command]
+pub fn read_file_content(file_path: String) -> Result<String, String> {
+    let path = PathBuf::from(&file_path);
+    
+    if !path.exists() {
+        return Err("File does not exist".to_string());
+    }
+    
+    if !path.is_file() {
+        return Err("Path is not a file".to_string());
+    }
+    
+    fs::read_to_string(&path)
+        .map_err(|e| format!("Failed to read file: {}", e))
+}
