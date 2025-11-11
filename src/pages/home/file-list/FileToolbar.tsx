@@ -52,7 +52,7 @@ export function FileToolbar({
           <DropdownMenuTrigger asChild>
             <Button 
               variant="outline" 
-              className="gap-2 h-10 px-4 bg-white hover:bg-slate-50"
+              className="gap-2 h-10 px-4"
             >
               <Icon className="h-4 w-4" />
               <span>{currentOption.label}</span>
@@ -71,7 +71,7 @@ export function FileToolbar({
                   <OptionIcon className="h-4 w-4" />
                   <span>{option.label}</span>
                   {currentView === option.value && (
-                    <span className="ml-auto text-blue-600">✓</span>
+                    <span className="ml-auto text-theme-primary">✓</span>
                   )}
                 </DropdownMenuItem>
               )
@@ -79,29 +79,29 @@ export function FileToolbar({
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <span className="text-sm text-slate-300">|</span>
+        <span className="text-sm text-theme-border">|</span>
 
         {/* Select All Checkbox */}
-        <div className="flex items-center gap-2 text-sm text-slate-600">
+        <div className="flex items-center gap-2 text-sm text-theme-secondary">
           <Checkbox checked={isAllSelected} onCheckedChange={onSelectAll} aria-label="Select all" />
           <span>Select All</span>
         </div>
 
-        <span className="text-sm text-slate-600">•</span>
+        <span className="text-sm text-theme-secondary">•</span>
 
         {/* Selected Count */}
-        <span className="text-sm text-slate-600">
+        <span className="text-sm text-theme-secondary">
           {selectedCount} of {totalCount} selected
         </span>
         
         {/* AI Actions and Delete Button (shows when items are selected) */}
         {selectedCount > 0 && (
           <>
-            <span className="text-sm text-slate-600">•</span>
+            <span className="text-sm text-theme-secondary">•</span>
             <Button
               variant="outline"
               size="sm"
-              className="gap-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 border-indigo-200"
+              className="gap-2 text-theme-primary hover-text-theme-primary-dark hover-bg-theme-primary-light border-theme-primary"
               onClick={onSummarizeClick}
             >
               <Sparkles className="h-4 w-4" />

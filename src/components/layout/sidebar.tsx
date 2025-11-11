@@ -14,14 +14,14 @@ export function Sidebar() {
   const location = useLocation()
   
   return (
-    <aside className="w-[280px] bg-slate-50 border-r border-slate-200 flex flex-col h-screen">
+    <aside className="w-[280px] bg-theme-secondary border-r border-theme flex flex-col h-screen">
       {/* Logo */}
-      <div className="px-6 py-4 border-b border-slate-200">
+      <div className="px-6 py-4 border-b border-theme">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-sm">K</span>
           </div>
-          <span className="font-bold text-lg text-slate-900">KLIN</span>
+          <span className="font-bold text-lg text-theme-text">KLIN</span>
         </div>
       </div>
       
@@ -36,8 +36,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
                 isActive 
-                  ? "bg-white text-slate-900 shadow-sm" 
-                  : "text-slate-600 hover:bg-white hover:text-slate-900"
+                  ? "bg-theme-background text-theme-text shadow-sm" 
+                  : "text-theme-secondary hover-bg-theme-background hover:text-theme-text"
               )}
             >
               <div className="flex items-center gap-3">
@@ -50,16 +50,16 @@ export function Sidebar() {
       </nav>
       
       {/* User Profile */}
-      <div className="p-4 border-t border-slate-200">
+      <div className="p-4 border-t border-theme">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold">
             AU
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 truncate">Azunyan U. Wu</p>
-            <p className="text-xs text-slate-500">Basic Member</p>
+            <p className="text-sm font-semibold text-theme-text truncate">Azunyan U. Wu</p>
+            <p className="text-xs text-theme-muted">Basic Member</p>
           </div>
-          <button className="text-slate-400 hover:text-slate-600">
+          <button className="text-theme-muted hover:text-theme-secondary">
             <LogOut className="h-4 w-4" />
           </button>
         </div>

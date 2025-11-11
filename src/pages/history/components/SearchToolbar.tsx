@@ -40,7 +40,7 @@ export function SearchToolbar({
   return (
     <div className="flex items-center gap-3">
       <div className="flex-1 relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-theme-muted" />
         <Input 
           placeholder="Search in history..." 
           className="pl-10 h-12 text-base"
@@ -68,7 +68,7 @@ export function SearchToolbar({
             />
             
             {/* Dropdown */}
-            <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-slate-200 rounded-lg shadow-lg z-20 py-1">
+            <div className="absolute right-0 top-full mt-2 w-56 bg-theme-background border border-theme rounded-lg shadow-lg z-20 py-1">
               {filters.map((filter) => {
                 const Icon = filter.icon
                 return (
@@ -76,15 +76,15 @@ export function SearchToolbar({
                     key={filter.value}
                     onClick={() => handleFilterSelect(filter.value)}
                     className={cn(
-                      "w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-3",
-                      activeFilter === filter.value && "bg-indigo-50 text-indigo-700 font-medium"
+                      "w-full px-4 py-2.5 text-left text-sm hover-bg-theme-secondary transition-colors flex items-center gap-3",
+                      activeFilter === filter.value && "bg-theme-primary-light text-theme-primary font-medium"
                     )}
                   >
                     {Icon && <Icon className={cn("h-4 w-4", filter.color)} />}
                     {!Icon && <span className="w-4" />}
                     <span>{filter.label}</span>
                     {activeFilter === filter.value && (
-                      <div className="ml-auto h-2 w-2 rounded-full bg-indigo-600" />
+                      <div className="ml-auto h-2 w-2 rounded-full bg-theme-primary" />
                     )}
                   </button>
                 )

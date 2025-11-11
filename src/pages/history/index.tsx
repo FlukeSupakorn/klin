@@ -85,24 +85,24 @@ export function HistoryPage() {
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="px-8 py-6 border-b border-slate-200">
+      <div className="px-8 py-6 border-b border-theme">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Activity</h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <h1 className="text-3xl font-bold text-theme-text">Activity</h1>
+            <p className="text-sm text-theme-secondary mt-1">
               Track file organization progress and history
             </p>
           </div>
           
           <div className="flex items-center gap-3">
             <button 
-              className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
               onClick={() => navigate('/settings')}
             >
-              <Settings className="h-5 w-5 text-slate-600" />
+              <Settings className="h-5 w-5 text-theme-secondary" />
             </button>
-            <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
-              <Bell className="h-5 w-5 text-slate-600" />
+            <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
+              <Bell className="h-5 w-5 text-theme-secondary" />
             </button>
           </div>
         </div>
@@ -152,7 +152,7 @@ export function HistoryPage() {
         {queue.length > 0 && (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-slate-900">
+              <h2 className="text-xl font-semibold text-theme-text">
                 Current Queue ({queue.length})
               </h2>
               
@@ -185,15 +185,15 @@ export function HistoryPage() {
 
         {/* History Section */}
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-4">
+          <h2 className="text-xl font-semibold text-theme-text mb-4">
             History ({activeFilter !== 'all' || searchQuery ? `${filteredCount} / ` : ''}{history.length})
           </h2>
           
           {history.length === 0 && queue.length === 0 ? (
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-12 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-200 mb-4">
+            <div className="bg-theme-secondary border border-theme rounded-lg p-12 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-theme-tertiary mb-4">
                 <svg
-                  className="h-8 w-8 text-slate-400"
+                  className="h-8 w-8 text-theme-muted"
                   fill="none"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -204,8 +204,8 @@ export function HistoryPage() {
                   <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-slate-900 mb-1">No activity yet</h3>
-              <p className="text-sm text-slate-500">
+              <h3 className="text-lg font-medium text-theme-text mb-1">No activity yet</h3>
+              <p className="text-sm text-theme-secondary">
                 Organize files to see them appear here
               </p>
             </div>

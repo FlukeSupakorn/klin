@@ -2,6 +2,7 @@ import { FileText, Download, Trash2 } from 'lucide-react'
 import { NoteItem } from '@/lib/note-api'
 import { formatDistanceToNow } from 'date-fns'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 interface NoteCardProps {
   note: NoteItem
@@ -27,6 +28,27 @@ export function NoteCard({ note, onOpen, onDownload, onDelete }: NoteCardProps) 
   }
 
   const modifiedDate = new Date(parseInt(note.modified) * 1000)
+
+  // Custom markdown components with inline styles for theme support
+  const markdownComponents = {
+    h1: ({ node, ...props }: any) => <h1 style={{ color: 'var(--color-text)' }} {...props} />,
+    h2: ({ node, ...props }: any) => <h2 style={{ color: 'var(--color-text)' }} {...props} />,
+    h3: ({ node, ...props }: any) => <h3 style={{ color: 'var(--color-text)' }} {...props} />,
+    h4: ({ node, ...props }: any) => <h4 style={{ color: 'var(--color-text)' }} {...props} />,
+    h5: ({ node, ...props }: any) => <h5 style={{ color: 'var(--color-text)' }} {...props} />,
+    h6: ({ node, ...props }: any) => <h6 style={{ color: 'var(--color-text)' }} {...props} />,
+    p: ({ node, ...props }: any) => <p style={{ color: 'var(--color-text-secondary)' }} {...props} />,
+    strong: ({ node, ...props }: any) => <strong style={{ color: 'var(--color-text)' }} {...props} />,
+    em: ({ node, ...props }: any) => <em style={{ color: 'var(--color-text-secondary)' }} {...props} />,
+    code: ({ node, inline, ...props }: any) => {
+      if (inline) {
+        return <code style={{ color: 'var(--color-primary)', backgroundColor: 'var(--color-primary-light)' }} {...props} />
+      }
+      return <code style={{ color: 'var(--color-text)' }} {...props} />
+    },
+    a: ({ node, ...props }: any) => <a style={{ color: 'var(--color-primary)' }} {...props} />,
+    li: ({ node, ...props }: any) => <li style={{ color: 'var(--color-text-secondary)' }} {...props} />,
+  }
 
   return (
     <div
@@ -63,14 +85,10 @@ export function NoteCard({ note, onOpen, onDownload, onDelete }: NoteCardProps) 
       </h3>
 
       {/* Markdown Preview */}
-      <div className="text-sm text-theme-secondary mb-3 line-clamp-3 prose prose-sm max-w-none
-        prose-headings:text-theme-text
-        prose-p:text-theme-secondary
-        prose-strong:text-theme-text
-        prose-code:text-theme-primary
-        prose-a:text-theme-primary
-        prose-li:text-theme-secondary">
-        <ReactMarkdown>{previewText}</ReactMarkdown>
+      <div className="text-sm mb-3 line-clamp-3 prose prose-sm max-w-none">
+        <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+          {previewText}
+        </ReactMarkdown>
       </div>
 
       {/* Date */}

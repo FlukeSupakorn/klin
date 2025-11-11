@@ -9,15 +9,15 @@ export function NotificationSettings() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold text-slate-900 mb-6">Notification Settings</h2>
+      <h2 className="text-2xl font-bold text-theme-text mb-6">Notification Settings</h2>
       
       <div className="space-y-4">
         {notifications.map((item) => (
-          <div key={item.label} className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-            <input type="checkbox" defaultChecked className="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600" />
+          <div key={item.label} className="flex items-start gap-3 p-4 bg-theme-secondary rounded-lg">
+            <input type="checkbox" defaultChecked className="mt-1 h-4 w-4 rounded border-theme text-theme-primary" />
             <div className="flex-1">
-              <div className="font-medium text-slate-900">{item.label}</div>
-              <div className="text-sm text-slate-600">{item.description}</div>
+              <div className="font-medium text-theme-text">{item.label}</div>
+              <div className="text-sm text-theme-secondary">{item.description}</div>
             </div>
           </div>
         ))}

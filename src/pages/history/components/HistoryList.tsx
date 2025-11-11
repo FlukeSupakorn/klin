@@ -52,7 +52,7 @@ export function HistoryList({ searchQuery, activeFilter = 'all' }: HistoryListPr
       {filteredHistory.map((item) => (
         <div
           key={item.id}
-          className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition-colors"
+          className="bg-theme-background border border-theme rounded-lg p-4 hover:border-theme-primary transition-colors"
         >
           <div className="flex items-start gap-4">
             {/* File Icon */}
@@ -65,13 +65,13 @@ export function HistoryList({ searchQuery, activeFilter = 'all' }: HistoryListPr
               {/* Name Change */}
               <div className="mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-slate-900 truncate">
+                  <span className="text-sm font-medium text-theme-text truncate">
                     {item.original_name}
                   </span>
                   {item.original_name !== item.final_name && (
                     <>
-                      <ArrowRight className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                      <span className="text-sm font-medium text-indigo-600 truncate">
+                      <ArrowRight className="h-4 w-4 text-theme-muted flex-shrink-0" />
+                      <span className="text-sm font-medium text-theme-primary truncate">
                         {item.final_name}
                       </span>
                     </>
@@ -80,19 +80,19 @@ export function HistoryList({ searchQuery, activeFilter = 'all' }: HistoryListPr
               </div>
 
               {/* Folder Change */}
-              <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+              <div className="flex items-center gap-2 text-xs text-theme-muted mb-2">
                 <FolderOpen className="h-3 w-3" />
                 <span className="truncate">{item.original_folder || 'Unknown'}</span>
                 {item.original_folder !== item.final_folder && (
                   <>
                     <ArrowRight className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate text-indigo-600">{item.final_folder}</span>
+                    <span className="truncate text-theme-primary">{item.final_folder}</span>
                   </>
                 )}
               </div>
 
               {/* Timestamp */}
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-theme-muted">
                 {formatDistanceToNow(item.timestamp, { addSuffix: true })}
               </div>
             </div>

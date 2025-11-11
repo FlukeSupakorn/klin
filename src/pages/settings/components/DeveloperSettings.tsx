@@ -28,26 +28,26 @@ export function DeveloperSettings() {
 
   return (
     <div className="max-w-2xl">
-      <h2 className="text-2xl font-bold text-slate-900 mb-2">Developer Settings</h2>
-      <p className="text-slate-600 mb-6">Settings for testing and development purposes</p>
+      <h2 className="text-2xl font-bold text-theme-text mb-2">Developer Settings</h2>
+      <p className="text-theme-secondary mb-6">Settings for testing and development purposes</p>
       
       <div className="space-y-6">
         {/* Dev Mode Toggle */}
-        <div className="border border-indigo-200 rounded-lg p-6 bg-indigo-50">
+        <div className="border border-theme-primary rounded-lg p-6 bg-theme-primary-light">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Code className="h-5 w-5 text-indigo-600" />
-                <h3 className="text-lg font-semibold text-slate-900">Developer Mode</h3>
+                <Code className="h-5 w-5 text-theme-primary" />
+                <h3 className="text-lg font-semibold text-theme-text">Developer Mode</h3>
               </div>
-              <p className="text-sm text-slate-600 mb-4">
+              <p className="text-sm text-theme-secondary mb-4">
                 Enable developer mode to unlock special features for testing. When enabled, 
                 the first-time setup will appear once per app session (on first Home visit), and
                 all validation requirements will be removed.
               </p>
-              <div className="bg-white border border-indigo-300 rounded-md p-3">
-                <p className="text-xs text-indigo-900 font-medium mb-1">Dev Mode Features:</p>
-                <ul className="text-xs text-indigo-700 space-y-1 ml-4 list-disc">
+              <div className="bg-theme-background border border-theme rounded-md p-3">
+                <p className="text-xs text-theme-text font-medium mb-1">Dev Mode Features:</p>
+                <ul className="text-xs text-theme-secondary space-y-1 ml-4 list-disc">
                   <li><strong>Setup on app start</strong> - Shows setup dialog once when app opens (per session)</li>
                   <li><strong>Remove validation blockers</strong> - Can save with 0 folders (no minimum required)</li>
                   <li><strong>Quick testing</strong> - Easy iteration on onboarding flow</li>
