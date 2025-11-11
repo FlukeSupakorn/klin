@@ -215,18 +215,6 @@ export const callOrganizeAPI = async (request: OrganizeRequest): Promise<Organiz
 // Simulate AI processing delay (2-5 seconds per file)
 const getRandomDelay = () => Math.floor(Math.random() * 3000) + 2000
 
-// Mock destination folders
-const mockDestinations = [
-  'Documents',
-  'Images',
-  'Videos',
-  'Music',
-  'Archives',
-  'Applications',
-  'Code',
-  'Others',
-]
-
 // Get a random destination folder based on file type
 const getSuggestedDestination = (filename: string): string => {
   const category = getFileCategory(filename)
@@ -236,7 +224,6 @@ const getSuggestedDestination = (filename: string): string => {
 // Generate a suggested name based on file type
 const generateSuggestedName = (originalName: string): string => {
   const ext = getFileExtension(originalName)
-  const nameWithoutExt = originalName.replace(/\.[^/.]+$/, '')
   
   // Mock AI-generated descriptive names
   const descriptiveNames = [

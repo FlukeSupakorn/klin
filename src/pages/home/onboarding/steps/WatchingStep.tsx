@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { WatchingFolder } from '../../store/useHomeStore'
 
 interface WatchingStepProps {

@@ -74,9 +74,6 @@ export function HomePage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
-  // Summarize state
-  const [isSummarizing, setIsSummarizing] = useState(false)
-
   // Handle bulk delete
   const handleDeleteClick = () => setIsDeleteOpen(true)
   
@@ -115,8 +112,6 @@ export function HomePage() {
   // Handle summarize to note
   const handleSummarizeClick = async () => {
     try {
-      setIsSummarizing(true)
-      
       toast.info('AI Processing', 'Analyzing selected files...')
       
       // Generate summaries for selected files
@@ -144,8 +139,6 @@ export function HomePage() {
     } catch (error) {
       console.error('Failed to summarize files:', error)
       toast.error('Summarize Failed', 'An error occurred while creating the summary')
-    } finally {
-      setIsSummarizing(false)
     }
   }
 

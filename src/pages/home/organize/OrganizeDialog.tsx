@@ -35,8 +35,6 @@ export function OrganizeDialog({
   isOpen,
   onClose,
   selectedFiles,
-  onGenerate,
-  isLoading,
 }: OrganizeDialogProps) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -44,7 +42,6 @@ export function OrganizeDialog({
   const updateQueueItem = useActivityStore((state) => state.updateQueueItem)
   const setProcessing = useActivityStore((state) => state.setProcessing)
   const setProgress = useActivityStore((state) => state.setProgress)
-  const isCancelled = useActivityStore((state) => state.isCancelled)
 
   const [isOrganizing, setIsOrganizing] = useState(false)
 

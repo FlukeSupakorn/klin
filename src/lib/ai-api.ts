@@ -98,7 +98,7 @@ function getRandomImportance(): 'low' | 'medium' | 'high' {
 }
 
 // Mock API: Generate summary for a single file
-export async function generateFileSummary(filename: string, filePath: string): Promise<FileSummary> {
+export async function generateFileSummary(filename: string, _filePath: string): Promise<FileSummary> {
   // Simulate AI processing delay
   await new Promise(resolve => setTimeout(resolve, AI_DELAY))
 

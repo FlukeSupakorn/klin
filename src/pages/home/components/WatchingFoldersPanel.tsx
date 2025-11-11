@@ -12,7 +12,6 @@ export function WatchingFoldersPanel() {
   const selectAllFolders = useHomeStore((state) => state.selectAllFolders)
   const removeWatchingFolder = useHomeStore((state) => state.removeWatchingFolder)
   const addWatchingFolder = useHomeStore((state) => state.addWatchingFolder)
-  const updateWatchingFolder = useHomeStore((state) => state.updateWatchingFolder)
   const setFiles = useHomeStore((state) => state.setFiles)
   const files = useHomeStore((state) => state.files)
 
