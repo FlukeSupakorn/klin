@@ -15,7 +15,7 @@ import { FeaturedFolders } from './components/FeaturedFolders'
 import { FileExplorer } from './components/FileExplorer'
 import { NotePreviewPanel } from './components/NotePreviewPanel'
 import { FileNode } from './components/FileTreeNode'
-import { DestinationFoldersModal } from '@/components/shared/DestinationFoldersModal'
+import { DestinationFoldersDialog } from '@/components/ui/destination-folders-dialog'
 import { useFeaturedFolders, useFileTree, useHorizontalScroll } from './hooks/useInsights'
 import { useNotePreview } from './hooks/useNotePreview'
 import { useHomeStore } from '@/pages/home/store/useHomeStore'
@@ -105,13 +105,14 @@ export function InsightsPage() {
       )}
 
       {/* Destination Folders Modal */}
-      <DestinationFoldersModal
+      <DestinationFoldersDialog
         open={showDestinationModal}
         onOpenChange={setShowDestinationModal}
         currentFolders={destinationFolders}
         onSave={handleSaveFolders}
         title="Select Destination Folders"
         description="Choose multiple folders where your organized files will be stored."
+        showTips={true}
       />
     </div>
   )

@@ -1,3 +1,4 @@
+import { FolderOpen, X, Plus } from 'lucide-react'
 import {
   DialogDescription,
   DialogFooter,
@@ -5,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { FolderListEditor } from '@/components/shared/FolderListEditor'
+import { Input } from '@/components/ui/input'
 
 interface DestinationsStepProps {
   tempDestinations: string[]
@@ -42,16 +43,96 @@ export function DestinationsStep({
           Destination Folders ({tempDestinations.length})
         </h3>
 
-        <FolderListEditor
-          folders={tempDestinations}
-          newFolderPath={tempNewDestination}
-          onNewFolderPathChange={onSetNewDestination}
-          onBrowseFolder={onBrowseFolder}
-          onAddFolder={onAddDestination}
-          onRemoveFolder={onRemoveDestination}
-          emptyMessage="No destination folders yet"
-          placeholder="Enter folder path"
-        />
+        {/* Folder List */}
+        {tempDestinations.length === 0 ? (
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 text-center mb-4">
+            <svg
+              className="h-12 w-12 text-slate-400 mx-auto mb-2"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+            </svg>
+            <p className="text-sm text-slate-600">No destination folders yet</p>
+            <p className="text-xs text-slate-500 mt-1">Add at least one folder below</p>
+          </div>
+        ) : (
+          <div className="space-y-2 max-h-64 overflow-y-auto mb-4">
+            {tempDestinations.map((folder, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 bg-white border border-slate-200 rounded-lg p-3 hover:border-slate-300 transition-colors"
+              >
+                <div className="h-8 w-8 rounded bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    className="h-4 w-4 text-emerald-600"
+                    fill="none"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-slate-900 font-mono truncate" title={folder}>
+                    {folder}
+                  </p>
+                </div>
+                <button
+                  onClick={() => onRemoveDestination(folder)}
+                  className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors flex-shrink-0"
+                  title="Remove folder"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add New Folder Form */}
+        <div className="border-t border-slate-200 pt-4">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Add New Folder
+          </label>
+          <div className="flex gap-2">
+            <Input
+              value={tempNewDestination}
+              onChange={(e) => onSetNewDestination(e.target.value)}
+              placeholder="Enter folder path or browse..."
+              className="flex-1 font-mono text-sm"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  onAddDestination()
+                }
+              }}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBrowseFolder}
+              className="gap-2 flex-shrink-0"
+            >
+              <FolderOpen className="h-4 w-4" />
+              Browse
+            </Button>
+            <Button
+              onClick={onAddDestination}
+              disabled={!tempNewDestination.trim()}
+              className="gap-2 flex-shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </Button>
+          </div>
+        </div>
 
         <p className="text-xs text-slate-500 mt-3">
           We've added some default folders for you. You can add more or remove them.
