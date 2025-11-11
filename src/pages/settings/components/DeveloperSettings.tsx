@@ -1,44 +1,62 @@
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import { Code } from 'lucide-react'
+import { useState } from 'react'
 
-interface DeveloperSettingsProps {
-  isFirstTime: boolean
-  onFirstTimeChange: (checked: boolean) => void
-}
+export function DeveloperSettings() {
+  const [devMode, setDevMode] = useState(
+    () => localStorage.getItem('klin-dev-mode') === 'true'
+  )
 
-export function DeveloperSettings({ isFirstTime, onFirstTimeChange }: DeveloperSettingsProps) {
+  const handleDevModeToggle = (checked: boolean) => {
+    localStorage.setItem('klin-dev-mode', checked ? 'true' : 'false')
+    setDevMode(checked)
+  }
+
   return (
     <div className="max-w-2xl">
       <h2 className="text-2xl font-bold text-slate-900 mb-2">Developer Settings</h2>
       <p className="text-slate-600 mb-6">Settings for testing and development purposes</p>
       
       <div className="space-y-6">
-        {/* First Time Setup Toggle */}
-        <div className="border border-slate-200 rounded-lg p-6 bg-white">
+        {/* Dev Mode Toggle */}
+        <div className="border border-indigo-200 rounded-lg p-6 bg-indigo-50">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-2">
-                <Code className="h-5 w-5 text-purple-600" />
-                <h3 className="text-lg font-semibold text-slate-900">Simulate First Time Setup</h3>
+                <Code className="h-5 w-5 text-indigo-600" />
+                <h3 className="text-lg font-semibold text-slate-900">Developer Mode</h3>
               </div>
               <p className="text-sm text-slate-600 mb-4">
-                Toggle this to test the first-time setup experience. When enabled, the app will show 
-                the welcome wizard on next page refresh, allowing you to test the onboarding flow.
+                Enable developer mode to unlock special features for testing. When enabled, 
+                the first-time setup will always appear when navigating to the Home page, and
+                all validation requirements will be removed.
               </p>
-              <div className="bg-purple-50 border border-purple-200 rounded-md p-3">
-                <p className="text-xs text-purple-900 font-medium mb-1">Current Status:</p>
-                <p className="text-xs text-purple-700">
-                  {isFirstTime ? (
-                    <span className="font-semibold">First time mode is ACTIVE - Refresh the page to see the setup wizard</span>
+              <div className="bg-white border border-indigo-300 rounded-md p-3">
+                <p className="text-xs text-indigo-900 font-medium mb-1">Dev Mode Features:</p>
+                <ul className="text-xs text-indigo-700 space-y-1 ml-4 list-disc">
+                  <li><strong>Always show first-time setup</strong> - Opens setup dialog on every Home page visit</li>
+                  <li><strong>Remove validation blockers</strong> - Can save with 0 folders (no minimum required)</li>
+                  <li><strong>Quick testing</strong> - Rapid iteration on onboarding flow</li>
+                  <li><strong>Clear all folders</strong> - No restrictions on emptying folder lists</li>
+                </ul>
+              </div>
+              <div className="mt-3 bg-white border border-indigo-300 rounded-md p-3">
+                <p className="text-xs text-indigo-900 font-medium mb-1">Current Status:</p>
+                <p className="text-xs text-indigo-700">
+                  {devMode ? (
+                    <span className="font-semibold">✅ Dev Mode is ACTIVE - Navigate to Home to test setup</span>
                   ) : (
-                    <span>First time setup is completed - Toggle ON to test again</span>
+                    <span>❌ Dev Mode is OFF - Normal validation applies</span>
                   )}
                 </p>
               </div>
             </div>
             <div className="ml-4">
-              <Switch checked={isFirstTime} onCheckedChange={onFirstTimeChange} />
+              <Switch
+                checked={devMode}
+                onCheckedChange={handleDevModeToggle}
+              />
             </div>
           </div>
         </div>

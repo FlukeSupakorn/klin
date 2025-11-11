@@ -29,6 +29,8 @@ export function DestinationsStep({
   onBack,
   onComplete,
 }: DestinationsStepProps) {
+  const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'
+  
   return (
     <>
       <DialogHeader>
@@ -137,13 +139,22 @@ export function DestinationsStep({
         <p className="text-xs text-slate-500 mt-3">
           We've added some default folders for you. You can add more or remove them.
         </p>
+        
+        {/* Dev Mode Notice */}
+        {isDevMode && (
+          <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-md p-2">
+            <p className="text-xs text-indigo-700">
+              <span className="font-semibold">Dev Mode:</span> You can complete setup with 0 folders
+            </p>
+          </div>
+        )}
       </div>
 
       <DialogFooter className="flex gap-2">
         <Button variant="outline" onClick={onBack}>
           Back
         </Button>
-        <Button onClick={onComplete} disabled={tempDestinations.length === 0}>
+        <Button onClick={onComplete} disabled={!isDevMode && tempDestinations.length === 0}>
           <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

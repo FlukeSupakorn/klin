@@ -4,9 +4,7 @@ import { Sparkles } from 'lucide-react'
 
 interface AutomationSettingsProps {
   autoOrganize: boolean
-  isFirstTime: boolean
   onAutoOrganizeChange: (checked: boolean) => void
-  onFirstTimeChange: (checked: boolean) => void
 }
 
 export function AutomationSettings({

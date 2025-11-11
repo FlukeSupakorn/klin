@@ -14,8 +14,6 @@ export function SettingsPage() {
   const {
     autoOrganize,
     setAutoOrganize,
-    isFirstTime,
-    handleFirstTimeToggle,
   } = useAutomationSettings()
 
   return (
@@ -41,19 +39,12 @@ export function SettingsPage() {
             {activeTab === 'automation' && (
               <AutomationSettings
                 autoOrganize={autoOrganize}
-                isFirstTime={isFirstTime}
                 onAutoOrganizeChange={setAutoOrganize}
-                onFirstTimeChange={handleFirstTimeToggle}
               />
             )}
             {activeTab === 'notifications' && <NotificationSettings />}
             {activeTab === 'language' && <LanguageSettings />}
-            {activeTab === 'developer' && (
-              <DeveloperSettings
-                isFirstTime={isFirstTime}
-                onFirstTimeChange={handleFirstTimeToggle}
-              />
-            )}
+            {activeTab === 'developer' && <DeveloperSettings />}
           </div>
         </div>
       </div>

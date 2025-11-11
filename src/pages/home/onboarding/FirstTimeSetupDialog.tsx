@@ -27,13 +27,18 @@ export function FirstTimeSetupDialog() {
     removeTempWatchingFolder,
     completeFirstTimeSetup,
     completeAISetup,
+    cancelSetup,
   } = useOnboarding()
 
   if (!isFirstTimeSetup) return null
 
   return (
-    <Dialog open={isFirstTimeSetup} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-[600px]" onInteractOutside={(e) => e.preventDefault()}>
+    <Dialog open={isFirstTimeSetup} onOpenChange={(open) => {
+      if (!open) {
+        cancelSetup()
+      }
+    }}>
+      <DialogContent className="sm:max-w-[600px]">
         {/* Welcome Step */}
         {setupStep === 'welcome' && <WelcomeStep onNext={() => setSetupStep('watching')} />}
 

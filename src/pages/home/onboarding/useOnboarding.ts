@@ -198,6 +198,25 @@ export function useOnboarding() {
     }
   }
 
+  const cancelSetup = () => {
+    // Close the setup dialog and mark as completed
+    localStorage.setItem('klin-first-time-setup', 'completed')
+    setIsFirstTimeSetup(false)
+    
+    // Load any existing saved folders
+    const savedFolders = localStorage.getItem('klin-watching-folders')
+    if (savedFolders) {
+      try {
+        const folders = JSON.parse(savedFolders)
+        folders.forEach((folder: any) => {
+          addWatchingFolder(folder)
+        })
+      } catch (error) {
+        console.error('Failed to load saved folders:', error)
+      }
+    }
+  }
+
   return {
     isFirstTimeSetup,
     setupStep,
@@ -218,5 +237,6 @@ export function useOnboarding() {
     removeTempWatchingFolder,
     completeFirstTimeSetup,
     completeAISetup,
+    cancelSetup,
   }
 }

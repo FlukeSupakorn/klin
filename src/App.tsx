@@ -6,7 +6,6 @@ import HistoryPage from './pages/history'
 import NotePage from './pages/note'
 import InsightsPage from './pages/insights'
 import CalendarPage from './pages/calendar'
-import { SubscriptionPage } from './pages/subscription-page'
 import SettingsPage from './pages/settings'
 import HelpSupportPage from './pages/help-support'
 import './index.css'
@@ -24,7 +23,6 @@ function App() {
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/note" element={<NotePage />} />
             <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/subscription" element={<SubscriptionPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/help" element={<HelpSupportPage />} />
           </Routes>

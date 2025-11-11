@@ -111,7 +111,8 @@ export function DestinationFoldersDialog({
     onOpenChange(false)
   }
 
-  const canSave = tempFolders.length >= minFolders
+  const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'
+  const canSave = isDevMode ? true : tempFolders.length >= minFolders
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -283,10 +284,19 @@ export function DestinationFoldersDialog({
           )}
 
           {/* Validation Message */}
-          {tempFolders.length < minFolders && (
+          {!isDevMode && tempFolders.length < minFolders && (
             <p className="text-xs text-amber-600 mt-3">
               Please add at least {minFolders} folder{minFolders > 1 ? 's' : ''} to continue.
             </p>
+          )}
+          
+          {/* Dev Mode Notice */}
+          {isDevMode && (
+            <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-md p-2">
+              <p className="text-xs text-indigo-700">
+                <span className="font-semibold">Dev Mode:</span> Validation disabled - You can save with any number of folders
+              </p>
+            </div>
           )}
         </div>
 

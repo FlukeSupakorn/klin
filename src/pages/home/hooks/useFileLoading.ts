@@ -18,9 +18,16 @@ export function useFileLoading() {
   } = useHomeStore()
 
   useEffect(() => {
+    const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'
     const isFirstTime = localStorage.getItem('klin-first-time-setup') !== 'completed'
-    if (isFirstTime) {
+    
+    // Only show setup if truly first time OR dev mode AND app just started (not already shown)
+    if (isFirstTime || (isDevMode && !sessionStorage.getItem('klin-dev-setup-shown'))) {
       setIsFirstTimeSetup(true)
+      // Mark that we've shown the setup in this session (for dev mode)
+      if (isDevMode) {
+        sessionStorage.setItem('klin-dev-setup-shown', 'true')
+      }
       // Clear temp folders before loading defaults
       setTempWatchingFolders([])
       setFiles([])
