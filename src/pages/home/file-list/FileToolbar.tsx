@@ -1,8 +1,13 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Trash2 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown } from 'lucide-react'
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
@@ -19,15 +24,47 @@ interface FileToolbarProps {
 export function ViewSwitcher() {
   const { currentView, setCurrentView } = useFileStore()
   
+  const viewOptions = [
+    { value: 'tab', label: 'Tab View', icon: LayoutDashboard },
+    { value: 'grid', label: 'Grid View', icon: LayoutGrid },
+    { value: 'list', label: 'List View', icon: List },
+  ]
+  
+  const currentOption = viewOptions.find(opt => opt.value === currentView) || viewOptions[0]
+  const Icon = currentOption.icon
+  
   return (
     <div className="mb-4">
-      <Tabs value={currentView} onValueChange={(v) => setCurrentView(v as any)}>
-        <TabsList>
-          <TabsTrigger value="tab">Tab View</TabsTrigger>
-          <TabsTrigger value="grid">Grid View</TabsTrigger>
-          <TabsTrigger value="list">List View</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            variant="outline" 
+            className="gap-2 h-10 px-4 bg-white hover:bg-slate-50"
+          >
+            <Icon className="h-4 w-4" />
+            <span>{currentOption.label}</span>
+            <ChevronDown className="h-4 w-4 opacity-50" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-48">
+          {viewOptions.map((option) => {
+            const OptionIcon = option.icon
+            return (
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => setCurrentView(option.value as any)}
+                className="gap-2 cursor-pointer"
+              >
+                <OptionIcon className="h-4 w-4" />
+                <span>{option.label}</span>
+                {currentView === option.value && (
+                  <span className="ml-auto text-blue-600">✓</span>
+                )}
+              </DropdownMenuItem>
+            )
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   )
 }
