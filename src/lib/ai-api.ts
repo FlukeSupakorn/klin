@@ -231,3 +231,100 @@ All ${summaries.length} files have been analyzed and summarized above. This prov
     content,
   }
 }
+
+// Mock API: Generate preview note for a folder (for file explorer)
+export async function generateFolderNote(folderPath: string, folderName: string): Promise<string> {
+  // Simulate AI processing delay
+  await new Promise(resolve => setTimeout(resolve, AI_DELAY * 0.5))
+
+  const mockFileCount = Math.floor(Math.random() * 50) + 5
+  const mockCategories = categories.sort(() => Math.random() - 0.5).slice(0, 3)
+  
+  return `# 📁 ${folderName}
+
+**Path:** \`${folderPath}\`  
+**Files:** ${mockFileCount} items  
+**Last Updated:** ${new Date().toLocaleDateString()}
+
+## Overview
+
+This folder contains ${mockFileCount} files organized for project management and documentation purposes. The content includes various file types spanning multiple categories.
+
+## Key Categories
+
+${mockCategories.map(cat => `- **${cat}**: Relevant documents and resources`).join('\n')}
+
+## AI-Generated Insights
+
+- **Organization Level:** Well-structured with logical file grouping
+- **Usage Frequency:** Accessed ${Math.floor(Math.random() * 20) + 5} times this month
+- **Priority Level:** ${['High', 'Medium', 'Low'][Math.floor(Math.random() * 3)]}
+
+## Contents Summary
+
+The folder primarily contains:
+- Planning and strategy documents
+- Data analysis and reports
+- Team collaboration files
+- Reference materials and archives
+
+## Recommendations
+
+- Consider archiving files older than 6 months
+- Add README file for better organization
+- Review and update outdated documents
+
+---
+*AI-generated note • Created ${new Date().toLocaleTimeString()}*`
+}
+
+// Mock API: Generate preview note for a file (for file explorer)
+export async function generateFileNote(filePath: string, fileName: string): Promise<string> {
+  // Simulate AI processing delay
+  await new Promise(resolve => setTimeout(resolve, AI_DELAY * 0.5))
+
+  const ext = getFileExtension(fileName)
+  const summaries = mockSummaries[ext] || mockSummaries.default
+  const keyPointsSets = mockKeyPoints[ext] || mockKeyPoints.default
+  const category = getRandomItem(categories)
+  const summary = getRandomItem(summaries)
+  const keyPoints = getRandomItem(keyPointsSets)
+  
+  const fileSize = Math.floor(Math.random() * 5000) + 100
+  const lastModified = new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000)
+
+  return `# 📄 ${fileName}
+
+**Path:** \`${filePath}\`  
+**Size:** ${fileSize.toLocaleString()} KB  
+**Modified:** ${lastModified.toLocaleDateString()}  
+**Category:** ${category}
+
+## AI Summary
+
+${summary}
+
+## Key Points Extracted
+
+${keyPoints.map(point => `- ${point}`).join('\n')}
+
+## File Metadata
+
+- **Format:** ${ext.toUpperCase()}
+- **Read Time:** ~${Math.floor(Math.random() * 10) + 2} minutes
+- **Importance:** ${['⭐⭐⭐', '⭐⭐', '⭐'][Math.floor(Math.random() * 3)]}
+
+## Related Topics
+
+${categories.sort(() => Math.random() - 0.5).slice(0, 3).map(cat => `- ${cat}`).join('\n')}
+
+## AI Recommendations
+
+${Math.random() > 0.5 
+  ? '- This file contains valuable information for current projects\n- Consider sharing with relevant team members\n- Add to important documents collection'
+  : '- Review for outdated information\n- Consider consolidating with similar files\n- Archive if no longer actively used'
+}
+
+---
+*AI-generated note • Analyzed ${new Date().toLocaleTimeString()}*`
+}
