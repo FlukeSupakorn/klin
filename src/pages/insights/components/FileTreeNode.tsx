@@ -53,26 +53,26 @@ export function FileTreeNode({
   return (
     <div>
       <div
-        className={`flex items-center gap-2 py-2 px-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors ${
-          selected ? 'bg-indigo-50 hover:bg-indigo-100' : ''
+        className={`flex items-center gap-2 py-2 px-2 rounded-lg hover-bg-theme-secondary cursor-pointer transition-colors ${
+          selected ? 'bg-theme-primary-light hover:bg-theme-primary-light' : ''
         }`}
         style={{ paddingLeft: `${level * 20 + 8}px` }}
         onClick={handleClick}
       >
         {node.isDir && (
           <ChevronRight
-            className={`h-4 w-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+            className={`h-4 w-4 text-theme-muted transition-transform ${isExpanded ? 'rotate-90' : ''}`}
           />
         )}
         {!node.isDir && <div className="w-4" />}
         
         {node.isDir ? (
-          <Folder className="h-4 w-4 text-indigo-600 flex-shrink-0" />
+          <Folder className="h-4 w-4 text-theme-primary flex-shrink-0" />
         ) : (
-          <File className="h-4 w-4 text-slate-400 flex-shrink-0" />
+          <File className="h-4 w-4 text-theme-muted flex-shrink-0" />
         )}
         
-        <span className={`text-sm truncate ${selected ? 'font-medium text-indigo-900' : 'text-slate-700'}`}>
+        <span className={`text-sm truncate ${selected ? 'font-medium text-theme-primary' : 'text-theme-text'}`}>
           {node.name}
         </span>
       </div>

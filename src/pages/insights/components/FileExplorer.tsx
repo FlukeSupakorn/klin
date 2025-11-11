@@ -24,11 +24,11 @@ export function FileExplorer({
   const [searchQuery, setSearchQuery] = useState('')
 
   return (
-    <div className="w-1/2 bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
-      <div className="p-4 border-b border-slate-200">
+    <div className="w-1/2 bg-theme-background border border-theme rounded-xl overflow-hidden flex flex-col">
+      <div className="p-4 border-b border-theme">
         <div className="flex items-center gap-2 mb-3">
-          <FolderOpen className="h-5 w-5 text-indigo-600" />
-          <h2 className="text-lg font-semibold text-slate-900">File Explorer</h2>
+          <FolderOpen className="h-5 w-5 text-theme-primary" />
+          <h2 className="text-lg font-semibold text-theme-text">File Explorer</h2>
         </div>
         <Input
           placeholder="Search files and folders..."

@@ -24,9 +24,9 @@ export function FeaturedFolders({
     <div>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-indigo-600" />
-          <h2 className="text-lg font-semibold text-slate-900">Featured Folders</h2>
-          <span className="text-sm text-slate-500">AI-identified important locations</span>
+          <TrendingUp className="h-5 w-5 text-theme-primary" />
+          <h2 className="text-lg font-semibold text-theme-text">Featured Folders</h2>
+          <span className="text-sm text-theme-secondary">AI-identified important locations</span>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={onScrollLeft}>
@@ -63,7 +63,7 @@ function FeaturedFoldersSkeleton() {
   return (
     <div className="flex gap-4 overflow-hidden">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="flex-shrink-0 w-[400px] bg-white border border-slate-200 rounded-xl p-6 space-y-3">
+        <div key={i} className="flex-shrink-0 w-[400px] bg-theme-background border border-theme rounded-xl p-6 space-y-3">
           <Skeleton className="h-6 w-3/4" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
@@ -104,7 +104,7 @@ function FolderCard({ folder, onFolderClick }: FolderCardProps) {
 
   return (
     <div
-      className="flex-shrink-0 w-[400px] bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer group"
+      className="flex-shrink-0 w-[400px] bg-theme-background border border-theme rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer group"
       onClick={() => {
         onFolderClick(folder.folderPath)
       }}
@@ -114,24 +114,24 @@ function FolderCard({ folder, onFolderClick }: FolderCardProps) {
         <div className="flex items-center gap-2">
           <span className="text-2xl">{getImportanceIcon(folder.importance)}</span>
           <div>
-            <h3 className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+            <h3 className="font-semibold text-theme-text group-hover:text-theme-primary transition-colors">
               {folder.folderName}
             </h3>
-            <p className="text-xs text-slate-500">{folder.fileCount} files</p>
+            <p className="text-xs text-theme-secondary">{folder.fileCount} files</p>
           </div>
         </div>
-        <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+        <ChevronRight className="h-5 w-5 text-theme-muted group-hover:text-theme-primary transition-colors" />
       </div>
 
       {/* Overview */}
-      <p className="text-sm text-slate-600 mb-4 line-clamp-2">{folder.overview}</p>
+      <p className="text-sm text-theme-secondary mb-4 line-clamp-2">{folder.overview}</p>
 
       {/* Categories */}
       <div className="flex flex-wrap gap-2 mb-3">
         {folder.categories.slice(0, 3).map((category) => (
           <span
             key={category}
-            className="text-xs px-2 py-1 bg-slate-100 text-slate-700 rounded-full"
+            className="text-xs px-2 py-1 bg-theme-secondary text-theme-text rounded-full"
           >
             {category}
           </span>
@@ -141,15 +141,15 @@ function FolderCard({ folder, onFolderClick }: FolderCardProps) {
       {/* Highlights */}
       <div className="space-y-1">
         {folder.highlights.slice(0, 2).map((highlight, idx) => (
-          <div key={idx} className="flex items-center gap-2 text-xs text-slate-600">
-            <div className="h-1 w-1 rounded-full bg-indigo-600" />
+          <div key={idx} className="flex items-center gap-2 text-xs text-theme-secondary">
+            <div className="h-1 w-1 rounded-full bg-theme-primary" />
             <span>{highlight}</span>
           </div>
         ))}
       </div>
 
       {/* Importance Badge */}
-      <div className="mt-4 pt-4 border-t border-slate-100">
+      <div className="mt-4 pt-4 border-t border-theme-light">
         <span className={`text-xs px-2 py-1 rounded-full border ${getImportanceColor(folder.importance)}`}>
           {folder.importance.toUpperCase()} PRIORITY
         </span>

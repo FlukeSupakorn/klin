@@ -15,11 +15,11 @@ export function NotePreviewPanel({
   isLoading,
 }: NotePreviewPanelProps) {
   return (
-    <div className="w-1/2 bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
-      <div className="p-4 border-b border-slate-200">
+    <div className="w-1/2 bg-theme-background border border-theme rounded-xl overflow-hidden flex flex-col">
+      <div className="p-4 border-b border-theme">
         <div className="flex items-center gap-2">
-          <FileText className="h-5 w-5 text-indigo-600" />
-          <h2 className="text-lg font-semibold text-slate-900">AI Preview</h2>
+          <FileText className="h-5 w-5 text-theme-primary" />
+          <h2 className="text-lg font-semibold text-theme-text">AI Preview</h2>
         </div>
       </div>
 
@@ -39,9 +39,9 @@ export function NotePreviewPanel({
 function EmptyPreview() {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center">
-      <FileText className="h-16 w-16 text-slate-300 mb-4" />
-      <p className="text-slate-600 font-medium">No item selected</p>
-      <p className="text-sm text-slate-500 mt-2">
+      <FileText className="h-16 w-16 text-theme-muted mb-4" />
+      <p className="text-theme-text font-medium">No item selected</p>
+      <p className="text-sm text-theme-secondary mt-2">
         Select a file or folder to view AI-generated notes
       </p>
     </div>

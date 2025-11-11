@@ -68,26 +68,26 @@ export function NotePage() {
 
   return (
     <>
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
         {/* Header */}
-        <div className="px-8 py-6 border-b border-slate-200">
+        <div className="px-8 py-6 border-b border-theme">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">Notes</h1>
-              <p className="text-sm text-slate-500 mt-1">
+              <h1 className="text-3xl font-bold text-theme-text">Notes</h1>
+              <p className="text-sm text-theme-secondary mt-1">
                 Create and manage your markdown notes
               </p>
             </div>
             
             <div className="flex items-center gap-3">
               <button 
-                className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50"
+                className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
                 onClick={() => navigate('/settings')}
               >
-                <Settings className="h-5 w-5 text-slate-600" />
+                <Settings className="h-5 w-5 text-theme-secondary" />
               </button>
-              <button className="h-10 w-10 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-50">
-                <Bell className="h-5 w-5 text-slate-600" />
+              <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
+                <Bell className="h-5 w-5 text-theme-secondary" />
               </button>
               <Button className="gap-2" onClick={handleCreateNote}>
                 <Plus className="h-4 w-4" />
