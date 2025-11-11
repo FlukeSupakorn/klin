@@ -9,6 +9,7 @@ interface FeaturedFoldersProps {
   onScrollLeft: () => void
   onScrollRight: () => void
   onRefresh: () => void
+  onFolderClick: (folderPath: string) => void
 }
 
 export function FeaturedFolders({
@@ -17,6 +18,7 @@ export function FeaturedFolders({
   onScrollLeft,
   onScrollRight,
   onRefresh,
+  onFolderClick,
 }: FeaturedFoldersProps) {
   return (
     <div>
@@ -49,7 +51,7 @@ export function FeaturedFolders({
           style={{ scrollbarWidth: 'thin' }}
         >
           {folders.map((folder) => (
-            <FolderCard key={folder.folderPath} folder={folder} />
+            <FolderCard key={folder.folderPath} folder={folder} onFolderClick={onFolderClick} />
           ))}
         </div>
       )}
@@ -74,9 +76,10 @@ function FeaturedFoldersSkeleton() {
 
 interface FolderCardProps {
   folder: FolderInsight
+  onFolderClick: (folderPath: string) => void
 }
 
-function FolderCard({ folder }: FolderCardProps) {
+function FolderCard({ folder, onFolderClick }: FolderCardProps) {
   const getImportanceColor = (importance: string) => {
     switch (importance) {
       case 'high':
@@ -103,7 +106,7 @@ function FolderCard({ folder }: FolderCardProps) {
     <div
       className="flex-shrink-0 w-[400px] bg-white border border-slate-200 rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer group"
       onClick={() => {
-        console.log('Navigate to folder:', folder.folderPath)
+        onFolderClick(folder.folderPath)
       }}
     >
       {/* Header */}

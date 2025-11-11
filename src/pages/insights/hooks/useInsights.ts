@@ -84,10 +84,31 @@ export function useFileTree() {
     setExpandedFolders(newExpanded)
   }
 
+  const navigateToFolder = (folderPath: string) => {
+    // Expand all parent folders in the path
+    const newExpanded = new Set(expandedFolders)
+    
+    // Add the folder itself and all its parents
+    newExpanded.add(folderPath)
+    
+    // Find and expand parent folders by checking if any destination folder is a parent
+    destinationFolders.forEach(destFolder => {
+      if (folderPath.startsWith(destFolder)) {
+        newExpanded.add(destFolder)
+      }
+    })
+    
+    setExpandedFolders(newExpanded)
+    
+    // Return the folder path so it can be selected
+    return folderPath
+  }
+
   return {
     fileTree,
     expandedFolders,
     toggleFolder,
+    navigateToFolder,
     isLoading,
   }
 }

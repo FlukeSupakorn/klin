@@ -62,13 +62,3 @@ export async function createFolder(folderPath: string): Promise<void> {
     throw error
   }
 }
-
-export async function readFileBinary(filePath: string): Promise<Uint8Array> {
-  try {
-    const data = await invoke<number[]>('read_file_binary', { filePath })
-    return new Uint8Array(data)
-  } catch (error) {
-    console.error('Failed to read binary file:', error)
-    throw error
-  }
-}

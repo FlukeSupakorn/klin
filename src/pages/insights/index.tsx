@@ -13,6 +13,7 @@ import { InsightsHeader, EmptyState } from './components/InsightsHeader'
 import { FeaturedFolders } from './components/FeaturedFolders'
 import { FileExplorer } from './components/FileExplorer'
 import { NotePreviewPanel } from './components/NotePreviewPanel'
+import { FileNode } from './components/FileTreeNode'
 import { useFeaturedFolders, useFileTree, useHorizontalScroll } from './hooks/useInsights'
 import { useNotePreview } from './hooks/useNotePreview'
 import { useHomeStore } from '@/pages/home/store/useHomeStore'
@@ -21,7 +22,7 @@ import { selectFolder } from '@/lib/tauri-api'
 export function InsightsPage() {
   // Business logic from hooks
   const { featuredFolders, isLoading, reload, hasDestinations } = useFeaturedFolders()
-  const { fileTree, expandedFolders, toggleFolder, isLoading: isLoadingTree } = useFileTree()
+  const { fileTree, expandedFolders, toggleFolder, navigateToFolder, isLoading: isLoadingTree } = useFileTree()
   const { scrollLeft, scrollRight } = useHorizontalScroll()
   const { selectedItem, notePreview, isLoading: isLoadingNote, onSelectItem } = useNotePreview()
   
@@ -36,6 +37,30 @@ export function InsightsPage() {
       }
     } catch (error) {
       console.error('Failed to select folder:', error)
+    }
+  }
+
+  const handleFeaturedFolderClick = (folderPath: string) => {
+    // Navigate to the folder in the file tree
+    navigateToFolder(folderPath)
+    
+    // Find the folder node and select it
+    const findFolderNode = (nodes: FileNode[]): FileNode | null => {
+      for (const node of nodes) {
+        if (node.path === folderPath) {
+          return node
+        }
+        if (node.children) {
+          const found = findFolderNode(node.children)
+          if (found) return found
+        }
+      }
+      return null
+    }
+    
+    const folderNode = findFolderNode(fileTree)
+    if (folderNode) {
+      onSelectItem(folderNode)
     }
   }
 
@@ -54,6 +79,7 @@ export function InsightsPage() {
             onScrollLeft={scrollLeft}
             onScrollRight={scrollRight}
             onRefresh={reload}
+            onFolderClick={handleFeaturedFolderClick}
           />
 
           {/* File Explorer with Note Preview */}

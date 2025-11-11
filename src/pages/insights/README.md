@@ -1,143 +1,50 @@
 # AI Insights Page
 
 ## Overview
-The AI Insights page provides intelligent file organization analysis with a file explorer and AI-generated note previews.
+The AI Insights page provides intelligent folder analysis with a file explorer and AI-generated note previews for folders.
 
 ## Structure
 
 ```
 src/pages/insights/
-├── index.tsx                 # Main page component
+├── index.tsx                    # Main page component
 ├── components/
-│   └── FileTreeNode.tsx     # Recursive file tree component
+│   ├── InsightsHeader.tsx      # Header with folder selection
+│   ├── FeaturedFolders.tsx     # Horizontal scroll of destination folders
+│   ├── FileExplorer.tsx        # File tree explorer
+│   ├── FileTreeNode.tsx        # Recursive file tree node component
+│   └── NotePreviewPanel.tsx    # AI notes preview panel
+├── hooks/
+│   ├── useInsights.ts          # Featured folders & file tree logic
+│   └── useNotePreview.ts       # Folder AI notes generation
 └── utils/
-    └── fileTree.ts          # File tree utilities and mock data generation
+    └── fileTree.ts             # File tree utilities
 ```
 
 ## Features
 
-### ✅ Implemented
+### ✅ Current Implementation
 - **Real Destination Folders**: Uses actual destination folders from settings (`useHomeStore`)
-- **Mock File Structure**: AI-generated folder organization with realistic file names
+- **Real File Structure**: Reads actual files from destination folders using Tauri
 - **Horizontal Scroll**: Featured folders with left/right navigation (3 cards visible)
-- **File Explorer**: Tree navigation with expand/collapse
-- **Markdown Rendering**: Uses `react-markdown` with prose styling
-- **AI Note Preview**: Displays AI-generated summaries for folders and files
-- **Empty State**: Shows message when no destination folders configured
+- **File Explorer**: Tree navigation with expand/collapse for folders
+- **Click to Open Files**: Files open with system default application (like home page)
+- **Markdown Rendering**: Uses `react-markdown` with `@tailwindcss/typography`
+- **AI Folder Notes**: Displays AI-generated summaries for folders only
+- **Empty State**: Shows folder selection when no destination folders configured
+- **Persistent Storage**: Destination folders saved to localStorage via Zustand persist
 
-### 🚧 Future Implementation: File Preview
+### 📝 Folder-Only Previews
 
-#### Supported File Types
-The following file types should be supported for preview:
+The preview panel now shows:
+- **Folders**: AI-generated notes with folder overview and file summaries
+- **Files**: Open with system application (no in-app preview)
 
-1. **PDF Files** (`.pdf`)
-   - Library: `react-pdf` or `@react-pdf-viewer/core`
-   - Usage: Display PDF pages with zoom/navigation controls
-
-2. **Excel Files** (`.xlsx`, `.xls`)
-   - Library: `sheetjs` (xlsx) + custom table renderer
-   - Usage: Parse and display spreadsheet data in tables
-
-3. **Word Documents** (`.docx`, `.doc`)
-   - Library: `mammoth` (docx to HTML)
-   - Usage: Convert and display formatted document content
-
-4. **Text/Markdown** (`.txt`, `.md`)
-   - Already supported via `react-markdown`
-   - Usage: Display plain text or rendered markdown
-
-5. **CSV Files** (`.csv`)
-   - Library: `papaparse` + table component
-   - Usage: Parse and display tabular data
-
-#### Implementation Guide
-
-```typescript
-// In handleSelectItem function:
-const ext = item.name.split('.').pop()?.toLowerCase()
-
-if (item.isDir) {
-  // Show folder note
-  const note = await generateFolderNote(item.path, item.name)
-  setNotePreview(note)
-} else {
-  // Check file type and preview accordingly
-  switch (ext) {
-    case 'pdf':
-      // Load and display PDF
-      // setPreviewType('pdf')
-      // setPdfUrl(item.path)
-      break
-    
-    case 'xlsx':
-    case 'xls':
-      // Parse and display Excel
-      // const data = await parseExcel(item.path)
-      // setPreviewType('excel')
-      // setExcelData(data)
-      break
-    
-    case 'docx':
-    case 'doc':
-      // Convert and display Word doc
-      // const html = await convertDocx(item.path)
-      // setPreviewType('document')
-      // setDocumentHtml(html)
-      break
-    
-    case 'txt':
-    case 'md':
-      // Display text/markdown
-      // const content = await readTextFile(item.path)
-      // setPreviewType('text')
-      // setTextContent(content)
-      break
-    
-    default:
-      // Unsupported format - show AI note instead
-      const note = await generateFileNote(item.path, item.name)
-      setPreviewType('ai-note')
-      setNotePreview(note)
-  }
-}
-```
-
-#### Preview Component Structure
-
-```tsx
-// Create src/pages/insights/components/FilePreview.tsx
-
-interface FilePreviewProps {
-  file: FileNode
-  type: 'pdf' | 'excel' | 'document' | 'text' | 'ai-note' | 'unsupported'
-  data: any
-}
-
-export function FilePreview({ file, type, data }: FilePreviewProps) {
-  switch (type) {
-    case 'pdf':
-      return <PdfViewer url={data.url} />
-    case 'excel':
-      return <ExcelViewer data={data.sheets} />
-    case 'document':
-      return <DocumentViewer html={data.html} />
-    case 'text':
-      return <TextViewer content={data.content} />
-    case 'ai-note':
-      return <ReactMarkdown>{data.markdown}</ReactMarkdown>
-    default:
-      return <UnsupportedFileMessage fileName={file.name} />
-  }
-}
-```
-
-## Mock Data
-
-The mock file structure is generated in `utils/fileTree.ts` with:
-- AI-organized categories (Reports, Planning, Archive)
-- Realistic file names with proper extensions
-- Nested folder structure
-- File type icons and metadata
+This approach:
+- ✅ Keeps the app fast and lightweight
+- ✅ Uses system apps for optimal file viewing
+- ✅ Focuses on AI-generated insights for folders
+- ✅ Reduces complexity and dependencies
 
 ## Styling
 
@@ -148,16 +55,26 @@ Uses Tailwind's typography plugin (`prose`) for markdown rendering:
 - `prose-code:bg-indigo-50` - Code background
 
 ## API Integration
+    
+    case 'xlsx':
+## API Integration
 
-### Current Mock APIs
-- `generateFolderNote(path, name)` - AI folder summary
-- `generateFileNote(path, name)` - AI file summary
-- `getFeaturedFolders(folders)` - Important folder insights
+### Current AI APIs
+- `generateFolderNote(path, name)` - AI folder summary with file analysis
 
-### Real API Requirements
-When implementing real AI:
-1. Replace mock delay with actual API calls
+### Real API Integration
+When implementing with real AI service:
+1. Replace mock delay with actual API calls to your AI service
 2. Add authentication/authorization
-3. Implement caching for frequently accessed files
+3. Implement caching for frequently accessed folders
 4. Add error handling and retry logic
 5. Stream large responses for better UX
+
+## User Flow
+
+1. **No Destinations**: Shows empty state with "Select Destination Folder" button
+2. **Select Folder**: Opens Tauri folder picker, adds to destination list
+3. **Featured Folders**: View destination folders in horizontal scroll
+4. **Explore Files**: Click folders to expand/collapse tree
+5. **View AI Notes**: Select folder to see AI-generated overview
+6. **Open Files**: Click files to open with system default application
