@@ -24,6 +24,10 @@ import { useToast } from '@/components/ui/toast'
 // Tauri API
 import { deleteFile } from '@/lib/tauri-api'
 
+// AI API
+import { generateBatchSummaries, createNoteFromSummaries } from '@/lib/ai-api'
+import { createNote } from '@/lib/note-api'
+
 // Sub-feature components
 import { DestinationBanner } from './destination/DestinationBanner'
 import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
@@ -70,6 +74,9 @@ export function HomePage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  // Summarize state
+  const [isSummarizing, setIsSummarizing] = useState(false)
+
   // Handle bulk delete
   const handleDeleteClick = () => setIsDeleteOpen(true)
   
@@ -102,6 +109,43 @@ export function HomePage() {
       toast.error('Delete Failed', 'An error occurred while deleting files')
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  // Handle summarize to note
+  const handleSummarizeClick = async () => {
+    try {
+      setIsSummarizing(true)
+      
+      toast.info('AI Processing', 'Analyzing selected files...')
+      
+      // Generate summaries for selected files
+      const filesToSummarize = selectedFiles.map(f => ({ name: f.name, path: f.path }))
+      const summaries = await generateBatchSummaries(filesToSummarize)
+      
+      // Create note from summaries
+      const noteTitle = `File Summary - ${new Date().toLocaleDateString()}`
+      const { content } = await createNoteFromSummaries(summaries, noteTitle)
+      
+      // Save note
+      await createNote(noteTitle, content)
+      
+      // Clear selection
+      deselectAllFiles()
+      
+      // Show success toast
+      toast.success(
+        'Note Created',
+        `AI summary of ${selectedFiles.length} files saved to Notes`
+      )
+      
+      // Navigate to notes page
+      navigate('/note')
+    } catch (error) {
+      console.error('Failed to summarize files:', error)
+      toast.error('Summarize Failed', 'An error occurred while creating the summary')
+    } finally {
+      setIsSummarizing(false)
     }
   }
 
@@ -163,6 +207,7 @@ export function HomePage() {
           isAllSelected={isAllSelected}
           onSelectAll={handleSelectAll}
           onDeleteClick={handleDeleteClick}
+          onSummarizeClick={handleSummarizeClick}
         />
 
         {/* File List */}

@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown } from 'lucide-react'
+import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react'
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
@@ -18,6 +18,7 @@ interface FileToolbarProps {
   isAllSelected: boolean
   onSelectAll: () => void
   onDeleteClick: () => void
+  onSummarizeClick?: () => void
 }
 
 // Combined Toolbar Component (single line with all controls)
@@ -29,6 +30,7 @@ export function FileToolbar({
   isAllSelected,
   onSelectAll,
   onDeleteClick,
+  onSummarizeClick,
 }: FileToolbarProps) {
   const { currentView, setCurrentView } = useFileStore()
   
@@ -92,10 +94,19 @@ export function FileToolbar({
           {selectedCount} of {totalCount} selected
         </span>
         
-        {/* Delete Button (shows when items are selected) */}
+        {/* AI Actions and Delete Button (shows when items are selected) */}
         {selectedCount > 0 && (
           <>
             <span className="text-sm text-slate-600">•</span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 border-indigo-200"
+              onClick={onSummarizeClick}
+            >
+              <Sparkles className="h-4 w-4" />
+              Summarize to Note
+            </Button>
             <Button
               variant="outline"
               size="sm"

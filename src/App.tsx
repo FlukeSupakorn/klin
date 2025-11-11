@@ -4,6 +4,7 @@ import { ToastContainer } from './components/ui/toast'
 import HomePage from './pages/home'
 import HistoryPage from './pages/history'
 import NotePage from './pages/note'
+import InsightsPage from './pages/insights'
 import CalendarPage from './pages/calendar'
 import { SubscriptionPage } from './pages/subscription-page'
 import SettingsPage from './pages/settings'
@@ -19,6 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/files" replace />} />
             <Route path="/files" element={<HomePage />} />
+            <Route path="/insights" element={<InsightsPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/note" element={<NotePage />} />
             <Route path="/calendar" element={<CalendarPage />} />
