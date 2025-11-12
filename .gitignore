@@ -248,3 +248,5 @@ pnpm-lock.yaml
 *.tar.gz
 *.rar
 *.7z
+
+prompt

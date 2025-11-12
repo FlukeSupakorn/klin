@@ -1,12 +1,15 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import health
+
+from app.core.lifecycle import lifespan
+from app.api.v1.routers import health, organize
 
 app = FastAPI(
-    title="FastAPI Worker Demo",
+    title="FastAPI Worker - AI File Organizer",
     description="File processing worker with OCR, VLM analysis, and planning capabilities",
-    version="0.2.0"
+    version="0.3.0",
+    lifespan=lifespan
 )
 
 app.add_middleware(
@@ -17,7 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(health.router)
-# app.include_router(ingest.router)
+app.include_router(organize.router)
 # app.include_router(plan.router)
 # app.include_router(analyze.router)
 
