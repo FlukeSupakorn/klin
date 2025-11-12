@@ -1,0 +1,221 @@
+import { Settings, Bell, CheckCircle2, X, XCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useActivityStore } from './store/useActivityStore'
+import { SearchToolbar, FilterType } from './components/SearchToolbar'
+import { ActivityQueue } from './components/ActivityQueue'
+import { ActivityList } from './components/ActivityList'
+import { Button } from '@/components/ui/button'
+import { useState } from 'react'
+
+export function ActivityPage() {
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState<FilterType>('all')
+  
+  const queue = useActivityStore((state) => state.queue)
+  const history = useActivityStore((state) => state.history)
+  const isProcessing = useActivityStore((state) => state.isProcessing)
+  const currentIndex = useActivityStore((state) => state.currentIndex)
+  const totalFiles = useActivityStore((state) => state.totalFiles)
+  const rejectAll = useActivityStore((state) => state.rejectAll)
+  const moveToHistory = useActivityStore((state) => state.moveToHistory)
+  const removeFromQueue = useActivityStore((state) => state.removeFromQueue)
+  const cancelProcessing = useActivityStore((state) => state.cancelProcessing)
+
+  const hasCompletedItems = queue.some((item) => item.status === 'completed')
+
+  // Calculate filtered history count
+  const getFilteredHistoryCount = () => {
+    return history.filter((item) => {
+      const matchesSearch = item.original_name.toLowerCase().includes(searchQuery.toLowerCase())
+      if (!matchesSearch) return false
+
+      if (activeFilter === 'approved' && item.action !== 'approved') return false
+      if (activeFilter === 'rejected' && item.action !== 'rejected') return false
+
+      const now = new Date()
+      const itemDate = new Date(item.timestamp)
+      
+      if (activeFilter === 'today') {
+        const isToday = 
+          itemDate.getDate() === now.getDate() &&
+          itemDate.getMonth() === now.getMonth() &&
+          itemDate.getFullYear() === now.getFullYear()
+        if (!isToday) return false
+      }
+      
+      if (activeFilter === 'week') {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        if (itemDate < weekAgo) return false
+      }
+      
+      if (activeFilter === 'month') {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+        if (itemDate < monthAgo) return false
+      }
+
+      return true
+    }).length
+  }
+
+  const filteredCount = getFilteredHistoryCount()
+
+  const handleConfirm = () => {
+    // Move all items to history with their current userAction
+    const completedItems = queue.filter((item) => item.status === 'completed')
+    completedItems.forEach((item) => {
+      moveToHistory(item)
+      removeFromQueue(item.id)
+    })
+  }
+
+  const handleRejectAll = () => {
+    rejectAll()
+    // Auto-confirm after rejecting all - move all to history
+    setTimeout(() => {
+      const currentQueue = useActivityStore.getState().queue
+      const completedItems = currentQueue.filter((item) => item.status === 'completed')
+      completedItems.forEach((item) => {
+        moveToHistory(item)
+        removeFromQueue(item.id)
+      })
+    }, 100)
+  }
+
+  return (
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
+      {/* Header */}
+      <div className="px-8 py-6 border-b border-theme bg-theme-background">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-theme-text">Activity</h1>
+            <p className="text-sm text-theme-secondary mt-1">
+              Track file organization progress and history
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <button 
+              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
+              onClick={() => navigate('/settings')}
+            >
+              <Settings className="h-5 w-5 text-theme-secondary" />
+            </button>
+            <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
+              <Bell className="h-5 w-5 text-theme-secondary" />
+            </button>
+          </div>
+        </div>
+
+        <SearchToolbar 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto px-8 py-6 bg-theme-background">
+        {/* Processing Progress */}
+        {isProcessing && (
+          <div className="mb-6 bg-theme-primary-light border border-theme-primary rounded-lg p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-theme-text">
+                  Processing files...
+                </span>
+                <span className="text-sm text-theme-secondary">
+                  {currentIndex} / {totalFiles}
+                </span>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={cancelProcessing}
+                className="gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-300 dark:border-red-700"
+              >
+                <XCircle className="h-4 w-4" />
+                Cancel
+              </Button>
+            </div>
+            <div className="w-full bg-theme-secondary rounded-full h-2">
+              <div
+                className="bg-theme-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentIndex / totalFiles) * 100}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Queue Section */}
+        {queue.length > 0 && (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-theme-text">
+                Current Queue ({queue.length})
+              </h2>
+              
+              {hasCompletedItems && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleRejectAll}
+                    className="gap-2 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/30 border-red-300 dark:border-red-700"
+                  >
+                    <X className="h-4 w-4" />
+                    Reject All
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={handleConfirm}
+                    className="gap-2"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    Confirm
+                  </Button>
+                </div>
+              )}
+            </div>
+            
+            <ActivityQueue searchQuery={searchQuery} />
+          </div>
+        )}
+
+        {/* History Section */}
+        <div>
+          <h2 className="text-xl font-semibold text-theme-text mb-4">
+            History ({activeFilter !== 'all' || searchQuery ? `${filteredCount} / ` : ''}{history.length})
+          </h2>
+          
+          {history.length === 0 && queue.length === 0 ? (
+            <div className="bg-theme-secondary border border-theme rounded-lg p-12 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-theme-tertiary mb-4">
+                <svg
+                  className="h-8 w-8 text-theme-muted"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-theme-text mb-1">No activity yet</h3>
+              <p className="text-sm text-theme-secondary">
+                Organize files to see them appear here
+              </p>
+            </div>
+          ) : (
+            <ActivityList searchQuery={searchQuery} activeFilter={activeFilter} />
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default ActivityPage

@@ -1,0 +1,55 @@
+import { useSettingsTabs } from './hooks/useSettingsTabs'
+import { useAutomationSettings } from './hooks/useAutomationSettings'
+import { SettingsSidebar } from './components/SettingsSidebar'
+import { ProfileSettings } from './components/ProfileSettings'
+import { SecuritySettings } from './components/SecuritySettings'
+import { AppearanceSettings } from './components/AppearanceSettings'
+import { AutomationSettings } from './components/AutomationSettings'
+import { NotificationSettings } from './components/NotificationSettings'
+import { LanguageSettings } from './components/LanguageSettings'
+import { DeveloperSettings } from './components/DeveloperSettings'
+
+export function SettingsPage() {
+  const { activeTab, setActiveTab } = useSettingsTabs()
+  const {
+    autoOrganize,
+    setAutoOrganize,
+  } = useAutomationSettings()
+
+  return (
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
+      {/* Header */}
+      <div className="px-8 py-6 border-b border-theme">
+        <div>
+          <h1 className="text-3xl font-bold text-theme-text">Settings</h1>
+          <p className="text-sm text-theme-secondary mt-1">Manage your account settings and preferences</p>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-auto">
+        <div className="flex h-full">
+          <SettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+
+          {/* Content Area */}
+          <div className="flex-1 p-8 bg-theme-background">
+            {activeTab === 'profile' && <ProfileSettings />}
+            {activeTab === 'security' && <SecuritySettings />}
+            {activeTab === 'appearance' && <AppearanceSettings />}
+            {activeTab === 'automation' && (
+              <AutomationSettings
+                autoOrganize={autoOrganize}
+                onAutoOrganizeChange={setAutoOrganize}
+              />
+            )}
+            {activeTab === 'notifications' && <NotificationSettings />}
+            {activeTab === 'language' && <LanguageSettings />}
+            {activeTab === 'developer' && <DeveloperSettings />}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default SettingsPage

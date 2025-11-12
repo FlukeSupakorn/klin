@@ -1,0 +1,194 @@
+import { useEffect } from 'react'
+import { getDownloadsFolder, readFolder, FileItem } from '@/lib/tauri-api'
+import { useHomeStore } from '../store/useHomeStore'
+import { generateUUID } from '@/lib/uuid'
+
+export function useFileLoading() {
+  const {
+    watchingFolders,
+    selectedFolderIds,
+    setFiles,
+    setLoading,
+    setIsFirstTimeSetup,
+    addTempWatchingFolder,
+    setTempWatchingFolders,
+    setTempDestinations,
+    updateWatchingFolder,
+    setWatchingFolders,
+  } = useHomeStore()
+
+  useEffect(() => {
+    const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'
+    const isFirstTime = localStorage.getItem('klin-first-time-setup') !== 'completed'
+    
+    // Only show setup if truly first time OR dev mode AND app just started (not already shown)
+    if (isFirstTime || (isDevMode && !sessionStorage.getItem('klin-dev-setup-shown'))) {
+      setIsFirstTimeSetup(true)
+      // Mark that we've shown the setup in this session (for dev mode)
+      if (isDevMode) {
+        sessionStorage.setItem('klin-dev-setup-shown', 'true')
+      }
+      // Clear temp folders before loading defaults
+      setTempWatchingFolders([])
+      setFiles([])
+      loadDefaultFolders()
+    } else {
+      loadSavedWatchingFolders()
+    }
+  }, [])
+
+  // Reload files when selection changes (but not on initial mount)
+  useEffect(() => {
+    const isFirstTime = localStorage.getItem('klin-first-time-setup') !== 'completed'
+    if (!isFirstTime && watchingFolders.length > 0) {
+      loadFilesFromSelectedFolders()
+    }
+  }, [selectedFolderIds])
+
+  const loadDefaultFolders = async () => {
+    try {
+      // Check if there are saved watching folders (for dev mode)
+      const savedFolders = localStorage.getItem('klin-watching-folders')
+      
+      if (savedFolders) {
+        // Load existing folders into temp state for setup
+        const folders = JSON.parse(savedFolders)
+        setTempWatchingFolders(folders)
+      } else {
+        // First time ever - load Downloads as default
+        const downloadsPath = await getDownloadsFolder()
+        const folderName = getFolderName(downloadsPath)
+        
+        addTempWatchingFolder({
+          id: generateUUID(),
+          name: folderName,
+          path: downloadsPath,
+          fileCount: 0,
+        })
+      }
+      
+      const downloadsPath = await getDownloadsFolder()
+      setTempDestinations([
+        `${downloadsPath}/Documents`,
+        `${downloadsPath}/Images`,
+        `${downloadsPath}/Videos`,
+      ])
+      setLoading(false)
+    } catch (error) {
+      console.error('Failed to load default folders:', error)
+      setLoading(false)
+    }
+  }
+
+  const loadSavedWatchingFolders = async () => {
+    try {
+      setLoading(true)
+      
+      // Load watching folders from localStorage
+      const savedFolders = localStorage.getItem('klin-watching-folders')
+      if (savedFolders) {
+        const folders = JSON.parse(savedFolders)
+        // Set all folders at once to prevent duplicates
+        setWatchingFolders(folders)
+        
+        // Load files immediately using the folders we just loaded
+        await loadFilesFromFolders(folders)
+      }
+    } catch (error) {
+      console.error('Failed to load saved watching folders:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadFilesFromFolders = async (foldersToLoad: any[]) => {
+    try {
+      if (foldersToLoad.length === 0) {
+        setFiles([])
+        return
+      }
+      
+      // Load files from each folder
+      const allFiles: FileItem[] = []
+      for (const folder of foldersToLoad) {
+        try {
+          const files = await readFolder(folder.path)
+          // Add source folder info to each file
+          const filesWithSource = files.map(file => ({
+            ...file,
+            sourceFolder: folder.path,
+            sourceFolderId: folder.id,
+            sourceFolderName: folder.name,
+          }))
+          allFiles.push(...filesWithSource)
+          
+          // Update file count for this folder
+          updateWatchingFolder(folder.id, { fileCount: files.length })
+        } catch (error) {
+          console.error(`Failed to load files from ${folder.path}:`, error)
+        }
+      }
+      
+      setFiles(allFiles)
+    } catch (error) {
+      console.error('Failed to load files:', error)
+    }
+  }
+
+  const loadFilesFromSelectedFolders = async () => {
+    try {
+      setLoading(true)
+      
+      // Determine which folders to load from
+      const foldersToLoad = selectedFolderIds.length === 0
+        ? watchingFolders // All folders
+        : watchingFolders.filter(f => selectedFolderIds.includes(f.id))
+      
+      if (foldersToLoad.length === 0) {
+        setFiles([])
+        return
+      }
+      
+      // Load files from each folder
+      const allFiles: FileItem[] = []
+      for (const folder of foldersToLoad) {
+        try {
+          const files = await readFolder(folder.path)
+          // Add source folder info to each file
+          const filesWithSource = files.map(file => ({
+            ...file,
+            sourceFolder: folder.path,
+            sourceFolderId: folder.id,
+            sourceFolderName: folder.name,
+          }))
+          allFiles.push(...filesWithSource)
+          
+          // Update file count for this folder
+          updateWatchingFolder(folder.id, { fileCount: files.length })
+        } catch (error) {
+          console.error(`Failed to load files from ${folder.path}:`, error)
+        }
+      }
+      
+      setFiles(allFiles)
+    } catch (error) {
+      console.error('Failed to load files:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const reloadFiles = async () => {
+    await loadFilesFromSelectedFolders()
+  }
+
+  const getFolderName = (path: string) => {
+    const parts = path.split(/[\\/]/)
+    return parts[parts.length - 1] || path
+  }
+
+  return {
+    reloadFiles,
+    loadFilesFromSelectedFolders,
+  }
+}
