@@ -94,8 +94,16 @@ export function ActivityQueue({ searchQuery }: ActivityQueueProps) {
             <div className="flex-1 min-w-0">
               {/* Original Name */}
               <div className="mb-2">
-                <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Original:</span>
-                <p className="text-sm font-medium text-slate-100 dark:text-slate-200 truncate">
+                <span className={`text-xs font-medium ${
+                  item.status === 'processing' 
+                    ? 'text-slate-600 dark:text-slate-300' 
+                    : 'text-slate-600 dark:text-slate-400'
+                }`}>Original:</span>
+                <p className={`text-sm font-medium truncate ${
+                  item.status === 'processing'
+                    ? 'text-slate-900 dark:text-slate-100'
+                    : 'text-slate-900 dark:text-slate-100'
+                }`}>
                   {item.original_name}
                 </p>
               </div>
