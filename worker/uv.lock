@@ -3,6 +3,18 @@ revision = 3
 requires-python = ">=3.13"
 
 [[package]]
+name = "aiodataloader"
+version = "0.4.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/bc/3b/405fe771e782054509f976db2a29c69bb6250be8bde16ac1fa93755070c6/aiodataloader-0.4.2.tar.gz", hash = "sha256:c92f6f2fb7ee13939ffd68274895aca44ccc0294a1275179bfb8af2b29b788e1", size = 13458, upload-time = "2025-02-17T14:51:43.336Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/20/8700336be44dcccab78741f2513b1b1474ba4070134e8c2b5a50865f07bd/aiodataloader-0.4.2-py3-none-any.whl", hash = "sha256:3c9780867631326a2ae931c322fac5e2a2ad5a48bf7646e5250834630536ef57", size = 10994, upload-time = "2025-02-17T14:51:41.589Z" },
+]
+
+[[package]]
 name = "annotated-doc"
 version = "0.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -146,6 +158,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f9/48/0f14d8555b750dc8c04382804e4214f1d7f55298127f3a0237ba566e69dd/fastapi_cloud_cli-0.3.1.tar.gz", hash = "sha256:8c7226c36e92e92d0c89827e8f56dbf164ab2de4444bd33aa26b6c3f7675db69", size = 24080, upload-time = "2025-10-09T11:32:58.174Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/68/79/7f5a5e5513e6a737e5fb089d9c59c74d4d24dc24d581d3aa519b326bedda/fastapi_cloud_cli-0.3.1-py3-none-any.whl", hash = "sha256:7d1a98a77791a9d0757886b2ffbf11bcc6b3be93210dd15064be10b216bf7e00", size = 19711, upload-time = "2025-10-09T11:32:57.118Z" },
+]
+
+[[package]]
+name = "fastapi-voyager"
+version = "0.12.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "pydantic-resolve" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/86/1d/3f2e98e055fcdd35fc7e5f022fe4ea51f72ae80fa6e695584ac3de717b0e/fastapi_voyager-0.12.3.tar.gz", hash = "sha256:d43f97460dfaf4343a2bab518f56533dd9c35bf8b75aa69974fc7b4db2145a25", size = 582813, upload-time = "2025-11-23T13:55:54.615Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c2/ba/2ee6ee0cf38e177c29c99348a0765f8ffc5e219b82c1ededafde32d94146/fastapi_voyager-0.12.3-py3-none-any.whl", hash = "sha256:cd605eb53536e08be61fdceb4463dc3e99c36fb03b837a584c7de277682d93df", size = 529128, upload-time = "2025-11-23T13:55:53.569Z" },
 ]
 
 [[package]]
@@ -372,6 +397,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/5c/96/5fb7d8c3c17bc8c62fdb031c47d77a1af698f1d7a406b0f79aaa1338f9ad/pydantic_core-2.41.5-cp314-cp314t-win32.whl", hash = "sha256:b4ececa40ac28afa90871c2cc2b9ffd2ff0bf749380fbdf57d165fd23da353aa", size = 1988906, upload-time = "2025-11-04T13:41:56.606Z" },
     { url = "https://files.pythonhosted.org/packages/22/ed/182129d83032702912c2e2d8bbe33c036f342cc735737064668585dac28f/pydantic_core-2.41.5-cp314-cp314t-win_amd64.whl", hash = "sha256:80aa89cad80b32a912a65332f64a4450ed00966111b6615ca6816153d3585a8c", size = 1981607, upload-time = "2025-11-04T13:41:58.889Z" },
     { url = "https://files.pythonhosted.org/packages/9f/ed/068e41660b832bb0b1aa5b58011dea2a3fe0ba7861ff38c4d4904c1c1a99/pydantic_core-2.41.5-cp314-cp314t-win_arm64.whl", hash = "sha256:35b44f37a3199f771c3eaa53051bc8a70cd7b54f333531c59e29fd4db5d15008", size = 1974769, upload-time = "2025-11-04T13:42:01.186Z" },
+]
+
+[[package]]
+name = "pydantic-resolve"
+version = "1.13.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiodataloader" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5a/b8/e4026796bd4a3f97255dfc6c61718aefd8e1d45a1180d39a09c60d0bf9a1/pydantic_resolve-1.13.5.tar.gz", hash = "sha256:862c75273f792ac6ef27b5117b844466ac142080a12b2f816c0b4ca08f0059c3", size = 26926, upload-time = "2025-10-23T02:51:07.447Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f3/30/03b74616dff02fa7dbfc44e67b4d0ba7608230085e9658e4d3f0a50761b8/pydantic_resolve-1.13.5-py3-none-any.whl", hash = "sha256:5a7a46c9d42ce9cd3b2b90e7f6a9cd7cf277cfe10d82451644f8f224c3e9d753", size = 28238, upload-time = "2025-10-23T02:51:05.929Z" },
 ]
 
 [[package]]
@@ -752,6 +789,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "fastapi-voyager" },
     { name = "httpx" },
     { name = "pydantic-settings" },
     { name = "python-multipart" },
@@ -760,6 +798,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.121.0" },
+    { name = "fastapi-voyager", specifier = ">=0.12.3" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydantic-settings", specifier = ">=2.11.0" },
     { name = "python-multipart", specifier = ">=0.0.20" },

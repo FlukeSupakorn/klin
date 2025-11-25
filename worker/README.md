@@ -63,13 +63,24 @@ uv run fastapi dev app/main.py
 
 **Option 2: Using Uvicorn directly**
 ```bash
-uv run uvicorn app.main:app --reload --port 8000
+uv run uvicorn app.main:app --reload
 ```
 
 **Option 3: Using Python script (reads PORT from .env)**
 ```bash
 uv run python app/main.py
 ```
+
+### Comparison of Development Options
+
+| Feature | FastAPI CLI | Uvicorn | Python Script |
+|---------|-------------|---------|---------------|
+| **Command** | `uv run fastapi dev app/main.py` | `uv run uvicorn app.main:app --reload` | `uv run python app/main.py` |
+| **Default Port** | 8000 | 8000 | 7071 (from .env) |
+| **Auto-reload** | ✅ Built-in | ✅ With `--reload` flag | ✅ Built-in |
+| **Reads .env PORT** | ❌ | ❌ | ✅ |
+| **Custom Port** | `--port 7071` | `--port 7071` | Edit `.env` file |
+| **Best For** | Quick start, standard setup | Fine-grained control | Custom configuration |
 
 ### Production Mode
 ```bash
@@ -85,13 +96,14 @@ The server will start at:
 - **API**: http://127.0.0.1:8000
 - **Interactive Docs**: http://127.0.0.1:8000/docs
 - **ReDoc**: http://127.0.0.1:8000/redoc
-- **Scalar**: Coming soon...
+- **Voyager**: http://127.0.0.1:8000/voyager
 
 ## 📚 API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/health` | GET | Health check - returns `{"ok": true}` |
+| `/voyager` | GET | API dependency visualization (FastAPI Voyager) |
 | `/ingest` | POST | Process and parse PDF and TXT files |
 | `/plan` | POST | Generate file organization suggestions |
 | `/analyze` | POST | VLM analysis of images/PDFs (text extraction, description) |

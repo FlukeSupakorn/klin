@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_voyager.server import create_voyager
 
 from app.core.lifecycle import lifespan
 from app.api.v1.routers import health, organize
@@ -11,6 +12,9 @@ app = FastAPI(
     version="0.3.0",
     lifespan=lifespan
 )
+
+voyager_app = create_voyager(app)
+app.mount("/voyager", voyager_app)
 
 app.add_middleware(
     CORSMiddleware,
