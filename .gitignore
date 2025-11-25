@@ -250,3 +250,5 @@ pnpm-lock.yaml
 *.7z
 
 prompt
+
+lancedb

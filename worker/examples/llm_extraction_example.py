@@ -45,11 +45,8 @@ async def main():
     """
     # Example files (replace with your actual file paths)
     example_files = [
-        "/path/to/document.pdf",
-        "/path/to/report.docx",
-        "/path/to/presentation.pptx",
-        "/path/to/data.xlsx",
-        "/path/to/screenshot.png",
+        "C:/Users/noone/Downloads/67-10-22-266-274-671027+ปัจจัยที่มีอิทธิพลต่อการตัดสินใจใช้ระบบ.pdf",
+        "C:/Users/noone/Downloads/GEN421 Project.pdf"
     ]
     
     print("🚀 LLM-Based Text Extraction Demo")
