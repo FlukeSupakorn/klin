@@ -115,7 +115,7 @@ trained_models/
 data/
 datasets/
 *.csv
-*.json
+#*.json
 *.jsonl
 *.parquet
 !package.json

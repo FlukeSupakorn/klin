@@ -1,0 +1,18 @@
+{
+    "result": {
+        "C:\\Users\\noone\\Downloads\\67-10-22-266-274-671027+ปัจจัยที่มีอิทธิพลต่อการตัดสินใจใช้ระบบ.pdf": {
+            "move": "C:\\Users\\oatln\\Downloads\\Work",
+            "rename": "ปัจจัยที่มีอิทธิพลต่อการตัดสินใจใช้ระบบ.pdf",
+            "summary": "This PDF document appears to be a research paper or report discussing factors influencing decisions regarding system usage.",
+            "duplicate": null,
+            "confidence": 0.95
+        },
+        "C:\\Users\\noone\\Downloads\\Worksheet5.pdf": {
+            "move": "C:\\Users\\oatln\\Downloads\\Work",
+            "rename": "Worksheet5.pdf",
+            "summary": "This is a PDF worksheet, likely related to study or work tasks.",
+            "duplicate": null,
+            "confidence": 0.95
+        }
+    }
+}
