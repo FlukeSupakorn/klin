@@ -1,4 +1,3 @@
-import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -11,8 +10,6 @@ import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles } from
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
-  localSearch: string
-  setLocalSearch: (search: string) => void
   selectedCount: number
   totalCount: number
   isAllSelected: boolean
@@ -23,8 +20,6 @@ interface FileToolbarProps {
 
 // Combined Toolbar Component (single line with all controls)
 export function FileToolbar({
-  localSearch,
-  setLocalSearch,
   selectedCount,
   totalCount,
   isAllSelected,
@@ -118,15 +113,6 @@ export function FileToolbar({
             </Button>
           </>
         )}
-      </div>
-
-      {/* Right side: Search */}
-      <div className="w-72">
-        <Input
-          placeholder="Search..."
-          value={localSearch}
-          onChange={(e) => setLocalSearch(e.target.value)}
-        />
       </div>
     </div>
   )

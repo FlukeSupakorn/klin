@@ -39,6 +39,8 @@ import { OrganizePreviewDialog } from './organize/OrganizePreviewDialog'
 import { ChangeWatcherDialog } from './watcher/ChangeWatcherDialog'
 import { ManageDestinationsDialog } from './destination/ManageDestinationsDialog'
 import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
+import { AISearchBar } from './components/AISearchBar'
+import { AISearchResults } from './components/AISearchResults'
 
 import { useHomeStore } from './store/useHomeStore'
 import { useFileStore } from '@/store/useFileStore'
@@ -49,7 +51,7 @@ export function HomePage() {
   const navigate = useNavigate()
 
   // Get state from stores
-  const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen } = useHomeStore()
+  const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen, files } = useHomeStore()
 
   // Use hooks for logic
   const {
@@ -70,9 +72,45 @@ export function HomePage() {
   
   const toast = useToast()
 
+  // Search state
+  const [isSearchMode, setIsSearchMode] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<typeof filteredFiles>([])
+
   // Delete state
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Handle AI Search
+  const handleSearch = () => {
+    if (!localSearch.trim()) {
+      setIsSearchMode(false)
+      setSearchResults([])
+      return
+    }
+
+    setIsSearching(true)
+    setIsSearchMode(true)
+
+    // Simulate AI search delay (mock for now)
+    setTimeout(() => {
+      // Filter files based on search query (current implementation)
+      const results = files.filter((file) =>
+        file.name.toLowerCase().includes(localSearch.toLowerCase())
+      )
+      setSearchResults(results)
+      setIsSearching(false)
+    }, 800)
+  }
+
+  // Handle search input change
+  const handleSearchChange = (value: string) => {
+    setLocalSearch(value)
+    if (!value.trim()) {
+      setIsSearchMode(false)
+      setSearchResults([])
+    }
+  }
 
   // Handle bulk delete
   const handleDeleteClick = () => setIsDeleteOpen(true)
@@ -186,31 +224,55 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-auto p-6 space-y-6 bg-theme-background">
-        {/* Watching Folders Panel */}
-        <WatchingFoldersPanel />
+      {/* Main Content Area - add padding bottom for fixed search bar */}
+      <div className="flex-1 overflow-auto p-6 pb-40 space-y-6 bg-theme-background">
+        {/* Show different content based on search mode */}
+        {isSearchMode ? (
+          /* AI Search Results View */
+          <AISearchResults 
+            files={searchResults}
+            searchQuery={localSearch}
+            isSearching={isSearching}
+            onBack={() => {
+              setIsSearchMode(false)
+              setLocalSearch('')
+              setSearchResults([])
+            }}
+          />
+        ) : (
+          /* Normal File Browser View */
+          <>
+            {/* Watching Folders Panel */}
+            <WatchingFoldersPanel />
 
-        {/* Toolbar - View switcher, select all, delete, and search in one line */}
-        <FileToolbar
-          localSearch={localSearch}
-          setLocalSearch={setLocalSearch}
-          selectedCount={selectedFileIds.length}
-          totalCount={filteredFiles.length}
-          isAllSelected={isAllSelected}
-          onSelectAll={handleSelectAll}
-          onDeleteClick={handleDeleteClick}
-          onSummarizeClick={handleSummarizeClick}
-        />
+            {/* Toolbar - View switcher, select all, delete */}
+            <FileToolbar
+              selectedCount={selectedFileIds.length}
+              totalCount={filteredFiles.length}
+              isAllSelected={isAllSelected}
+              onSelectAll={handleSelectAll}
+              onDeleteClick={handleDeleteClick}
+              onSummarizeClick={handleSummarizeClick}
+            />
 
-        {/* File List */}
-        <FileListView
-          files={filteredFiles}
-          selectedFileIds={selectedFileIds}
-          onToggleSelection={toggleFileSelection}
-          loading={loading}
-        />
+            {/* File List */}
+            <FileListView
+              files={filteredFiles}
+              selectedFileIds={selectedFileIds}
+              onToggleSelection={toggleFileSelection}
+              loading={loading}
+            />
+          </>
+        )}
       </div>
+
+      {/* Fixed AI Search Bar at Bottom */}
+      <AISearchBar
+        value={localSearch}
+        onChange={handleSearchChange}
+        onSearch={handleSearch}
+        isSearching={isSearching}
+      />
 
       {/* Dialogs */}
       <OrganizeDialog
