@@ -1,4 +1,4 @@
-import { FolderOpen, X, Plus } from 'lucide-react'
+import { FolderOpen, X, Plus, Sparkles } from 'lucide-react'
 import {
   DialogDescription,
   DialogFooter,
@@ -7,6 +7,8 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Switch } from '@/components/ui/switch'
+import { useAutomationSettings } from '@/pages/settings/hooks/useAutomationSettings'
 
 interface DestinationsStepProps {
   tempDestinations: string[]
@@ -30,6 +32,7 @@ export function DestinationsStep({
   onComplete,
 }: DestinationsStepProps) {
   const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'
+  const { autoOrganize, setAutoOrganize } = useAutomationSettings()
   
   return (
     <>
@@ -139,6 +142,26 @@ export function DestinationsStep({
         <p className="text-xs text-theme-muted mt-3">
           We've added some default folders for you. You can add more or remove them.
         </p>
+
+        {/* Auto Organize Setting */}
+        <div className="border border-theme rounded-lg p-4 mt-4 bg-theme-background">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-theme-primary" />
+                <h4 className="text-sm font-semibold text-theme-text">Auto Organize Files</h4>
+              </div>
+              <p className="text-xs text-theme-secondary">
+                Automatically organize new files into these destination folders based on file type and content when they appear in your watched folders.
+              </p>
+            </div>
+            <Switch 
+              checked={autoOrganize} 
+              onCheckedChange={setAutoOrganize}
+              className="flex-shrink-0"
+            />
+          </div>
+        </div>
         
         {/* Dev Mode Notice */}
         {isDevMode && (

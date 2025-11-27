@@ -6,6 +6,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
+import { useAutomationSettings } from '@/pages/settings/hooks/useAutomationSettings'
 
 interface AIGeneratedFolder {
   name: string
@@ -26,6 +28,8 @@ export function AIGeneratedStep({
   onBack,
   onComplete,
 }: AIGeneratedStepProps) {
+  const { autoOrganize, setAutoOrganize } = useAutomationSettings()
+
   return (
     <>
       <DialogHeader>
@@ -74,6 +78,26 @@ export function AIGeneratedStep({
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Auto Organize Setting */}
+        <div className="border border-theme rounded-lg p-4 mt-4 bg-theme-background">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-4 w-4 text-theme-primary" />
+                <h4 className="text-sm font-semibold text-theme-text">Auto Organize Files</h4>
+              </div>
+              <p className="text-xs text-theme-secondary">
+                Automatically organize new files into these folders based on file type and content when they appear in your watched folders.
+              </p>
+            </div>
+            <Switch 
+              checked={autoOrganize} 
+              onCheckedChange={setAutoOrganize}
+              className="flex-shrink-0"
+            />
+          </div>
         </div>
 
         <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mt-4">
