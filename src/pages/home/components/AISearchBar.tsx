@@ -5,10 +5,11 @@ interface AISearchBarProps {
   value: string
   onChange: (value: string) => void
   onSearch: () => void
+  onClear?: () => void
   isSearching?: boolean
 }
 
-export function AISearchBar({ value, onChange, onSearch, isSearching }: AISearchBarProps) {
+export function AISearchBar({ value, onChange, onSearch, onClear, isSearching }: AISearchBarProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
 
@@ -27,6 +28,13 @@ export function AISearchBar({ value, onChange, onSearch, isSearching }: AISearch
         onSearch()
       }
     }
+    // ESC key to clear search and go back
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      onChange('')
+      onClear?.()
+      inputRef.current?.blur()
+    }
   }
 
   const handleClear = () => {
@@ -35,10 +43,7 @@ export function AISearchBar({ value, onChange, onSearch, isSearching }: AISearch
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
-      {/* Gradient fade effect */}
-      <div className="h-8 bg-gradient-to-t from-theme-background to-transparent" />
-      
+    <div className="sticky bottom-0 z-40 pointer-events-none">
       {/* Search bar container */}
       <div className="bg-theme-background pb-6 px-6 pointer-events-auto">
         <div className="max-w-3xl mx-auto">

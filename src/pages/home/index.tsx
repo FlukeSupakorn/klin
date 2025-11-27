@@ -224,8 +224,11 @@ export function HomePage() {
         </div>
       </div>
 
-      {/* Main Content Area - add padding bottom for fixed search bar */}
-      <div className="flex-1 overflow-auto p-6 pb-40 space-y-6 bg-theme-background">
+      {/* Main Content Area - add padding bottom for search bar */}
+      <div className="flex-1 overflow-auto p-6 pb-6 space-y-6 bg-theme-background">
+        {/* Watching Folders Panel - always visible */}
+        <WatchingFoldersPanel />
+
         {/* Show different content based on search mode */}
         {isSearchMode ? (
           /* AI Search Results View */
@@ -242,9 +245,6 @@ export function HomePage() {
         ) : (
           /* Normal File Browser View */
           <>
-            {/* Watching Folders Panel */}
-            <WatchingFoldersPanel />
-
             {/* Toolbar - View switcher, select all, delete */}
             <FileToolbar
               selectedCount={selectedFileIds.length}
@@ -266,11 +266,15 @@ export function HomePage() {
         )}
       </div>
 
-      {/* Fixed AI Search Bar at Bottom */}
+      {/* Sticky AI Search Bar at Bottom */}
       <AISearchBar
         value={localSearch}
         onChange={handleSearchChange}
         onSearch={handleSearch}
+        onClear={() => {
+          setIsSearchMode(false)
+          setSearchResults([])
+        }}
         isSearching={isSearching}
       />
 

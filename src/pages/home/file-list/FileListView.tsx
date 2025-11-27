@@ -41,8 +41,8 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
   // Initial loading state
   if (loading) {
     return (
-      <div className="bg-theme-background border border-theme rounded-xl shadow-sm overflow-hidden">
-        <div className="p-6">
+      <div className="bg-theme-background overflow-hidden">
+        <div className="">
           {currentView === 'grid' && <GridSkeleton count={100} />}
           {currentView === 'list' && <ListSkeleton count={100} />}
           {currentView === 'tab' && <TabSkeleton count={100} />}
@@ -53,7 +53,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
 
   if (files.length === 0) {
     return (
-      <div className="flex items-center justify-center py-12 bg-theme-background border border-theme rounded-xl shadow-sm">
+      <div className="flex items-center justify-center py-12 bg-theme-background">
         <div className="text-center">
           <FolderOpen className="h-16 w-16 text-theme-muted mx-auto mb-4" />
           <p className="text-theme-secondary">No files found</p>
@@ -63,7 +63,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
   }
 
   return (
-    <div className="bg-theme-background border border-theme rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-theme-background overflow-hidden">
       {/* List View */}
       {currentView === 'list' && (
         <table className="w-full">
@@ -137,15 +137,15 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
 
       {/* Grid View */}
       {currentView === 'grid' && (
-        <div className="p-6 space-y-6">
+        <div className="space-y-4">
           <div className="grid grid-cols-4 gap-4">
             {displayedFiles.map((file) => {
               const isSelected = selectedFileIds.includes(file.path)
               return (
                 <div
                   key={file.path}
-                  className={`bg-theme-background border border-theme rounded-xl p-4 hover:shadow-md transition-all cursor-pointer ${
-                    isSelected ? 'ring-2 ring-theme-primary border-theme-primary' : ''
+                  className={`bg-theme-secondary/30 hover:bg-theme-secondary hover:shadow-lg hover:shadow-theme-primary/10 hover:scale-[1.02] rounded-xl p-4 transition-all duration-200 cursor-pointer ${
+                    isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-md shadow-theme-primary/10' : ''
                   }`}
                   onClick={() => onToggleSelection(file.path)}
                 >
@@ -196,15 +196,15 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
 
       {/* Tab View */}
       {currentView === 'tab' && (
-        <div className="space-y-6 p-6">
-          <div className="space-y-3">
+        <div className="space-y-4">
+          <div className="space-y-2">
             {displayedFiles.map((file) => {
               const isSelected = selectedFileIds.includes(file.path)
               return (
                 <div
                   key={file.path}
-                  className={`bg-theme-background border border-theme rounded-xl p-4 hover:shadow-sm transition-all cursor-pointer ${
-                    isSelected ? 'ring-2 ring-theme-primary border-theme-primary' : ''
+                  className={`bg-theme-secondary/30 hover:bg-theme-secondary hover:shadow-md hover:shadow-theme-primary/10 rounded-xl p-4 transition-all duration-200 cursor-pointer ${
+                    isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-sm shadow-theme-primary/10' : ''
                   }`}
                   onClick={() => onToggleSelection(file.path)}
                 >
