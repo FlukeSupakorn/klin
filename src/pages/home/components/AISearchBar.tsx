@@ -43,16 +43,14 @@ export function AISearchBar({ value, onChange, onSearch, onClear, isSearching }:
   }
 
   return (
-    <div className="sticky bottom-0 z-40 pointer-events-none">
-      {/* Search bar container */}
-      <div className="bg-theme-background pb-6 px-6 pointer-events-auto">
-        <div className="max-w-3xl mx-auto">
-          <div
-            className={`
-              relative flex items-end gap-3 
-              bg-theme-secondary border-2 rounded-2xl
-              transition-all duration-200 ease-out
-              ${isFocused 
+    <div className="sticky bottom-6 z-40 px-6">
+      <div className="max-w-3xl mx-auto pointer-events-auto">
+        <div
+          className={`
+            relative flex items-end gap-3 
+            bg-theme-secondary border-2 rounded-3xl shadow-2xl
+            transition-all duration-200 ease-out
+            ${isFocused 
                 ? 'border-theme-primary shadow-lg shadow-theme-primary/10' 
                 : 'border-theme hover:border-theme-primary/50'
               }
@@ -125,8 +123,8 @@ export function AISearchBar({ value, onChange, onSearch, onClear, isSearching }:
             </div>
           </div>
 
-          {/* Helper text */}
-          <div className="flex items-center justify-center gap-4 mt-3 text-xs text-theme-muted">
+          {/* Helper text - inside the floating container */}
+          <div className="flex items-center justify-center gap-4 py-2 text-xs text-theme-muted">
             <span className="flex items-center gap-1.5">
               <kbd className="px-1.5 py-0.5 bg-theme-tertiary rounded text-[10px] font-medium">Enter</kbd>
               <span>to search</span>
@@ -135,9 +133,12 @@ export function AISearchBar({ value, onChange, onSearch, onClear, isSearching }:
               <kbd className="px-1.5 py-0.5 bg-theme-tertiary rounded text-[10px] font-medium">Shift + Enter</kbd>
               <span>new line</span>
             </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="px-1.5 py-0.5 bg-theme-tertiary rounded text-[10px] font-medium">Esc</kbd>
+              <span>to clear</span>
+            </span>
           </div>
         </div>
       </div>
-    </div>
   )
 }
