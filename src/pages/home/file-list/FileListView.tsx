@@ -144,9 +144,10 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
               return (
                 <div
                   key={file.path}
-                  className={`bg-theme-secondary/30 hover:bg-theme-secondary hover:shadow-lg hover:shadow-theme-primary/10 hover:scale-[1.02] rounded-xl p-4 transition-all duration-200 cursor-pointer ${
-                    isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-md shadow-theme-primary/10' : ''
-                  }`}
+                  className={`bg-theme-secondary/30 rounded-xl p-4 transition-all duration-200 cursor-pointer
+                    shadow-sm shadow-theme-primary/5
+                    hover:bg-theme-secondary hover:shadow-lg hover:shadow-theme-primary/10 hover:scale-[1.02]
+                    ${isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-md shadow-theme-primary/10' : ''}`}
                   onClick={() => onToggleSelection(file.path)}
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -203,9 +204,10 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
               return (
                 <div
                   key={file.path}
-                  className={`bg-theme-secondary/30 hover:bg-theme-secondary hover:shadow-md hover:shadow-theme-primary/10 rounded-xl p-4 transition-all duration-200 cursor-pointer ${
-                    isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-sm shadow-theme-primary/10' : ''
-                  }`}
+                  className={`bg-theme-secondary/30 rounded-xl p-4 transition-all duration-200 cursor-pointer
+                    shadow-sm shadow-theme-primary/5
+                    hover:bg-theme-secondary hover:shadow-md hover:shadow-theme-primary/10
+                    ${isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-sm shadow-theme-primary/10' : ''}`}
                   onClick={() => onToggleSelection(file.path)}
                 >
                   <div className="flex items-center gap-4">
