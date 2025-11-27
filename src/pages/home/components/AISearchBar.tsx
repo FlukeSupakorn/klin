@@ -48,11 +48,11 @@ export function AISearchBar({ value, onChange, onSearch, onClear, isSearching }:
         <div
           className={`
             relative flex items-end gap-3 
-            bg-theme-secondary border-2 rounded-3xl shadow-2xl
+            bg-theme-secondary border-2 rounded-3xl
             transition-all duration-200 ease-out
             ${isFocused 
-                ? 'border-theme-primary shadow-lg shadow-theme-primary/10' 
-                : 'border-theme hover:border-theme-primary/50'
+                ? 'border-theme-primary shadow-2xl shadow-theme-primary/20' 
+                : 'border-theme hover:border-theme-primary/50 shadow-md shadow-theme-primary/5'
               }
             `}
           >
