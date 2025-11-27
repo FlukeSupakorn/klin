@@ -22,7 +22,7 @@ import { useOrganize } from './hooks/useOrganize'
 import { useToast } from '@/components/ui/toast'
 
 // Tauri API
-import { deleteFile } from '@/lib/tauri-api'
+import { deleteFile, FileItem } from '@/lib/tauri-api'
 
 // AI API
 import { generateBatchSummaries, createNoteFromSummaries } from '@/lib/ai-api'
@@ -81,23 +81,82 @@ export function HomePage() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  const SPECIAL_QUERY = 'สไลด์พรีเซ้น senior presentation'
+  const buildMockFile = (name: string): FileItem => ({
+    name,
+    path: `C:/supak/Downloads/${name}`,
+    is_dir: false,
+    size: 575000,
+    modified: '2025-08-15T00:00:00Z',
+    sourceFolderName: 'supak / Downloads',
+  })
+
   // Handle AI Search
   const handleSearch = () => {
-    if (!localSearch.trim()) {
+    const rawQuery = localSearch.trim()
+    if (!rawQuery) {
       setIsSearchMode(false)
       setSearchResults([])
       return
     }
 
-    setIsSearching(true)
+    const query = rawQuery.toLowerCase()
     setIsSearchMode(true)
 
-    // Simulate AI search delay (mock for now)
+    // Immediate mock response for the exact phrase
+    if (query === SPECIAL_QUERY) {
+      const desiredFiles = [
+        { key: 'proposalpresentation.pdf', display: 'ProposalPresentation.pdf' },
+        { key: 'senior_project_introduction.pdf', display: 'Senior_project_introduction.pdf' },
+      ]
+
+      const mockResults: FileItem[] = desiredFiles.map(({ key, display }) => {
+        const existing = files.find((file) => file.name.toLowerCase() === key)
+        return existing ?? buildMockFile(display)
+      })
+
+      setSearchResults(mockResults)
+      setIsSearching(false)
+      return
+    }
+
+    setIsSearching(true)
+
+    // Simulate AI search delay (mock semantic search)
     setTimeout(() => {
-      // Filter files based on search query (current implementation)
-      const results = files.filter((file) =>
-        file.name.toLowerCase().includes(localSearch.toLowerCase())
-      )
+      const fallbackQuery = query
+
+      // Lowercase mapping keys and filenames for robust matching
+      const semanticMappings: { [key: string]: string[] } = {
+        'senior project presentation': [
+          'proposalpresentation.pdf',
+          'senior_project_introduction.pdf',
+        ],
+        // add more mappings as needed
+      }
+
+      let results = files
+
+      // Check if query matches any semantic mapping (case-insensitive)
+      const matchedFiles = new Set<string>()
+      for (const [semanticQuery, fileNames] of Object.entries(semanticMappings)) {
+        if (fallbackQuery.includes(semanticQuery)) {
+          fileNames.forEach(fileName => matchedFiles.add(fileName.toLowerCase()))
+        }
+      }
+
+      // If semantic match found, filter by matched filenames (case-insensitive)
+      if (matchedFiles.size > 0) {
+        results = files.filter((file) =>
+          matchedFiles.has(file.name.toLowerCase())
+        )
+      } else {
+        // Fall back to simple text search (case-insensitive)
+        results = files.filter((file) =>
+          file.name.toLowerCase().includes(fallbackQuery)
+        )
+      }
+
       setSearchResults(results)
       setIsSearching(false)
     }, 800)
