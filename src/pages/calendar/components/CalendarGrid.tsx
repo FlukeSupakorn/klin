@@ -12,23 +12,31 @@ interface Event {
 interface CalendarGridProps {
   calendarDays: Array<{ day: number; isCurrentMonth: boolean; isToday: boolean }>
   events?: Event[]
+  currentMonth: number
+  currentYear: number
+  onEventClick?: (event: Event) => void
+  onDateClick?: (date: Date) => void
 }
 
-export function CalendarGrid({ calendarDays, events = [] }: CalendarGridProps) {
+export function CalendarGrid({ 
+  calendarDays, 
+  events = [], 
+  currentMonth, 
+  currentYear,
+  onEventClick,
+  onDateClick 
+}: CalendarGridProps) {
   // Helper function to check if a day has events
   const getEventsForDay = (day: number, month: number, year: number) => {
     return events.filter(event => {
+      const eventDate = new Date(event.date)
       return (
-        event.date.getDate() === day &&
-        event.date.getMonth() === month &&
-        event.date.getFullYear() === year
+        eventDate.getDate() === day &&
+        eventDate.getMonth() === month &&
+        eventDate.getFullYear() === year
       )
     })
   }
-
-  const currentDate = new Date()
-  const currentMonth = currentDate.getMonth()
-  const currentYear = currentDate.getFullYear()
 
   return (
     <div className="p-6">
@@ -46,6 +54,11 @@ export function CalendarGrid({ calendarDays, events = [] }: CalendarGridProps) {
           return (
             <div
               key={index}
+              onClick={() => {
+                if (item.isCurrentMonth && onDateClick) {
+                  onDateClick(new Date(currentYear, currentMonth, item.day))
+                }
+              }}
               className={`
                 min-h-[100px] bg-theme-background p-2 cursor-pointer transition-all hover:bg-theme-secondary/50
                 ${item.isCurrentMonth ? 'bg-theme-background' : 'bg-theme-secondary/30'}
@@ -65,7 +78,11 @@ export function CalendarGrid({ calendarDays, events = [] }: CalendarGridProps) {
                 {dayEvents.slice(0, 2).map((event) => (
                   <div
                     key={event.id}
-                    className={`text-xs px-2 py-1 rounded ${event.color} text-white truncate`}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (onEventClick) onEventClick(event)
+                    }}
+                    className={`text-xs px-2 py-1 rounded ${event.color} text-white truncate hover:opacity-90`}
                     title={`${event.title} - ${event.time}`}
                   >
                     {event.title}

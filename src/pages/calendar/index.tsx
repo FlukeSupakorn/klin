@@ -1,10 +1,15 @@
 import { Button } from '@/components/ui/button'
-import { Settings, Bell, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Settings, Bell, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useCalendar } from './hooks/useCalendar'
 import { CalendarHeader } from './components/CalendarHeader'
 import { CalendarGrid } from './components/CalendarGrid'
-import { useState } from 'react'
+import { CreateEventDialog } from './components/CreateEventDialog'
+import { EventDetailsDialog } from './components/EventDetailsDialog'
+import { useCalendarStore } from './store/useCalendarStore'
+import { mockEvents } from './data/mockEvents'
+import { useState, useEffect } from 'react'
+import { CalendarEvent } from './data/mockEvents'
 
 export function CalendarPage() {
   const navigate = useNavigate()
@@ -17,35 +22,37 @@ export function CalendarPage() {
     goToToday,
   } = useCalendar()
 
+  const { events, addEvent, deleteEvent } = useCalendarStore()
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month')
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+  const [isEventDetailsOpen, setIsEventDetailsOpen] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
 
-  // Mock events for demonstration
-  const mockEvents = [
-    {
-      id: 1,
-      title: 'Senior Project Presentation Review',
-      date: new Date(2025, 11, 15), // December 15, 2025
-      time: '2:00 PM - 3:30 PM',
-      color: 'bg-blue-500',
-      location: 'Conference Room A',
-    },
-    {
-      id: 2,
-      title: 'Team Meeting',
-      date: new Date(2025, 11, 10),
-      time: '10:00 AM - 11:00 AM',
-      color: 'bg-green-500',
-      location: 'Online',
-    },
-    {
-      id: 3,
-      title: 'Project Deadline',
-      date: new Date(2025, 11, 20),
-      time: '11:59 PM',
-      color: 'bg-red-500',
-      location: 'Submit Online',
-    },
-  ]
+  // Initialize with mock events on first load
+  useEffect(() => {
+    if (events.length === 0) {
+      mockEvents.forEach(event => {
+        addEvent(event)
+      })
+    }
+  }, [])
+
+  const handleCreateEvent = (eventData: any) => {
+    addEvent(eventData)
+  }
+
+  const handleEventClick = (event: CalendarEvent) => {
+    setSelectedEvent(event)
+    setIsEventDetailsOpen(true)
+  }
+
+  const handleDateClick = (date: Date) => {
+    setSelectedDate(date)
+    setIsCreateDialogOpen(true)
+  }
+
+  const allEvents = events.length > 0 ? events : mockEvents
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
@@ -67,7 +74,7 @@ export function CalendarPage() {
             <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
               <Bell className="h-5 w-5 text-theme-secondary" />
             </button>
-            <Button className="gap-2">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="gap-2">
               <Plus className="h-4 w-4" />
               New Event
             </Button>
@@ -122,38 +129,71 @@ export function CalendarPage() {
             </div>
             
             <div className="text-sm text-theme-secondary">
-              {mockEvents.length} events this month
+              {allEvents.length} events this month
             </div>
           </div>
 
-          <CalendarGrid calendarDays={calendarData} events={mockEvents} />
+          <CalendarGrid 
+            calendarDays={calendarData} 
+            events={allEvents} 
+            currentMonth={month}
+            currentYear={year}
+            onEventClick={handleEventClick}
+            onDateClick={handleDateClick}
+          />
         </div>
 
         {/* Upcoming Events Sidebar */}
         <div className="mt-6 bg-theme-background border border-theme rounded-xl p-6">
           <h3 className="text-lg font-semibold text-theme-text mb-4">Upcoming Events</h3>
           <div className="space-y-3">
-            {mockEvents.map((event) => (
-              <div
-                key={event.id}
-                className="flex items-start gap-3 p-4 bg-theme-secondary hover:bg-theme-tertiary rounded-lg border border-theme cursor-pointer transition-colors"
-              >
-                <div className={`h-2 w-2 rounded-full ${event.color} mt-2`} />
-                <div className="flex-1">
-                  <h4 className="font-semibold text-theme-text">{event.title}</h4>
-                  <p className="text-sm text-theme-secondary mt-1">
-                    {event.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                  </p>
-                  <p className="text-sm text-theme-muted">{event.time}</p>
-                  {event.location && (
-                    <p className="text-xs text-theme-muted mt-1">📍 {event.location}</p>
-                  )}
+            {allEvents.length === 0 ? (
+              <p className="text-sm text-theme-secondary text-center py-8">No events scheduled</p>
+            ) : (
+              allEvents.map((event) => (
+                <div
+                  key={event.id}
+                  onClick={() => handleEventClick(event)}
+                  className="flex items-start gap-3 p-4 bg-theme-secondary hover:bg-theme-tertiary rounded-lg border border-theme cursor-pointer transition-colors"
+                >
+                  <div className={`h-2 w-2 rounded-full ${event.color} mt-2`} />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-theme-text">{event.title}</h4>
+                    <p className="text-sm text-theme-secondary mt-1">
+                      {event.date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </p>
+                    <p className="text-sm text-theme-muted">{event.time}</p>
+                    {event.location && (
+                      <p className="text-xs text-theme-muted mt-1">📍 {event.location}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>
+
+      {/* Dialogs */}
+      <CreateEventDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => {
+          setIsCreateDialogOpen(false)
+          setSelectedDate(undefined)
+        }}
+        onCreateEvent={handleCreateEvent}
+        selectedDate={selectedDate}
+      />
+
+      <EventDetailsDialog
+        event={selectedEvent}
+        isOpen={isEventDetailsOpen}
+        onClose={() => {
+          setIsEventDetailsOpen(false)
+          setSelectedEvent(null)
+        }}
+        onDelete={deleteEvent}
+      />
     </div>
   )
 }

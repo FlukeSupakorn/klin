@@ -41,7 +41,7 @@ import { ManageDestinationsDialog } from './destination/ManageDestinationsDialog
 import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
 import { AISearchBar } from './components/AISearchBar'
 import { AISearchResults } from './components/AISearchResults'
-import { MeetingSchedulingPopup } from './components/MeetingSchedulingPopup'
+import { MeetingSchedulingPopup } from '../calendar/components/MeetingSchedulingPopup'
 
 import { useHomeStore } from './store/useHomeStore'
 import { useFileStore } from '@/store/useFileStore'
