@@ -150,24 +150,28 @@ export function FileHealthPage() {
           <div className="max-w-2xl mx-auto">
             <div className="flex flex-col items-center justify-center py-16">
               {/* Big Scan Button */}
-              <button
-                onClick={handleScan}
-                disabled={isScanning}
-                className={`relative h-48 w-48 rounded-full flex items-center justify-center transition-all ${
-                  isScanning
-                    ? 'bg-gradient-to-br from-blue-500 to-purple-500 animate-pulse'
-                    : 'bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 hover:scale-105 shadow-xl hover:shadow-2xl'
-                }`}
-              >
-                {isScanning ? (
-                  <div className="relative">
-                    <Search className="h-12 w-12 text-white animate-bounce" />
-                    <div className="absolute inset-0 rounded-full border-4 border-white/30 border-t-white animate-spin" />
-                  </div>
-                ) : (
-                  <FolderSearch className="h-12 w-12 text-white" />
+              <div className="relative">
+                {/* Outer spinning ring */}
+                {isScanning && (
+                  <div className="absolute -inset-4 rounded-full border-4 border-purple-500/30 border-t-purple-500 animate-spin" />
                 )}
-              </button>
+                
+                <button
+                  onClick={handleScan}
+                  disabled={isScanning}
+                  className={`relative h-48 w-48 rounded-full flex items-center justify-center transition-all ${
+                    isScanning
+                      ? 'bg-gradient-to-br from-blue-500 to-purple-500 animate-pulse'
+                      : 'bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 hover:scale-105 shadow-xl hover:shadow-2xl'
+                  }`}
+                >
+                  {isScanning ? (
+                    <Search className="h-12 w-12 text-white animate-bounce" />
+                  ) : (
+                    <FolderSearch className="h-12 w-12 text-white" />
+                  )}
+                </button>
+              </div>
 
               <div className="mt-8 text-center">
                 {isScanning ? (
