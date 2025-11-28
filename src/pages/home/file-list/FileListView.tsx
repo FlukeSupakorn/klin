@@ -105,8 +105,8 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                         type={getFileType(file.name, file.is_dir)}
                         className="h-5 w-5 text-theme-primary"
                       />
-                      <span 
-                        className="font-medium text-theme-text truncate max-w-md cursor-pointer hover-text-theme-primary transition-colors" 
+                      <span
+                        className="font-medium text-theme-text truncate max-w-md cursor-pointer hover-text-theme-primary transition-colors"
                         title={file.name}
                         onClick={() => handleOpenFile(file.path)}
                       >
@@ -138,7 +138,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
       {/* Grid View */}
       {currentView === 'grid' && (
         <div className="space-y-4">
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 p-1">
             {displayedFiles.map((file) => {
               const isSelected = selectedFileIds.includes(file.path)
               return (
@@ -166,8 +166,8 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     />
                   </div>
 
-                  <h3 
-                    className="font-semibold text-theme-text mb-1 truncate cursor-pointer hover-text-theme-primary transition-colors" 
+                  <h3
+                    className="font-semibold text-theme-text mb-1 truncate cursor-pointer hover-text-theme-primary transition-colors"
                     title={file.name}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -198,7 +198,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
       {/* Tab View */}
       {currentView === 'tab' && (
         <div className="space-y-4">
-          <div className="space-y-2">
+          <div className="space-y-2 p-1">
             {displayedFiles.map((file) => {
               const isSelected = selectedFileIds.includes(file.path)
               return (
@@ -226,8 +226,8 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 
-                        className="font-semibold text-theme-text truncate cursor-pointer hover-text-theme-primary transition-colors" 
+                      <h3
+                        className="font-semibold text-theme-text truncate cursor-pointer hover-text-theme-primary transition-colors"
                         title={file.name}
                         onClick={(e) => {
                           e.stopPropagation()
