@@ -1,9 +1,10 @@
-import { User, Lock, Palette, Globe, BellRing, Sparkles, Code } from 'lucide-react'
+import { User, Lock, Palette, Globe, BellRing, Sparkles, Code, Shield } from 'lucide-react'
 
 const tabs = [
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'security', label: 'Security', icon: Lock },
   { id: 'appearance', label: 'Appearance', icon: Palette },
+  { id: 'privacy', label: 'Privacy', icon: Shield },
   { id: 'automation', label: 'Automation', icon: Sparkles },
   { id: 'notifications', label: 'Notifications', icon: BellRing },
   { id: 'language', label: 'Language & Region', icon: Globe },

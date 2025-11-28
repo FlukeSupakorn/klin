@@ -4,6 +4,7 @@ import { SettingsSidebar } from './components/SettingsSidebar'
 import { ProfileSettings } from './components/ProfileSettings'
 import { SecuritySettings } from './components/SecuritySettings'
 import { AppearanceSettings } from './components/AppearanceSettings'
+import { PrivacySettings } from './components/PrivacySettings'
 import { AutomationSettings } from './components/AutomationSettings'
 import { NotificationSettings } from './components/NotificationSettings'
 import { LanguageSettings } from './components/LanguageSettings'
@@ -38,6 +39,7 @@ export function SettingsPage() {
             {activeTab === 'profile' && <ProfileSettings />}
             {activeTab === 'security' && <SecuritySettings />}
             {activeTab === 'appearance' && <AppearanceSettings />}
+            {activeTab === 'privacy' && <PrivacySettings />}
             {activeTab === 'automation' && (
               <AutomationSettings
                 autoOrganize={autoOrganize}
