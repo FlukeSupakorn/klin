@@ -10,6 +10,9 @@ export function DeveloperSettings() {
   const [isFirstTime, setIsFirstTime] = useState(
     () => localStorage.getItem('klin-first-time-setup') !== 'completed'
   )
+  const [mockSchedulingPopup, setMockSchedulingPopup] = useState(
+    () => localStorage.getItem('klin-mock-scheduling-popup') === 'true'
+  )
 
   const handleDevModeToggle = (checked: boolean) => {
     localStorage.setItem('klin-dev-mode', checked ? 'true' : 'false')
@@ -24,6 +27,11 @@ export function DeveloperSettings() {
       localStorage.setItem('klin-first-time-setup', 'completed')
       setIsFirstTime(false)
     }
+  }
+
+  const handleMockSchedulingToggle = (checked: boolean) => {
+    localStorage.setItem('klin-mock-scheduling-popup', checked ? 'true' : 'false')
+    setMockSchedulingPopup(checked)
   }
 
   return (
@@ -69,6 +77,38 @@ export function DeveloperSettings() {
               <Switch
                 checked={devMode}
                 onCheckedChange={handleDevModeToggle}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mock Meeting Scheduling Popup */}
+        <div className="border border-theme rounded-lg p-6 bg-theme-background">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Code className="h-5 w-5 text-theme-primary" />
+                <h3 className="text-lg font-semibold text-theme-text">Mock Meeting Scheduling Popup</h3>
+              </div>
+              <p className="text-sm text-theme-secondary mb-4">
+                When enabled, a mock meeting detection popup will appear when you visit the Home page. 
+                This simulates the AI finding a meeting file and asking to schedule it.
+              </p>
+              <div className="bg-theme-secondary border border-theme rounded-md p-3">
+                <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
+                <p className="text-xs text-theme-secondary">
+                  {mockSchedulingPopup ? (
+                    <span className="font-semibold">⚠️ Mock popup is ACTIVE - Navigate to Home to see meeting popup</span>
+                  ) : (
+                    <span>❌ Mock popup is OFF - Toggle ON to test scheduling feature</span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <div className="ml-4">
+              <Switch
+                checked={mockSchedulingPopup}
+                onCheckedChange={handleMockSchedulingToggle}
               />
             </div>
           </div>

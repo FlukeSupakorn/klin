@@ -41,9 +41,11 @@ import { ManageDestinationsDialog } from './destination/ManageDestinationsDialog
 import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
 import { AISearchBar } from './components/AISearchBar'
 import { AISearchResults } from './components/AISearchResults'
+import { MeetingSchedulingPopup } from './components/MeetingSchedulingPopup'
 
 import { useHomeStore } from './store/useHomeStore'
 import { useFileStore } from '@/store/useFileStore'
+import { useEffect } from 'react'
 
 export function HomePage() {
   // Initialize file loading
@@ -80,6 +82,32 @@ export function HomePage() {
   // Delete state
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Meeting scheduling popup state
+  const [isMeetingPopupOpen, setIsMeetingPopupOpen] = useState(false)
+
+  // Check for mock scheduling popup on mount
+  useEffect(() => {
+    const shouldShowPopup = localStorage.getItem('klin-mock-scheduling-popup') === 'true'
+    if (shouldShowPopup && !isFirstTimeSetup) {
+      // Show popup after a short delay to simulate file scanning
+      const timer = setTimeout(() => {
+        setIsMeetingPopupOpen(true)
+        // Clear the flag so it only shows once per session
+        localStorage.setItem('klin-mock-scheduling-popup', 'false')
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [isFirstTimeSetup])
+
+  const handleMeetingConfirm = () => {
+    setIsMeetingPopupOpen(false)
+    toast.success('Meeting Added', 'The meeting has been added to your calendar')
+    // Navigate to calendar page
+    setTimeout(() => {
+      navigate('/calendar')
+    }, 500)
+  }
 
   const SPECIAL_QUERY = 'สไลด์พรีเซ้น senior presentation'
   const buildMockFile = (name: string): FileItem => ({
@@ -358,6 +386,13 @@ export function HomePage() {
         onConfirm={handleBulkDelete}
         onClose={() => setIsDeleteOpen(false)}
         isLoading={isDeleting}
+      />
+
+      {/* Meeting Scheduling Popup */}
+      <MeetingSchedulingPopup
+        isOpen={isMeetingPopupOpen}
+        onClose={() => setIsMeetingPopupOpen(false)}
+        onConfirm={handleMeetingConfirm}
       />
     </div>
   )

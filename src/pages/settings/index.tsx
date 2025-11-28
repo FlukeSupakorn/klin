@@ -14,6 +14,8 @@ export function SettingsPage() {
   const {
     autoOrganize,
     setAutoOrganize,
+    autoScheduling,
+    setAutoScheduling,
   } = useAutomationSettings()
 
   return (
@@ -40,6 +42,8 @@ export function SettingsPage() {
               <AutomationSettings
                 autoOrganize={autoOrganize}
                 onAutoOrganizeChange={setAutoOrganize}
+                autoScheduling={autoScheduling}
+                onAutoSchedulingChange={setAutoScheduling}
               />
             )}
             {activeTab === 'notifications' && <NotificationSettings />}
