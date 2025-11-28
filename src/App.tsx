@@ -6,6 +6,7 @@ import ActivityPage from './pages/activity'
 import NotePage from './pages/note'
 import InsightsPage from './pages/insights'
 import CalendarPage from './pages/calendar'
+import FileHealthPage from './pages/file-health'
 import SettingsPage from './pages/settings'
 import HelpSupportPage from './pages/help-support'
 import './index.css'
@@ -23,6 +24,7 @@ function App() {
             <Route path="/history" element={<ActivityPage />} />
             <Route path="/note" element={<NotePage />} />
             <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/file-health" element={<FileHealthPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/help" element={<HelpSupportPage />} />
           </Routes>

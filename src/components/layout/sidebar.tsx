@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Activity, StickyNote, Settings, LogOut, Sparkles, Calendar } from 'lucide-react'
+import { Home, Activity, StickyNote, Settings, LogOut, Sparkles, Calendar, HeartPulse } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const menuItems = [
   { icon: Home, label: 'Home', path: '/files' },
   { icon: Calendar, label: 'Calendar', path: '/calendar' },
-  { icon: Sparkles, label: 'AI Insights', path: '/insights' },
+  { icon: HeartPulse, label: 'File Health', path: '/file-health' },
   { icon: Activity, label: 'Activity', path: '/history' },
   { icon: StickyNote, label: 'Note', path: '/note' },
   { icon: Settings, label: 'Settings', path: '/settings' },

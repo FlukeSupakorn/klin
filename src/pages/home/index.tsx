@@ -42,6 +42,7 @@ import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
 import { AISearchBar } from './components/AISearchBar'
 import { AISearchResults } from './components/AISearchResults'
 import { MeetingSchedulingPopup } from '../calendar/components/MeetingSchedulingPopup'
+import { NotificationPanel, Notification } from '@/components/NotificationPanel'
 
 import { useHomeStore } from './store/useHomeStore'
 import { useFileStore } from '@/store/useFileStore'
@@ -86,6 +87,20 @@ export function HomePage() {
   // Meeting scheduling popup state
   const [isMeetingPopupOpen, setIsMeetingPopupOpen] = useState(false)
 
+  // Notification panel state
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false)
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'warning',
+      title: 'Duplicate Files Found',
+      message: '15 duplicate files detected in your watched folders, wasting 12.4 MB of storage',
+      timestamp: new Date(),
+      actionPath: '/file-health',
+      actionLabel: 'View Details'
+    }
+  ])
+
   // Check for mock scheduling popup on mount
   useEffect(() => {
     const shouldShowPopup = localStorage.getItem('klin-mock-scheduling-popup') === 'true'
@@ -103,6 +118,14 @@ export function HomePage() {
   const handleMeetingConfirm = () => {
     setIsMeetingPopupOpen(false)
     toast.success('Meeting Confirmed', 'You can view the meeting in your calendar')
+  }
+
+  const handleClearNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id))
+  }
+
+  const handleClearAllNotifications = () => {
+    setNotifications([])
   }
 
   const SPECIAL_QUERY = 'สไลด์พรีเซ้น senior presentation'
@@ -295,8 +318,16 @@ export function HomePage() {
             >
               <Settings className="h-5 w-5 text-theme-secondary" />
             </button>
-            <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
+            <button 
+              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary relative"
+              onClick={() => setIsNotificationPanelOpen(!isNotificationPanelOpen)}
+            >
               <Bell className="h-5 w-5 text-theme-secondary" />
+              {notifications.length > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                  {notifications.length}
+                </span>
+              )}
             </button>
           </div>
         </div>
@@ -389,6 +420,15 @@ export function HomePage() {
         isOpen={isMeetingPopupOpen}
         onClose={() => setIsMeetingPopupOpen(false)}
         onConfirm={handleMeetingConfirm}
+      />
+
+      {/* Notification Panel */}
+      <NotificationPanel
+        isOpen={isNotificationPanelOpen}
+        onClose={() => setIsNotificationPanelOpen(false)}
+        notifications={notifications}
+        onClearNotification={handleClearNotification}
+        onClearAll={handleClearAllNotifications}
       />
     </div>
   )
