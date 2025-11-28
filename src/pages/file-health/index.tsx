@@ -161,11 +161,11 @@ export function FileHealthPage() {
               >
                 {isScanning ? (
                   <div className="relative">
-                    <Search className="h-16 w-16 text-white animate-bounce" />
+                    <Search className="h-12 w-12 text-white animate-bounce" />
                     <div className="absolute inset-0 rounded-full border-4 border-white/30 border-t-white animate-spin" />
                   </div>
                 ) : (
-                  <FolderSearch className="h-16 w-16 text-white" />
+                  <FolderSearch className="h-12 w-12 text-white" />
                 )}
               </button>
 
@@ -236,7 +236,7 @@ export function FileHealthPage() {
                 {selectedFiles.size} files selected
               </p>
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setHasScanned(false)}>
+                <Button variant="outline" onClick={handleScan}>
                   Scan Again
                 </Button>
                 <Button
@@ -277,7 +277,15 @@ export function FileHealthPage() {
                     {group.files.map((file, index) => (
                       <div
                         key={index}
-                        className="flex items-center justify-between p-3 bg-theme-secondary/30 rounded-lg hover:bg-theme-secondary transition-colors"
+                        className="flex items-center justify-between p-3 bg-theme-secondary/30 rounded-lg hover:bg-theme-secondary transition-colors cursor-pointer"
+                        onClick={(e) => {
+                          // If clicking checkbox, don't open file
+                          if ((e.target as HTMLInputElement).type === 'checkbox') {
+                            return;
+                          }
+                          // Open file in default application
+                          window.open(`file:///${file.path}`, '_blank');
+                        }}
                       >
                         <div className="flex items-center gap-3 flex-1 min-w-0">
                           <input
