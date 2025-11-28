@@ -11,10 +11,11 @@ import { useActivityStore } from '@/pages/activity/store/useActivityStore'
 export function FileHealthPage() {
   const { isScanning, scanProgress, hasScanned, startScan } = useFileHealthScan()
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
-  const [currentMockData, setCurrentMockData] = useState(mockDuplicatesDefault)
-  const [removedInfo, setRemovedInfo] = useState<{ count: number; savings: string } | null>(null)
   const { autoRemoveDuplicates } = useAutomationSettings()
   const { logDuplicateRemoval } = useActivityStore()
+  // When auto-remove is enabled, start with empty data (no duplicates to show)
+  const [currentMockData, setCurrentMockData] = useState(autoRemoveDuplicates ? [] : mockDuplicatesDefault)
+  const [removedInfo, setRemovedInfo] = useState<{ count: number; savings: string } | null>(null)
 
   const handleScan = async () => {
     setRemovedInfo(null) // Reset removed info

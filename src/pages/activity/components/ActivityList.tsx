@@ -99,7 +99,12 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
 
             {/* Action Badge */}
             <div className="flex-shrink-0">
-              {item.action === 'approved' ? (
+              {item.tag === 'duplicated' ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-full">
+                  <XCircle className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                  <span className="text-xs font-medium text-orange-700 dark:text-orange-300">Removed</span>
+                </div>
+              ) : item.action === 'approved' ? (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                   <span className="text-xs font-medium text-green-700">Approved</span>
