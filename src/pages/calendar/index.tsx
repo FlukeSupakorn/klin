@@ -52,7 +52,11 @@ export function CalendarPage() {
     setIsCreateDialogOpen(true)
   }
 
-  const allEvents = events.length > 0 ? events : mockEvents
+  // Ensure dates are Date objects (in case they were serialized to strings)
+  const allEvents = (events.length > 0 ? events : mockEvents).map(event => ({
+    ...event,
+    date: event.date instanceof Date ? event.date : new Date(event.date)
+  }))
 
   return (
     <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">

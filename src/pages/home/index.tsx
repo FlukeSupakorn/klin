@@ -102,11 +102,7 @@ export function HomePage() {
 
   const handleMeetingConfirm = () => {
     setIsMeetingPopupOpen(false)
-    toast.success('Meeting Added', 'The meeting has been added to your calendar')
-    // Navigate to calendar page
-    setTimeout(() => {
-      navigate('/calendar')
-    }, 500)
+    toast.success('Meeting Confirmed', 'You can view the meeting in your calendar')
   }
 
   const SPECIAL_QUERY = 'สไลด์พรีเซ้น senior presentation'

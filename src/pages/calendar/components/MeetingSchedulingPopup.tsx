@@ -1,4 +1,4 @@
-import { Calendar, Clock, MapPin, FileText, X, CheckCircle } from 'lucide-react'
+import { Calendar, Clock, MapPin, FileText, X, CheckCircle, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -9,6 +9,9 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { mockMeetingData } from '../data/mockEvents'
+import { useNavigate } from 'react-router-dom'
+import { useAutomationSettings } from '@/pages/settings/hooks/useAutomationSettings'
+import { useToast } from '@/components/ui/toast'
 
 interface MeetingSchedulingPopupProps {
   isOpen: boolean
@@ -17,6 +20,23 @@ interface MeetingSchedulingPopupProps {
 }
 
 export function MeetingSchedulingPopup({ isOpen, onClose, onConfirm }: MeetingSchedulingPopupProps) {
+  const navigate = useNavigate()
+  const { autoScheduling, setAutoScheduling } = useAutomationSettings()
+  const toast = useToast()
+
+  const handleConfirm = () => {
+    navigate('/calendar')
+    onClose()
+  }
+
+  const handleReject = () => {
+    onClose()
+    // Show toast after dialog closes
+    setTimeout(() => {
+      toast.info('Meeting Removed', 'The meeting has been removed from your calendar')
+    }, 100)
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -27,9 +47,9 @@ export function MeetingSchedulingPopup({ isOpen, onClose, onConfirm }: MeetingSc
                 <Calendar className="h-6 w-6 text-theme-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl">Meeting Detected</DialogTitle>
+                <DialogTitle className="text-xl">Meeting Found</DialogTitle>
                 <DialogDescription>
-                  Would you like to add this meeting to your calendar?
+                  I detected a meeting in your document and automatically added it to your calendar. You can confirm or reject this action.
                 </DialogDescription>
               </div>
             </div>
@@ -130,15 +150,40 @@ export function MeetingSchedulingPopup({ isOpen, onClose, onConfirm }: MeetingSc
           </div>
         </div>
 
-        <DialogFooter className="flex gap-2">
-          <Button variant="outline" onClick={onClose} className="gap-2">
-            <X className="h-4 w-4" />
-            Not Now
-          </Button>
-          <Button onClick={onConfirm} className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Add to Calendar
-          </Button>
+        <DialogFooter className="flex-col gap-3">
+          <div className="flex gap-2 w-full">
+            <Button variant="outline" onClick={handleReject} className="flex-1 gap-2">
+              <X className="h-4 w-4" />
+              Reject
+            </Button>
+            <Button onClick={handleConfirm} className="flex-1 gap-2">
+              <Calendar className="h-4 w-4" />
+              View in Calendar
+            </Button>
+          </div>
+
+          {/* Auto Scheduling Toggle */}
+          <div className="w-full flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-theme-secondary">
+              <Settings className="h-4 w-4" />
+              <span>Auto-schedule meetings</span>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                setAutoScheduling(!autoScheduling)
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                autoScheduling ? 'bg-theme-primary' : 'bg-theme-tertiary'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  autoScheduling ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
