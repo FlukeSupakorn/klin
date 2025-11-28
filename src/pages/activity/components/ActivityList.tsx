@@ -68,7 +68,7 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
                   <span className="text-sm font-medium text-theme-text truncate">
                     {item.original_name}
                   </span>
-                  {item.original_name !== item.final_name && (
+                  {item.tag !== 'duplicated' && item.original_name !== item.final_name && (
                     <>
                       <ArrowRight className="h-4 w-4 text-theme-muted flex-shrink-0" />
                       <span className="text-sm font-medium text-theme-primary truncate">
@@ -79,17 +79,34 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
                 </div>
               </div>
 
-              {/* Folder Change */}
-              <div className="flex items-center gap-2 text-xs text-theme-muted mb-2">
-                <FolderOpen className="h-3 w-3" />
-                <span className="truncate">{item.original_folder || 'Unknown'}</span>
-                {item.original_folder !== item.final_folder && (
-                  <>
-                    <ArrowRight className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate text-theme-primary">{item.final_folder}</span>
-                  </>
-                )}
-              </div>
+              {/* Folder Change or Duplicate Info */}
+              {item.tag === 'duplicated' ? (
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs text-theme-muted">
+                    <FolderOpen className="h-3 w-3" />
+                    <span className="truncate">{item.original_folder}</span>
+                  </div>
+                  {item.duplicateOf && (
+                    <div className="flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
+                      <span>Duplicate of:</span>
+                      <span className="font-medium truncate">{item.duplicateOf.name}</span>
+                      <span className="text-theme-muted">in</span>
+                      <span className="truncate">{item.duplicateOf.folder}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs text-theme-muted mb-2">
+                  <FolderOpen className="h-3 w-3" />
+                  <span className="truncate">{item.original_folder || 'Unknown'}</span>
+                  {item.original_folder !== item.final_folder && (
+                    <>
+                      <ArrowRight className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate text-theme-primary">{item.final_folder}</span>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* Timestamp */}
               <div className="text-xs text-theme-muted">

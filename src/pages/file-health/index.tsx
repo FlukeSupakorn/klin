@@ -27,9 +27,16 @@ export function FileHealthPage() {
     // If auto-remove is enabled, perform mock removal and log to Activity
     if (autoRemoveDuplicates) {
       // Calculate what will be removed before clearing
-      const filesToRemove = scanResults.flatMap((group) =>
-        group.files.slice(1).map((f) => ({ path: f.path, name: f.name, folder: f.folder }))
-      )
+      // First file in each group is kept, rest are removed
+      const filesToRemove = scanResults.flatMap((group) => {
+        const keptFile = group.files[0] // First file is kept
+        return group.files.slice(1).map((f) => ({
+          path: f.path,
+          name: f.name,
+          folder: f.folder,
+          duplicateOf: { name: keptFile.name, folder: keptFile.folder }
+        }))
+      })
       const totalRemoved = filesToRemove.length
       const savedMB = scanResults.reduce((sum, group) => {
         const value = parseFloat(group.potentialSavings)
@@ -72,9 +79,16 @@ export function FileHealthPage() {
 
   const handleAutoRemove = () => {
     // Mock auto removal: remove duplicates leaving one per group
-    const filesToRemove = currentMockData.flatMap((group) =>
-      group.files.slice(1).map((f) => ({ path: f.path, name: f.name, folder: f.folder }))
-    )
+    // First file in each group is kept, rest are removed
+    const filesToRemove = currentMockData.flatMap((group) => {
+      const keptFile = group.files[0] // First file is kept
+      return group.files.slice(1).map((f) => ({
+        path: f.path,
+        name: f.name,
+        folder: f.folder,
+        duplicateOf: { name: keptFile.name, folder: keptFile.folder }
+      }))
+    })
     const totalRemoved = filesToRemove.length
     const savedMB = currentMockData.reduce((sum, group) => {
       const value = parseFloat(group.potentialSavings)

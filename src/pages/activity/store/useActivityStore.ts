@@ -19,6 +19,7 @@ export interface HistoryItem {
   action: 'approved' | 'rejected'
   timestamp: Date
   tag?: 'duplicated'
+  duplicateOf?: { name: string; folder: string } // The original file that was kept
 }
 
 interface ActivityState {
@@ -54,7 +55,7 @@ interface ActivityState {
   clearHistory: () => void
 
   // Duplicate removal logging
-  logDuplicateRemoval: (files: { path: string; name: string; folder: string }[]) => void
+  logDuplicateRemoval: (files: { path: string; name: string; folder: string; duplicateOf?: { name: string; folder: string } }[]) => void
 }
 
 export const useActivityStore = create<ActivityState>((set, get) => ({
@@ -197,6 +198,7 @@ export const useActivityStore = create<ActivityState>((set, get) => ({
       action: 'approved',
       timestamp: now,
       tag: 'duplicated',
+      duplicateOf: f.duplicateOf,
     }))
 
     set((state) => ({
