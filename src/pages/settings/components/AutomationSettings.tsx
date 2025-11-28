@@ -1,12 +1,14 @@
 import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, HeartPulse } from 'lucide-react'
 
 interface AutomationSettingsProps {
   autoOrganize: boolean
   onAutoOrganizeChange: (checked: boolean) => void
   autoScheduling: boolean
   onAutoSchedulingChange: (checked: boolean) => void
+  autoRemoveDuplicates: boolean
+  onAutoRemoveDuplicatesChange: (checked: boolean) => void
 }
 
 export function AutomationSettings({
@@ -14,6 +16,8 @@ export function AutomationSettings({
   onAutoOrganizeChange,
   autoScheduling,
   onAutoSchedulingChange,
+  autoRemoveDuplicates,
+  onAutoRemoveDuplicatesChange,
 }: AutomationSettingsProps) {
   return (
     <div className="max-w-2xl">
@@ -75,6 +79,33 @@ export function AutomationSettings({
             </div>
             <div className="ml-4">
               <Switch checked={autoOrganize} onCheckedChange={onAutoOrganizeChange} />
+            </div>
+          </div>
+        </div>
+
+        {/* Auto Remove Duplicates */}
+        <div className="border border-theme rounded-lg p-6 bg-theme-background">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <HeartPulse className="h-5 w-5 text-theme-primary" />
+                <h3 className="text-lg font-semibold text-theme-text">Auto Remove Duplicates</h3>
+              </div>
+              <p className="text-sm text-theme-secondary mb-4">
+                Automatically delete duplicate files after scanning in File Health, keeping one copy per group. 
+                All removals are logged to Activity for your review.
+              </p>
+              <div className="bg-theme-primary-light border border-theme-primary rounded-md p-3">
+                <p className="text-xs text-theme-primary font-medium mb-1">Safety notes:</p>
+                <ul className="text-xs text-theme-primary space-y-1 ml-4 list-disc">
+                  <li>Keeps one original copy in each duplicate group</li>
+                  <li>Logs all removals to Activity with "duplicated" tag</li>
+                  <li>System and excluded folders are not affected</li>
+                </ul>
+              </div>
+            </div>
+            <div className="ml-4">
+              <Switch checked={autoRemoveDuplicates} onCheckedChange={onAutoRemoveDuplicatesChange} />
             </div>
           </div>
         </div>

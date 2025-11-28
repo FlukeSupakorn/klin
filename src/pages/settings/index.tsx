@@ -17,6 +17,8 @@ export function SettingsPage() {
     setAutoOrganize,
     autoScheduling,
     setAutoScheduling,
+    autoRemoveDuplicates,
+    setAutoRemoveDuplicates,
   } = useAutomationSettings()
 
   return (
@@ -46,6 +48,8 @@ export function SettingsPage() {
                 onAutoOrganizeChange={setAutoOrganize}
                 autoScheduling={autoScheduling}
                 onAutoSchedulingChange={setAutoScheduling}
+                autoRemoveDuplicates={autoRemoveDuplicates}
+                onAutoRemoveDuplicatesChange={setAutoRemoveDuplicates}
               />
             )}
             {activeTab === 'notifications' && <NotificationSettings />}

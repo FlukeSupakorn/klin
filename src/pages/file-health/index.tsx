@@ -5,17 +5,53 @@ import { DuplicateWarning } from './components/DuplicateWarning'
 import { DuplicateResults } from './components/DuplicateResults'
 import { useFileHealthScan } from './hooks/useFileHealthScan'
 import { mockDuplicatesDefault, mockDuplicatesAfterScan } from './data/mockDuplicates'
+import { useAutomationSettings } from '@/pages/settings/hooks/useAutomationSettings'
+import { useActivityStore } from '@/pages/activity/store/useActivityStore'
 
 export function FileHealthPage() {
   const { isScanning, scanProgress, hasScanned, startScan } = useFileHealthScan()
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
   const [currentMockData, setCurrentMockData] = useState(mockDuplicatesDefault)
+  const [removedInfo, setRemovedInfo] = useState<{ count: number; savings: string } | null>(null)
+  const { autoRemoveDuplicates } = useAutomationSettings()
+  const { logDuplicateRemoval } = useActivityStore()
 
   const handleScan = async () => {
+    setRemovedInfo(null) // Reset removed info
     await startScan()
     // After scan completes, switch to different mock data
-    setCurrentMockData(mockDuplicatesAfterScan)
+    const scanResults = mockDuplicatesAfterScan
     setSelectedFiles(new Set()) // Clear selections
+
+    // If auto-remove is enabled, perform mock removal and log to Activity
+    if (autoRemoveDuplicates) {
+      // Calculate what will be removed before clearing
+      const filesToRemove = scanResults.flatMap((group) =>
+        group.files.slice(1).map((f) => ({ path: f.path, name: f.name, folder: f.folder }))
+      )
+      const totalRemoved = filesToRemove.length
+      const savedMB = scanResults.reduce((sum, group) => {
+        const value = parseFloat(group.potentialSavings)
+        if (group.potentialSavings.includes('MB')) {
+          return sum + value
+        } else if (group.potentialSavings.includes('KB')) {
+          return sum + (value / 1024)
+        }
+        return sum
+      }, 0).toFixed(1)
+
+      // Log to Activity
+      if (filesToRemove.length > 0) {
+        logDuplicateRemoval(filesToRemove)
+      }
+
+      // Set removed info for display
+      setRemovedInfo({ count: totalRemoved, savings: savedMB })
+      // Clear duplicates (they're removed)
+      setCurrentMockData([])
+    } else {
+      setCurrentMockData(scanResults)
+    }
   }
 
   const toggleFileSelection = (filePath: string) => {
@@ -31,6 +67,33 @@ export function FileHealthPage() {
   const handleDeleteSelected = () => {
     // Mock delete
     setSelectedFiles(new Set())
+  }
+
+  const handleAutoRemove = () => {
+    // Mock auto removal: remove duplicates leaving one per group
+    const filesToRemove = currentMockData.flatMap((group) =>
+      group.files.slice(1).map((f) => ({ path: f.path, name: f.name, folder: f.folder }))
+    )
+    const totalRemoved = filesToRemove.length
+    const savedMB = currentMockData.reduce((sum, group) => {
+      const value = parseFloat(group.potentialSavings)
+      if (group.potentialSavings.includes('MB')) {
+        return sum + value
+      } else if (group.potentialSavings.includes('KB')) {
+        return sum + (value / 1024)
+      }
+      return sum
+    }, 0).toFixed(1)
+
+    // Log to Activity with 'duplicated' tag
+    if (filesToRemove.length > 0) {
+      logDuplicateRemoval(filesToRemove)
+    }
+
+    // Set removed info for display
+    setRemovedInfo({ count: totalRemoved, savings: savedMB })
+    // Update UI mock: after removal, no duplicates remain
+    setCurrentMockData([])
   }
 
   const totalDuplicates = currentMockData.reduce((sum, group) => sum + group.files.length, 0)
@@ -90,7 +153,7 @@ export function FileHealthPage() {
           </div>
 
           {/* Results View - shown below scan button, hidden during scan */}
-          {!isScanning && (
+          {!isScanning && (hasScanned || currentMockData.length > 0 || removedInfo) && (
             <DuplicateResults
               duplicates={currentMockData}
               totalDuplicates={totalDuplicates}
@@ -99,6 +162,9 @@ export function FileHealthPage() {
               onToggleFile={toggleFileSelection}
               onScanAgain={handleScan}
               onDeleteSelected={handleDeleteSelected}
+              onAutoRemove={handleAutoRemove}
+              autoRemoveEnabled={autoRemoveDuplicates}
+              removedInfo={removedInfo}
             />
           )}
         </div>

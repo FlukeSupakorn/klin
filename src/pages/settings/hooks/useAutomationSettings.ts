@@ -6,6 +6,8 @@ interface AutomationSettingsState {
   setAutoOrganize: (value: boolean) => void
   autoScheduling: boolean
   setAutoScheduling: (value: boolean) => void
+  autoRemoveDuplicates: boolean
+  setAutoRemoveDuplicates: (value: boolean) => void
 }
 
 const useAutomationSettingsStore = create<AutomationSettingsState>()(  
@@ -15,6 +17,8 @@ const useAutomationSettingsStore = create<AutomationSettingsState>()(
       setAutoOrganize: (value) => set({ autoOrganize: value }),
       autoScheduling: false,
       setAutoScheduling: (value) => set({ autoScheduling: value }),
+      autoRemoveDuplicates: false,
+      setAutoRemoveDuplicates: (value) => set({ autoRemoveDuplicates: value }),
     }),
     {
       name: 'klin-automation-settings',
@@ -23,12 +27,14 @@ const useAutomationSettingsStore = create<AutomationSettingsState>()(
 )
 
 export function useAutomationSettings() {
-  const { autoOrganize, setAutoOrganize, autoScheduling, setAutoScheduling } = useAutomationSettingsStore()
+  const { autoOrganize, setAutoOrganize, autoScheduling, setAutoScheduling, autoRemoveDuplicates, setAutoRemoveDuplicates } = useAutomationSettingsStore()
 
   return {
     autoOrganize,
     setAutoOrganize,
     autoScheduling,
     setAutoScheduling,
+    autoRemoveDuplicates,
+    setAutoRemoveDuplicates,
   }
 }
