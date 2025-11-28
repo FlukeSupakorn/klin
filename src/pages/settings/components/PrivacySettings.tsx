@@ -1,4 +1,4 @@
-import { Shield, File, Eye, EyeOff, Lock, Trash2, FolderLock, Plus, X } from 'lucide-react'
+import { Shield, Lock, Trash2, FolderLock, Plus, X } from 'lucide-react'
 import { useState } from 'react'
 
 export function PrivacySettings() {

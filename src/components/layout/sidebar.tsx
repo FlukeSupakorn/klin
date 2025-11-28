@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Home, Activity, StickyNote, Settings, LogOut, Sparkles, Calendar, HeartPulse } from 'lucide-react'
+import { Home, Activity, StickyNote, Settings, LogOut, Calendar, HeartPulse } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const menuItems = [

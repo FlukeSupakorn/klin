@@ -33,7 +33,6 @@ export function DuplicateResults({
   totalSavings,
   selectedFiles,
   onToggleFile,
-  onScanAgain,
   onDeleteSelected,
   onAutoRemove,
   autoRemoveEnabled,

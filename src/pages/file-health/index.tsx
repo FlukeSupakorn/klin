@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { ScanButton } from './components/ScanButton'
 import { InfoCards } from './components/InfoCards'
-import { DuplicateWarning } from './components/DuplicateWarning'
 import { DuplicateResults } from './components/DuplicateResults'
 import { useFileHealthScan } from './hooks/useFileHealthScan'
 import { mockDuplicatesDefault, mockDuplicatesAfterScan } from './data/mockDuplicates'

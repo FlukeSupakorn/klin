@@ -19,7 +19,7 @@ interface MeetingSchedulingPopupProps {
   onConfirm: () => void
 }
 
-export function MeetingSchedulingPopup({ isOpen, onClose, onConfirm }: MeetingSchedulingPopupProps) {
+export function MeetingSchedulingPopup({ isOpen, onClose }: MeetingSchedulingPopupProps) {
   const navigate = useNavigate()
   const { autoScheduling, setAutoScheduling } = useAutomationSettings()
   const toast = useToast()
