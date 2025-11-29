@@ -29,7 +29,6 @@ import { generateBatchSummaries, createNoteFromSummaries } from '@/lib/ai-api'
 import { createNote } from '@/lib/note-api'
 
 // Sub-feature components
-import { DestinationBanner } from './destination/DestinationBanner'
 import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
 import { RecentActivityWidget } from './components/RecentActivityWidget'
 import { AIInsightsWidget } from './components/AIInsightsWidget'
@@ -374,11 +373,6 @@ export function DashboardPage() {
         {/* Watching Folders Panel - scrollable row */}
         <div className="mt-6">
           <WatchingFoldersPanel />
-        </div>
-
-        {/* Destination Banner - compact */}
-        <div className="mt-5">
-          <DestinationBanner />
         </div>
       </div>
 

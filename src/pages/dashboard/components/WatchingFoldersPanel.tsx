@@ -1,7 +1,8 @@
 import { useDashboardStore, WatchingFolder } from '../store/useDashboardStore'
-import { FolderOpen, Plus, X, Check } from 'lucide-react'
+import { FolderOpen, Plus, X, Check, FolderInput } from 'lucide-react'
 import { selectFolder, readFolder } from '@/lib/tauri-api'
 import { generateUUID } from '@/lib/uuid'
+import { useDestinations } from '../destination/useDestinations'
 
 export function WatchingFoldersPanel() {
   const watchingFolders = useDashboardStore((state) => state.watchingFolders)
@@ -11,6 +12,8 @@ export function WatchingFoldersPanel() {
   const addWatchingFolder = useDashboardStore((state) => state.addWatchingFolder)
   const setFiles = useDashboardStore((state) => state.setFiles)
   const files = useDashboardStore((state) => state.files)
+  const setIsManageFoldersOpen = useDashboardStore((state) => state.setIsManageFoldersOpen)
+  const { destinationFolders } = useDestinations()
 
   const handleAddFolder = async () => {
     try {
@@ -104,8 +107,10 @@ export function WatchingFoldersPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      {/* Header with two sections */}
+      <div className="flex items-center justify-between gap-6">
+        {/* Watching Folders Section */}
+        <div className="flex items-center gap-3 flex-1">
           <div className="flex items-center gap-2.5">
             <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse shadow-sm" />
             <h2 className="text-base font-bold text-slate-800">
@@ -115,8 +120,6 @@ export function WatchingFoldersPanel() {
           <span className="text-xs font-semibold text-slate-500 bg-gradient-to-r from-slate-100 to-slate-200 px-2.5 py-1 rounded-full">
             {watchingFolders.length}
           </span>
-        </div>
-        <div className="flex items-center gap-2">
           <button
             onClick={handleAddFolder}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 shadow-sm hover:shadow-md transition-all"
@@ -125,6 +128,22 @@ export function WatchingFoldersPanel() {
             Add Folder
           </button>
         </div>
+
+        {/* Destination Folders Section */}
+        <button
+          onClick={() => setIsManageFoldersOpen(true)}
+          className="flex items-center gap-3 px-5 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl text-sm font-semibold text-emerald-700 hover:border-emerald-300 hover:from-emerald-100 hover:to-teal-100 transition-all group shadow-sm hover:shadow-md"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 bg-white rounded-lg shadow-sm">
+              <FolderInput className="h-5 w-5 text-emerald-600" />
+            </div>
+            <span>Destinations</span>
+            <span className="text-emerald-700 bg-white px-2.5 py-0.5 rounded-full text-xs font-bold shadow-sm">
+              {destinationFolders.length}
+            </span>
+          </div>
+        </button>
       </div>
 
       <div 
