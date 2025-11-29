@@ -1,5 +1,4 @@
-import { Settings, Bell, CheckCircle2, X, XCircle } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { CheckCircle2, X, XCircle } from 'lucide-react'
 import { useActivityStore } from './store/useActivityStore'
 import { SearchToolbar, FilterType } from './components/SearchToolbar'
 import { ActivityQueue } from './components/ActivityQueue'
@@ -8,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
 export function ActivityPage() {
-  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeFilter, setActiveFilter] = useState<FilterType>('all')
   
@@ -83,30 +81,9 @@ export function ActivityPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
-      {/* Header */}
-      <div className="px-8 py-6 border-b border-theme bg-theme-background">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="text-3xl font-bold text-theme-text">Activity</h1>
-            <p className="text-sm text-theme-secondary mt-1">
-              Track file organization progress and history
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <button 
-              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
-              onClick={() => navigate('/settings')}
-            >
-              <Settings className="h-5 w-5 text-theme-secondary" />
-            </button>
-            <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
-              <Bell className="h-5 w-5 text-theme-secondary" />
-            </button>
-          </div>
-        </div>
-
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-theme-background">
+      {/* Search Toolbar */}
+      <div className="px-8 py-4 border-b border-theme bg-theme-background">
         <SearchToolbar 
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}

@@ -10,15 +10,13 @@
  * - Minimal logic in this file - just composition
  */
 
-import { Sparkles, Settings, Bell, FolderOpen } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { FolderOpen } from 'lucide-react'
 
 // Hooks
 import { useFileLoading } from './hooks/useFileLoading'
 import { useFileSelection } from './hooks/useFileSelection'
 import { useOrganize } from './hooks/useOrganize'
-import { useAISearch } from './hooks/useAISearch'
 import { useFileDelete } from './hooks/useFileDelete'
 import { useSummarize } from './hooks/useSummarize'
 import { useNotifications } from './hooks/useNotifications'
@@ -40,18 +38,27 @@ import { OrganizePreviewDialog } from './organize/OrganizePreviewDialog'
 import { ChangeWatcherDialog } from './watcher/ChangeWatcherDialog'
 import { ManageDestinationsDialog } from './destination/ManageDestinationsDialog'
 import { ConfirmActionDialog } from './shared/ConfirmActionDialog'
-import { AISearchBar } from './components/AISearchBar'
 import { AISearchResults } from './components/AISearchResults'
 import { MeetingSchedulingPopup } from '../calendar/components/MeetingSchedulingPopup'
 import { NotificationPanel } from '@/components/NotificationPanel'
 
 import { useDashboardStore } from './store/useDashboardStore'
 import { useFileStore } from '@/store/useFileStore'
+import { useSearchStore } from '@/store/useSearchStore'
 import { usePrivacyStore } from '@/pages/privacy/store/usePrivacyStore'
+import { useNavbar } from '@/components/layout/NavbarContext'
 
 export function DashboardPage() {
-  const navigate = useNavigate()
   const toast = useToast()
+
+  // Navbar context for global controls
+  const {
+    setCanOrganize,
+    setShowOrganizeAll,
+    setOnOrganizeClick,
+    setNotificationCount,
+    setOnNotificationClick,
+  } = useNavbar()
 
   // Initialize file loading
   useFileLoading()
@@ -88,16 +95,14 @@ export function DashboardPage() {
   // Organize hook
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
 
-  // AI Search hook
+  // Global search store
   const {
     isSearchMode,
     isSearching,
     searchResults,
     searchQuery,
-    handleSearch,
-    handleSearchChange,
     clearSearch,
-  } = useAISearch()
+  } = useSearchStore()
 
   // File delete hook
   const {
@@ -152,6 +157,22 @@ export function DashboardPage() {
 
   const canOrganize = !currentViewFolderId || selectedFileIds.length > 0
 
+  // Sync navbar state
+  useEffect(() => {
+    setCanOrganize(canOrganize)
+    setShowOrganizeAll(!currentViewFolderId && files.length > 0)
+    setOnOrganizeClick(() => setIsOrganizeOpen(true))
+    setNotificationCount(notificationCount)
+    setOnNotificationClick(toggleNotificationPanel)
+
+    // Cleanup on unmount
+    return () => {
+      setOnOrganizeClick(null)
+      setOnNotificationClick(null)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canOrganize, currentViewFolderId, files.length, notificationCount])
+
   // Show first-time setup if needed
   if (isFirstTimeSetup) {
     return <FirstTimeSetupDialog />
@@ -159,55 +180,9 @@ export function DashboardPage() {
 
   return (
     <div className="flex flex-col h-full bg-theme-background">
-      {/* Header */}
-      <div className="bg-theme-background border-b border-theme px-8 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-theme-text">My Files</h1>
-            <p className="text-sm text-theme-secondary mt-1">Manage and organize your files</p>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              className="gap-2"
-              disabled={!canOrganize}
-              onClick={() => setIsOrganizeOpen(true)}
-              title={!canOrganize ? 'Select files to organize' : 'Organize files'}
-            >
-              <Sparkles className="h-4 w-4" />
-              Organize
-              {!currentViewFolderId && files.length > 0 && (
-                <span className="ml-1 text-xs bg-theme-primary text-white px-1.5 py-0.5 rounded-full">
-                  All
-                </span>
-              )}
-            </Button>
-
-            <button 
-              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
-              onClick={() => navigate('/settings')}
-            >
-              <Settings className="h-5 w-5 text-theme-secondary" />
-            </button>
-            <button 
-              className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary relative"
-              onClick={toggleNotificationPanel}
-            >
-              <Bell className="h-5 w-5 text-theme-secondary" />
-              {notificationCount > 0 && (
-                <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 rounded-full flex items-center justify-center text-xs font-bold text-white">
-                  {notificationCount}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Watching Folders Panel */}
-        <div className="mt-6">
-          <WatchingFoldersPanel />
-        </div>
+      {/* Watching Folders Panel */}
+      <div className="bg-theme-background border-b border-theme px-6 py-4">
+        <WatchingFoldersPanel />
       </div>
 
       {/* Main Content Area */}
@@ -239,15 +214,6 @@ export function DashboardPage() {
           <DashboardView />
         )}
       </div>
-
-      {/* Sticky AI Search Bar */}
-      <AISearchBar
-        value={searchQuery}
-        onChange={handleSearchChange}
-        onSearch={() => handleSearch(searchQuery)}
-        onClear={clearSearch}
-        isSearching={isSearching}
-      />
 
       {/* Dialogs */}
       <OrganizeDialog

@@ -122,17 +122,7 @@ export function FileHealthPage() {
   }, 0).toFixed(1)
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
-      {/* Header */}
-      <div className="bg-theme-background border-b border-theme px-8 py-6">
-        <div>
-          <h1 className="text-3xl font-bold text-theme-text">File Health</h1>
-          <p className="text-sm text-theme-secondary mt-1">
-            Find and manage duplicate files to free up space
-          </p>
-        </div>
-      </div>
-
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-theme-background">
       {/* Content */}
       <div className="flex-1 overflow-auto p-8">
         <div className="max-w-6xl mx-auto">
