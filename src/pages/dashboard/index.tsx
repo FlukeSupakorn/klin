@@ -31,6 +31,7 @@ import { createNote } from '@/lib/note-api'
 // Sub-feature components
 import { DestinationBanner } from './destination/DestinationBanner'
 import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
+import { RecentActivityWidget } from './components/RecentActivityWidget'
 import { FileListView } from './file-list/FileListView'
 import { FileToolbar } from './file-list/FileToolbar'
 import { FirstTimeSetupDialog } from './onboarding/FirstTimeSetupDialog'
@@ -447,26 +448,8 @@ export function DashboardPage() {
           /* Empty Dashboard View - Split into 2 sections */
           <div className="flex gap-6 h-full">
             {/* Left Section: Recent Activity (70%) */}
-            <div className="flex-[7] bg-white border border-slate-200 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
-                  <svg className="h-5 w-5 text-blue-600" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h2 className="text-lg font-semibold text-slate-800">Recent Activity</h2>
-              </div>
-              <div className="flex items-center justify-center h-[calc(100%-60px)]">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-100 mb-3">
-                    <svg className="h-8 w-8 text-slate-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
-                      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                  <p className="text-sm text-slate-600 font-medium">No recent activity</p>
-                  <p className="text-xs text-slate-400 mt-1">Your file operations will appear here</p>
-                </div>
-              </div>
+            <div className="flex-[7] bg-white border border-slate-200 rounded-2xl p-6 overflow-hidden">
+              <RecentActivityWidget />
             </div>
 
             {/* Right Section: AI Insights (30%) */}
