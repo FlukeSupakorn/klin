@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { selectFolder } from '@/lib/tauri-api'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 
 export function useDestinations() {
   const {
     destinationFolders,
     addDestinationFolder,
     removeDestinationFolder,
-  } = useHomeStore()
+  } = useDashboardStore()
 
   const [newDestinationFolder, setNewDestinationFolder] = useState('')
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { getDownloadsFolder, readFolder, FileItem } from '@/lib/tauri-api'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 import { generateUUID } from '@/lib/uuid'
 
 export function useFileLoading() {
@@ -15,7 +15,7 @@ export function useFileLoading() {
     setTempDestinations,
     updateWatchingFolder,
     setWatchingFolders,
-  } = useHomeStore()
+  } = useDashboardStore()
 
   useEffect(() => {
     const isDevMode = localStorage.getItem('klin-dev-mode') === 'true'

@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { useFileStore } from '@/store/useFileStore'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 
 export function useFileSelection() {
   const { selectedFileIds, toggleFileSelection, deselectAllFiles, selectAllFiles } = useFileStore()
-  const { files } = useHomeStore()
+  const { files } = useDashboardStore()
   const [localSearch, setLocalSearch] = useState('')
 
   const filteredFiles = files.filter((file) =>

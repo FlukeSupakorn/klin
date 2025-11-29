@@ -8,11 +8,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 import { useWatcher } from './useWatcher'
 
 export function ChangeWatcherDialog() {
-  const { isChangeFolderOpen, setIsChangeFolderOpen } = useHomeStore()
+  const { isChangeFolderOpen, setIsChangeFolderOpen } = useDashboardStore()
   const { watchedFolder, handleBrowseChangeFolder } = useWatcher()
 
   return (

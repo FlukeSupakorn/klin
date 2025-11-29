@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { CheckCircle2, XCircle, Edit2, Loader2, FolderOpen } from 'lucide-react'
 import { useState } from 'react'
-import { getFileType } from '@/pages/home/file-list/utils'
+import { getFileType } from '@/pages/dashboard/file-list/utils'
 
 interface ActivityQueueProps {
   searchQuery: string

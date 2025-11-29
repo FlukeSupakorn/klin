@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Sidebar } from './components/layout/sidebar'
 import { ToastContainer } from './components/ui/toast'
-import HomePage from './pages/home'
+import DashboardPage from './pages/dashboard'
 import ActivityPage from './pages/activity'
 import NotePage from './pages/note'
 import InsightsPage from './pages/insights'
@@ -18,8 +18,8 @@ function App() {
         <Sidebar />
         <main className="flex-1 flex flex-col overflow-hidden bg-theme-background">
           <Routes>
-            <Route path="/" element={<Navigate to="/files" replace />} />
-            <Route path="/files" element={<HomePage />} />
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/insights" element={<InsightsPage />} />
             <Route path="/history" element={<ActivityPage />} />
             <Route path="/note" element={<NotePage />} />

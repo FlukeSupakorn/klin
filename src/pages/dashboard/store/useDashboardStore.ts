@@ -19,7 +19,7 @@ interface OrganizePreview {
   summary?: string
 }
 
-interface HomeState {
+interface DashboardState {
   // Folder Management - Updated for multiple watching folders
   watchingFolders: WatchingFolder[]
   selectedFolderIds: string[] // Empty array means "All" selected
@@ -83,7 +83,7 @@ interface HomeState {
   setDestinationMode: (mode: 'ai' | 'custom' | null) => void
 }
 
-export const useHomeStore = create<HomeState>()(
+export const useDashboardStore = create<DashboardState>()(
   persist(
     (set) => ({
   // Folder Management - Multiple watching folders
@@ -213,7 +213,7 @@ export const useHomeStore = create<HomeState>()(
   setDestinationMode: (mode) => set({ destinationMode: mode }),
     }),
     {
-      name: 'klin-home-storage',
+      name: 'klin-dashboard-storage',
       partialize: (state) => ({
         watchingFolders: state.watchingFolders,
         destinationFolders: state.destinationFolders,

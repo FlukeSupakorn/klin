@@ -1,8 +1,8 @@
 /**
- * Home Page (formerly My Files Page)
+ * Dashboard Page
  * 
  * This is the main entry point that composes all sub-features.
- * State management is handled by Zustand store in ./store/useHomeStore.ts
+ * State management is handled by Zustand store in ./store/useDashboardStore.ts
  * 
  * Structure:
  * - Uses hooks for business logic
@@ -44,17 +44,17 @@ import { AISearchResults } from './components/AISearchResults'
 import { MeetingSchedulingPopup } from '../calendar/components/MeetingSchedulingPopup'
 import { NotificationPanel, Notification } from '@/components/NotificationPanel'
 
-import { useHomeStore } from './store/useHomeStore'
+import { useDashboardStore } from './store/useDashboardStore'
 import { useFileStore } from '@/store/useFileStore'
 import { useEffect } from 'react'
 
-export function HomePage() {
+export function DashboardPage() {
   // Initialize file loading
   const { reloadFiles } = useFileLoading()
   const navigate = useNavigate()
 
   // Get state from stores
-  const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen, files } = useHomeStore()
+  const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen, files } = useDashboardStore()
 
   // Use hooks for logic
   const {
@@ -332,16 +332,19 @@ export function HomePage() {
           </div>
         </div>
 
-        {/* Folder Watcher and Destination Banners */}
-        <div className="mt-4 space-y-3">
+        {/* Watching Folders Panel - scrollable row */}
+        <div className="mt-4">
+          <WatchingFoldersPanel />
+        </div>
+
+        {/* Destination Banner - compact */}
+        <div className="mt-3">
           <DestinationBanner />
         </div>
       </div>
 
       {/* Main Content Area - add padding bottom for search bar */}
       <div className="flex-1 overflow-auto p-6 pb-6 space-y-6 bg-theme-background">
-        {/* Watching Folders Panel - always visible */}
-        <WatchingFoldersPanel />
 
         {/* Show different content based on search mode */}
         {isSearchMode ? (
@@ -435,4 +438,4 @@ export function HomePage() {
 }
 
 // Export as default for easier importing
-export default HomePage
+export default DashboardPage

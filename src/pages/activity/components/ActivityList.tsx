@@ -1,7 +1,7 @@
 import { useActivityStore } from '../store/useActivityStore'
 import { FileIcon } from '@/components/file/file-icon'
 import { CheckCircle2, XCircle, FolderOpen, ArrowRight } from 'lucide-react'
-import { getFileType } from '@/pages/home/file-list/utils'
+import { getFileType } from '@/pages/dashboard/file-list/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { FilterType } from './SearchToolbar'
 

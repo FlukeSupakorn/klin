@@ -1,9 +1,9 @@
 import { FolderOpen, ChevronRight } from 'lucide-react'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 import { useWatcher } from './useWatcher'
 
 export function WatcherBanner() {
-  const { setIsChangeFolderOpen } = useHomeStore()
+  const { setIsChangeFolderOpen } = useDashboardStore()
   const { watchedFolder } = useWatcher()
 
   return (

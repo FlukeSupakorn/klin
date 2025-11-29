@@ -1,5 +1,5 @@
 import { selectFolder } from '@/lib/tauri-api'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 import { useFileLoading } from '../hooks/useFileLoading'
 
 export function useWatcher() {
@@ -7,7 +7,7 @@ export function useWatcher() {
     watchedFolder,
     setWatchedFolder,
     setIsChangeFolderOpen,
-  } = useHomeStore()
+  } = useDashboardStore()
   const { reloadFiles } = useFileLoading()
 
   const handleBrowseChangeFolder = async () => {

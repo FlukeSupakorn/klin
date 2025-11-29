@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useHomeStore } from '@/pages/home/store/useHomeStore'
+import { useDashboardStore } from '@/pages/dashboard/store/useDashboardStore'
 import { getFeaturedFolders, type FolderInsight } from '@/lib/ai-api'
 import { createFileTree } from '../utils/fileTree'
 import { FileNode } from '../components/FileTreeNode'
@@ -8,7 +8,7 @@ import { FileNode } from '../components/FileTreeNode'
  * Hook for managing featured folders insights
  */
 export function useFeaturedFolders() {
-  const destinationFolders = useHomeStore((state) => state.destinationFolders)
+  const destinationFolders = useDashboardStore((state) => state.destinationFolders)
   const [featuredFolders, setFeaturedFolders] = useState<FolderInsight[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -44,7 +44,7 @@ export function useFeaturedFolders() {
  * Hook for managing file tree explorer
  */
 export function useFileTree() {
-  const destinationFolders = useHomeStore((state) => state.destinationFolders)
+  const destinationFolders = useDashboardStore((state) => state.destinationFolders)
   const [fileTree, setFileTree] = useState<FileNode[]>([])
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set())
   const [isLoading, setIsLoading] = useState(true)

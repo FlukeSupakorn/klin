@@ -50,7 +50,7 @@ export function DeveloperSettings() {
               </div>
               <p className="text-sm text-theme-secondary mb-4">
                 Enable developer mode to unlock special features for testing. When enabled, 
-                the first-time setup will appear once per app session (on first Home visit), and
+                the first-time setup will appear once per app session (on first Dashboard visit), and
                 all validation requirements will be removed.
               </p>
               <div className="bg-theme-background border border-theme rounded-md p-3">
@@ -66,7 +66,7 @@ export function DeveloperSettings() {
                 <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
                 <p className="text-xs text-theme-secondary">
                   {devMode ? (
-                    <span className="font-semibold">✅ Dev Mode is ACTIVE - Navigate to Home to test setup</span>
+                    <span className="font-semibold">✅ Dev Mode is ACTIVE - Navigate to Dashboard to test setup</span>
                   ) : (
                     <span>❌ Dev Mode is OFF - Normal validation applies</span>
                   )}
@@ -91,14 +91,14 @@ export function DeveloperSettings() {
                 <h3 className="text-lg font-semibold text-theme-text">Mock Meeting Scheduling Popup</h3>
               </div>
               <p className="text-sm text-theme-secondary mb-4">
-                When enabled, a mock meeting detection popup will appear when you visit the Home page. 
+                When enabled, a mock meeting detection popup will appear when you visit the Dashboard page. 
                 This simulates the AI finding a meeting file and asking to schedule it.
               </p>
               <div className="bg-theme-secondary border border-theme rounded-md p-3">
                 <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
                 <p className="text-xs text-theme-secondary">
                   {mockSchedulingPopup ? (
-                    <span className="font-semibold">⚠️ Mock popup is ACTIVE - Navigate to Home to see meeting popup</span>
+                    <span className="font-semibold">⚠️ Mock popup is ACTIVE - Navigate to Dashboard to see meeting popup</span>
                   ) : (
                     <span>❌ Mock popup is OFF - Toggle ON to test scheduling feature</span>
                   )}
@@ -124,13 +124,13 @@ export function DeveloperSettings() {
               </div>
               <p className="text-sm text-theme-secondary mb-4">
                 Toggle this to immediately show the first-time setup wizard. When enabled, 
-                navigating to Home page will display the welcome dialog.
+                navigating to Dashboard page will display the welcome dialog.
               </p>
               <div className="bg-theme-secondary border border-theme rounded-md p-3">
                 <p className="text-xs text-theme-text font-medium mb-1">Current Status:</p>
                 <p className="text-xs text-theme-secondary">
                   {isFirstTime ? (
-                    <span className="font-semibold">⚠️ First time mode is ACTIVE - Navigate to Home to see setup wizard</span>
+                    <span className="font-semibold">⚠️ First time mode is ACTIVE - Navigate to Dashboard to see setup wizard</span>
                   ) : (
                     <span>✅ First time setup is completed - Toggle ON to test again</span>
                   )}

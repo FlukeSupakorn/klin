@@ -18,7 +18,7 @@ import { FileNode } from './components/FileTreeNode'
 import { DestinationFoldersDialog } from '@/components/ui/destination-folders-dialog'
 import { useFeaturedFolders, useFileTree, useHorizontalScroll } from './hooks/useInsights'
 import { useNotePreview } from './hooks/useNotePreview'
-import { useHomeStore } from '@/pages/home/store/useHomeStore'
+import { useDashboardStore } from '@/pages/dashboard/store/useDashboardStore'
 
 export function InsightsPage() {
   // Business logic from hooks
@@ -28,8 +28,8 @@ export function InsightsPage() {
   const { selectedItem, notePreview, isLoading: isLoadingNote, onSelectItem } = useNotePreview()
   
   // Destination folder management
-  const destinationFolders = useHomeStore((state) => state.destinationFolders)
-  const setDestinationFolders = useHomeStore((state) => state.setDestinationFolders)
+  const destinationFolders = useDashboardStore((state) => state.destinationFolders)
+  const setDestinationFolders = useDashboardStore((state) => state.setDestinationFolders)
   
   // Modal state
   const [showDestinationModal, setShowDestinationModal] = useState(false)

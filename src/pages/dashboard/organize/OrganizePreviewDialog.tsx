@@ -10,12 +10,12 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { FileIcon } from '@/components/file/file-icon'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 import { useOrganize } from '../hooks/useOrganize'
 import { getFileType } from '../file-list/utils'
 
 export function OrganizePreviewDialog() {
-  const { isPreviewOpen, setIsPreviewOpen } = useHomeStore()
+  const { isPreviewOpen, setIsPreviewOpen } = useDashboardStore()
   const {
     organizePreviews,
     editingIndex,

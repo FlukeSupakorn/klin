@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { selectFolder, readFolder, createFolder } from '@/lib/tauri-api'
-import { useHomeStore, WatchingFolder } from '../store/useHomeStore'
+import { useDashboardStore, WatchingFolder } from '../store/useDashboardStore'
 import { generateUUID } from '@/lib/uuid'
 
 // Mock AI-generated folder structure
@@ -35,7 +35,7 @@ export function useOnboarding() {
     setDestinationFolders,
     setFiles,
     setLoading,
-  } = useHomeStore()
+  } = useDashboardStore()
 
   const [tempNewDestination, setTempNewDestination] = useState('')
 

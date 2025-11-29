@@ -1,5 +1,5 @@
 import { DestinationFoldersDialog } from '@/components/ui/destination-folders-dialog'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 
 export function ManageDestinationsDialog() {
   const { 
@@ -7,7 +7,7 @@ export function ManageDestinationsDialog() {
     setIsManageFoldersOpen,
     destinationFolders,
     setDestinationFolders
-  } = useHomeStore()
+  } = useDashboardStore()
 
   const handleSave = (folders: string[]) => {
     setDestinationFolders(folders)

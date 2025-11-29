@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FileItem } from '@/lib/tauri-api'
 import { callOrganizeAPI } from '@/lib/mock-api'
-import { useHomeStore } from '../store/useHomeStore'
+import { useDashboardStore } from '../store/useDashboardStore'
 
 export function useOrganize() {
   const {
@@ -14,7 +14,7 @@ export function useOrganize() {
     setIsOrganizeOpen,
     setIsPreviewOpen,
     watchedFolder,
-  } = useHomeStore()
+  } = useDashboardStore()
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
   const [editName, setEditName] = useState('')

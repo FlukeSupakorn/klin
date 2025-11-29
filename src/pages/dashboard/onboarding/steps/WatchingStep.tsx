@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { WatchingFolder } from '../../store/useHomeStore'
+import { WatchingFolder } from '../../store/useDashboardStore'
 
 interface WatchingStepProps {
   tempWatchingFolders: WatchingFolder[]
