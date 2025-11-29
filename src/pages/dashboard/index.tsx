@@ -372,12 +372,12 @@ export function DashboardPage() {
         </div>
 
         {/* Watching Folders Panel - scrollable row */}
-        <div className="mt-4">
+        <div className="mt-6">
           <WatchingFoldersPanel />
         </div>
 
         {/* Destination Banner - compact */}
-        <div className="mt-3">
+        <div className="mt-5">
           <DestinationBanner />
         </div>
       </div>

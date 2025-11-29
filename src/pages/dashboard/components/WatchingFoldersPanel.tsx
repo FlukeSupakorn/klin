@@ -81,21 +81,21 @@ export function WatchingFoldersPanel() {
 
   if (watchingFolders.length === 0) {
     return (
-      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-2xl p-6 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white shadow-sm mb-3">
-          <FolderOpen className="h-7 w-7 text-slate-400" />
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100 border-2 border-slate-200 rounded-2xl p-10 text-center">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-md mb-4">
+          <FolderOpen className="h-10 w-10 text-slate-400" />
         </div>
-        <h3 className="text-base font-semibold text-slate-900 mb-1">
+        <h3 className="text-lg font-bold text-slate-900 mb-2">
           No watching folders
         </h3>
-        <p className="text-sm text-slate-500 mb-4">
-          Add folders to watch for automatic organization
+        <p className="text-sm text-slate-600 mb-6 max-w-md mx-auto">
+          Add folders to watch for automatic organization and AI-powered file management
         </p>
         <button 
           onClick={handleAddFolder}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-sm font-medium rounded-xl shadow-sm hover:shadow-md transition-all"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-base font-semibold rounded-xl shadow-md hover:shadow-lg hover:from-blue-600 hover:to-indigo-600 transition-all"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-5 w-5" />
           Add Watching Folder
         </button>
       </div>
@@ -103,32 +103,32 @@ export function WatchingFoldersPanel() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-            <h2 className="text-sm font-semibold text-slate-700">
+          <div className="flex items-center gap-2.5">
+            <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 animate-pulse shadow-sm" />
+            <h2 className="text-base font-bold text-slate-800">
               Watching Folders
             </h2>
           </div>
-          <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+          <span className="text-xs font-semibold text-slate-500 bg-gradient-to-r from-slate-100 to-slate-200 px-2.5 py-1 rounded-full">
             {watchingFolders.length}
           </span>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={handleAddFolder}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 shadow-sm hover:shadow-md transition-all"
           >
-            <Plus className="h-3 w-3" />
-            Add
+            <Plus className="h-4 w-4" />
+            Add Folder
           </button>
         </div>
       </div>
 
       <div 
-        className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent"
+        className="flex gap-4 overflow-x-auto pb-3 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent"
         style={{ scrollbarWidth: 'thin' }}
       >
         {watchingFolders.map((folder) => {
@@ -139,7 +139,7 @@ export function WatchingFoldersPanel() {
                 // Navigate into this folder instead of toggling selection
                 setCurrentViewFolderId(folder.id)
               }}
-              className={`flex-shrink-0 w-[260px] relative rounded-2xl p-3.5 cursor-pointer transition-all group ${
+              className={`flex-shrink-0 w-[320px] relative rounded-2xl p-5 cursor-pointer transition-all group ${
                 currentViewFolderId === folder.id
                   ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-sm'
                   : 'bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm'
@@ -151,48 +151,48 @@ export function WatchingFoldersPanel() {
                   e.stopPropagation()
                   handleRemoveFolder(folder.id)
                 }}
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all p-1.5 hover:bg-red-50 rounded-lg"
+                className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all p-2 hover:bg-red-50 rounded-lg shadow-sm"
               >
-                <X className="h-3.5 w-3.5 text-red-500" />
+                <X className="h-4 w-4 text-red-500" />
               </button>
 
               {/* Selected indicator */}
               {currentViewFolderId === folder.id && (
-                <div className="absolute top-2 left-2">
-                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full p-1 shadow-sm">
-                    <Check className="h-2.5 w-2.5 text-white" />
+                <div className="absolute top-3 left-3">
+                  <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full p-1.5 shadow-md">
+                    <Check className="h-3 w-3 text-white" />
                   </div>
                 </div>
               )}
 
               {/* Folder icon and info */}
-              <div className="flex items-start gap-2.5 mt-1">
-                <div className={`flex-shrink-0 p-2 rounded-xl ${
+              <div className="flex items-start gap-3 mt-1">
+                <div className={`flex-shrink-0 p-3 rounded-xl shadow-sm ${
                   currentViewFolderId === folder.id
                     ? 'bg-gradient-to-br from-blue-100 to-indigo-100' 
                     : 'bg-slate-100'
                 }`}>
-                  <FolderOpen className={`h-4 w-4 ${
+                  <FolderOpen className={`h-6 w-6 ${
                     currentViewFolderId === folder.id ? 'text-blue-600' : 'text-slate-500'
                   }`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className={`text-sm font-semibold truncate mb-1 ${
+                  <h3 className={`text-base font-bold truncate mb-1.5 ${
                     currentViewFolderId === folder.id ? 'text-blue-900' : 'text-slate-800'
                   }`}>
                     {folder.name || getFolderName(folder.path)}
                   </h3>
-                  <p className="text-xs text-slate-500 truncate mb-2 font-mono">
+                  <p className="text-xs text-slate-500 truncate mb-3 font-mono">
                     {folder.path}
                   </p>
-                  <div className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-lg ${
+                  <div className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1.5 rounded-lg shadow-sm ${
                     currentViewFolderId === folder.id 
-                      ? 'bg-blue-100 text-blue-700' 
+                      ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700' 
                       : 'bg-slate-100 text-slate-600'
                   }`}>
                     <span>{folder.fileCount}</span>
-                    <span className="text-[10px]">files</span>
+                    <span className="text-xs">files</span>
                   </div>
                 </div>
               </div>
