@@ -10,7 +10,7 @@
  * - Minimal logic in this file - just composition
  */
 
-import { Sparkles, Settings, Bell } from 'lucide-react'
+import { Sparkles, Settings, Bell, FolderOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
@@ -55,6 +55,14 @@ export function DashboardPage() {
 
   // Get state from stores
   const { loading, isFirstTimeSetup, isOrganizeOpen, setIsOrganizeOpen, files } = useDashboardStore()
+  const currentViewFolderId = useDashboardStore((state) => state.currentViewFolderId)
+  const setCurrentViewFolderId = useDashboardStore((state) => state.setCurrentViewFolderId)
+  const watchingFolders = useDashboardStore((state) => state.watchingFolders)
+
+  // Get the current folder if viewing one
+  const currentFolder = currentViewFolderId 
+    ? watchingFolders.find(f => f.id === currentViewFolderId)
+    : null
 
   // Use hooks for logic
   const {
@@ -286,6 +294,35 @@ export function DashboardPage() {
     }
   }
 
+  // Organize logic
+  const getOrganizeFiles = (): FileItem[] => {
+    if (!currentViewFolderId) {
+      // Dashboard: organize all files from all folders
+      return files
+    } else {
+      // Inside folder: organize all files from that folder if none selected, else selected files
+      if (selectedFileIds.length === 0) {
+        return files.filter(f => f.sourceFolderId === currentViewFolderId)
+      } else {
+        return selectedFiles
+      }
+    }
+  }
+
+  const getOrganizeMode = (): 'all-folders' | 'single-folder' | 'selected-files' => {
+    if (!currentViewFolderId) {
+      // Dashboard: all folders mode
+      return 'all-folders'
+    } else {
+      // Inside folder: single folder if no files selected, else selected files
+      if (selectedFileIds.length === 0) {
+        return 'single-folder'
+      } else {
+        return 'selected-files'
+      }
+    }
+  }
+
   // Show first-time setup if needed
   if (isFirstTimeSetup) {
     return <FirstTimeSetupDialog />
@@ -346,7 +383,7 @@ export function DashboardPage() {
       {/* Main Content Area - add padding bottom for search bar */}
       <div className="flex-1 overflow-auto p-6 pb-6 space-y-6 bg-theme-background">
 
-        {/* Show different content based on search mode */}
+        {/* Show different content based on view state */}
         {isSearchMode ? (
           /* AI Search Results View */
           <AISearchResults 
@@ -359,9 +396,35 @@ export function DashboardPage() {
               setSearchResults([])
             }}
           />
-        ) : (
-          /* Normal File Browser View */
+        ) : currentViewFolderId ? (
+          /* Inside Folder View */
           <>
+            {/* Back button */}
+            <button
+              onClick={() => setCurrentViewFolderId(null)}
+              className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all"
+            >
+              <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+              Back to Dashboard
+            </button>
+
+            {/* Folder Info */}
+            {currentFolder && (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                    <FolderOpen className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-blue-900">{currentFolder.name}</h2>
+                    <p className="text-sm text-blue-700 font-mono">{currentFolder.path}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Toolbar - View switcher, select all, delete */}
             <FileToolbar
               selectedCount={selectedFileIds.length}
@@ -380,6 +443,51 @@ export function DashboardPage() {
               loading={loading}
             />
           </>
+        ) : (
+          /* Empty Dashboard View - Split into 2 sections */
+          <div className="flex gap-6 h-full">
+            {/* Left Section: Recent Activity (70%) */}
+            <div className="flex-[7] bg-white border border-slate-200 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                  <svg className="h-5 w-5 text-blue-600" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-lg font-semibold text-slate-800">Recent Activity</h2>
+              </div>
+              <div className="flex items-center justify-center h-[calc(100%-60px)]">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-slate-100 mb-3">
+                    <svg className="h-8 w-8 text-slate-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                  </div>
+                  <p className="text-sm text-slate-600 font-medium">No recent activity</p>
+                  <p className="text-xs text-slate-400 mt-1">Your file operations will appear here</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section: AI Insights (30%) */}
+            <div className="flex-[3] bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl">
+                  <Sparkles className="h-5 w-5 text-indigo-600" />
+                </div>
+                <h2 className="text-lg font-semibold text-indigo-900">AI Insights</h2>
+              </div>
+              <div className="flex items-center justify-center h-[calc(100%-60px)]">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/50 mb-3">
+                    <Sparkles className="h-8 w-8 text-indigo-400" />
+                  </div>
+                  <p className="text-sm text-indigo-800 font-medium">No insights yet</p>
+                  <p className="text-xs text-indigo-600 mt-1">AI suggestions will appear here</p>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
@@ -399,9 +507,10 @@ export function DashboardPage() {
       <OrganizeDialog
         isOpen={isOrganizeOpen}
         onClose={() => setIsOrganizeOpen(false)}
-        selectedFiles={selectedFiles}
-        onGenerate={() => generateOrganizePreview(selectedFiles)}
+        selectedFiles={getOrganizeFiles()}
+        onGenerate={() => generateOrganizePreview(getOrganizeFiles())}
         isLoading={isLoadingOrganize}
+        organizeMode={getOrganizeMode()}
       />
 
       <OrganizePreviewDialog />

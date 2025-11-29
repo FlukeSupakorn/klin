@@ -29,12 +29,14 @@ interface OrganizeDialogProps {
   selectedFiles: FileItem[]
   onGenerate: () => void
   isLoading: boolean
+  organizeMode: 'all-folders' | 'single-folder' | 'selected-files'
 }
 
 export function OrganizeDialog({
   isOpen,
   onClose,
   selectedFiles,
+  organizeMode,
 }: OrganizeDialogProps) {
   const navigate = useNavigate()
   const toast = useToast()
@@ -188,31 +190,77 @@ export function OrganizeDialog({
 
         <div className="py-4">
           <div className="bg-theme-secondary rounded-lg p-4 space-y-2">
-            <p className="text-sm font-medium text-theme-text">
-              Selected files ({selectedFiles.length}):
-            </p>
-            <div className="space-y-2 max-h-48 overflow-y-auto">
-              {selectedFiles.map((file) => (
-                <div
-                  key={file.path}
-                  className="flex items-center gap-3 bg-theme-background rounded-md p-2 border border-theme overflow-hidden"
-                >
-                  <FileIcon
-                    type={getFileType(file.name, file.is_dir)}
-                    className="h-4 w-4 text-theme-primary flex-shrink-0"
-                  />
-                  <span
-                    className="text-sm text-theme-text truncate flex-1 min-w-0 max-w-[250px]"
-                    title={file.name}
-                  >
-                    {file.name}
-                  </span>
-                  <span className="text-xs text-theme-secondary flex-shrink-0 whitespace-nowrap">
-                    {formatFileSize(file.size)}
-                  </span>
+            {organizeMode === 'all-folders' ? (
+              // Dashboard: show all folders summary
+              (() => {
+                const folderGroups = selectedFiles.reduce((acc, file) => {
+                  const folderId = file.sourceFolderId || 'unknown'
+                  if (!acc[folderId]) {
+                    acc[folderId] = { name: file.sourceFolderName || 'Unknown', count: 0 }
+                  }
+                  acc[folderId].count++
+                  return acc
+                }, {} as Record<string, { name: string; count: number }>)
+                const folders = Object.values(folderGroups)
+                return (
+                  <div className="flex flex-col items-start">
+                    <p className="text-sm font-medium text-theme-text mb-2">
+                      Organize All Watching Folders ({folders.length} folders)
+                    </p>
+                    <div className="space-y-1 w-full">
+                      {folders.map((folder, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-xs bg-theme-background rounded-md px-3 py-2 border border-theme">
+                          <span className="font-medium text-theme-text">{folder.name}</span>
+                          <span className="text-theme-secondary">{folder.count} files</span>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-theme-secondary mt-2">
+                      Total: {selectedFiles.length} files will be organized
+                    </p>
+                  </div>
+                )
+              })()
+            ) : organizeMode === 'single-folder' ? (
+              // Single folder organize
+              <div className="flex flex-col items-start">
+                <p className="text-sm font-medium text-theme-text">
+                  Organize Folder: <span className="font-semibold">{selectedFiles[0]?.sourceFolderName || 'Folder'}</span>
+                </p>
+                <p className="text-xs text-theme-secondary">
+                  {selectedFiles.length} files will be organized in this folder
+                </p>
+              </div>
+            ) : (
+              // Selected files organize
+              <>
+                <p className="text-sm font-medium text-theme-text">
+                  Selected files ({selectedFiles.length}):
+                </p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {selectedFiles.map((file) => (
+                    <div
+                      key={file.path}
+                      className="flex items-center gap-3 bg-theme-background rounded-md p-2 border border-theme overflow-hidden"
+                    >
+                      <FileIcon
+                        type={getFileType(file.name, file.is_dir)}
+                        className="h-4 w-4 text-theme-primary flex-shrink-0"
+                      />
+                      <span
+                        className="text-sm text-theme-text truncate flex-1 min-w-0 max-w-[250px]"
+                        title={file.name}
+                      >
+                        {file.name}
+                      </span>
+                      <span className="text-xs text-theme-secondary flex-shrink-0 whitespace-nowrap">
+                        {formatFileSize(file.size)}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
 
           {/* Options */}

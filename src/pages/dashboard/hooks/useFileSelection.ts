@@ -5,9 +5,15 @@ import { useDashboardStore } from '../store/useDashboardStore'
 export function useFileSelection() {
   const { selectedFileIds, toggleFileSelection, deselectAllFiles, selectAllFiles } = useFileStore()
   const { files } = useDashboardStore()
+  const currentViewFolderId = useDashboardStore((state) => state.currentViewFolderId)
   const [localSearch, setLocalSearch] = useState('')
 
-  const filteredFiles = files.filter((file) =>
+  // Filter files by current folder if inside a folder, otherwise show empty
+  const filesInView = currentViewFolderId
+    ? files.filter((file) => file.sourceFolderId === currentViewFolderId)
+    : []
+
+  const filteredFiles = filesInView.filter((file) =>
     file.name.toLowerCase().includes(localSearch.toLowerCase())
   )
 

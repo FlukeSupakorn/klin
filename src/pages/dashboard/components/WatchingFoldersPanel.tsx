@@ -5,18 +5,12 @@ import { generateUUID } from '@/lib/uuid'
 
 export function WatchingFoldersPanel() {
   const watchingFolders = useDashboardStore((state) => state.watchingFolders)
-  const selectedFolderIds = useDashboardStore((state) => state.selectedFolderIds)
-  const toggleFolderSelection = useDashboardStore((state) => state.toggleFolderSelection)
-  const selectAllFolders = useDashboardStore((state) => state.selectAllFolders)
+  const currentViewFolderId = useDashboardStore((state) => state.currentViewFolderId)
+  const setCurrentViewFolderId = useDashboardStore((state) => state.setCurrentViewFolderId)
   const removeWatchingFolder = useDashboardStore((state) => state.removeWatchingFolder)
   const addWatchingFolder = useDashboardStore((state) => state.addWatchingFolder)
   const setFiles = useDashboardStore((state) => state.setFiles)
   const files = useDashboardStore((state) => state.files)
-
-  const isAllSelected = selectedFolderIds.length === 0
-  const isFolderSelected = (id: string) => {
-    return isAllSelected || selectedFolderIds.includes(id)
-  }
 
   const handleAddFolder = async () => {
     try {
@@ -52,7 +46,7 @@ export function WatchingFoldersPanel() {
         }))
         
         // If "All" is selected, add new files to the view
-        if (selectedFolderIds.length === 0) {
+        if (currentViewFolderId === '') {
           setFiles([...files, ...filesWithSource])
         }
         
@@ -124,17 +118,6 @@ export function WatchingFoldersPanel() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={selectAllFolders}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${
-              isAllSelected
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm'
-                : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
-            }`}
-          >
-            {isAllSelected && <Check className="h-3 w-3" />}
-            All
-          </button>
-          <button
             onClick={handleAddFolder}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all"
           >
@@ -149,13 +132,15 @@ export function WatchingFoldersPanel() {
         style={{ scrollbarWidth: 'thin' }}
       >
         {watchingFolders.map((folder) => {
-          const isSelected = isFolderSelected(folder.id)
           return (
             <div
               key={folder.id}
-              onClick={() => toggleFolderSelection(folder.id)}
+              onClick={() => {
+                // Navigate into this folder instead of toggling selection
+                setCurrentViewFolderId(folder.id)
+              }}
               className={`flex-shrink-0 w-[260px] relative rounded-2xl p-3.5 cursor-pointer transition-all group ${
-                isSelected
+                currentViewFolderId === folder.id
                   ? 'bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 shadow-sm'
                   : 'bg-white border border-slate-200 hover:border-slate-300 hover:shadow-sm'
               }`}
@@ -172,7 +157,7 @@ export function WatchingFoldersPanel() {
               </button>
 
               {/* Selected indicator */}
-              {isSelected && !isAllSelected && (
+              {currentViewFolderId === folder.id && (
                 <div className="absolute top-2 left-2">
                   <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full p-1 shadow-sm">
                     <Check className="h-2.5 w-2.5 text-white" />
@@ -183,18 +168,18 @@ export function WatchingFoldersPanel() {
               {/* Folder icon and info */}
               <div className="flex items-start gap-2.5 mt-1">
                 <div className={`flex-shrink-0 p-2 rounded-xl ${
-                  isSelected 
+                  currentViewFolderId === folder.id
                     ? 'bg-gradient-to-br from-blue-100 to-indigo-100' 
                     : 'bg-slate-100'
                 }`}>
                   <FolderOpen className={`h-4 w-4 ${
-                    isSelected ? 'text-blue-600' : 'text-slate-500'
+                    currentViewFolderId === folder.id ? 'text-blue-600' : 'text-slate-500'
                   }`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <h3 className={`text-sm font-semibold truncate mb-1 ${
-                    isSelected ? 'text-blue-900' : 'text-slate-800'
+                    currentViewFolderId === folder.id ? 'text-blue-900' : 'text-slate-800'
                   }`}>
                     {folder.name || getFolderName(folder.path)}
                   </h3>
@@ -202,7 +187,7 @@ export function WatchingFoldersPanel() {
                     {folder.path}
                   </p>
                   <div className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-lg ${
-                    isSelected 
+                    currentViewFolderId === folder.id 
                       ? 'bg-blue-100 text-blue-700' 
                       : 'bg-slate-100 text-slate-600'
                   }`}>

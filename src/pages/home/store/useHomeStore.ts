@@ -19,12 +19,10 @@ interface OrganizePreview {
   summary?: string
 }
 
-interface DashboardState {
+interface HomeState {
   // Folder Management - Updated for multiple watching folders
   watchingFolders: WatchingFolder[]
   selectedFolderIds: string[] // Empty array means "All" selected
-  currentViewFolderId: string | null // null = dashboard view, string = inside specific folder
-  setCurrentViewFolderId: (id: string | null) => void
   setWatchingFolders: (folders: WatchingFolder[]) => void
   addWatchingFolder: (folder: WatchingFolder) => void
   removeWatchingFolder: (id: string) => void
@@ -85,15 +83,13 @@ interface DashboardState {
   setDestinationMode: (mode: 'ai' | 'custom' | null) => void
 }
 
-export const useDashboardStore = create<DashboardState>()(
+export const useHomeStore = create<HomeState>()(
   persist(
     (set) => ({
   // Folder Management - Multiple watching folders
   watchingFolders: [],
   selectedFolderIds: [], // Empty = "All" selected
-  currentViewFolderId: null,
   
-  setCurrentViewFolderId: (id) => set({ currentViewFolderId: id }),
   setWatchingFolders: (folders) => set({ watchingFolders: folders }),
   
   addWatchingFolder: (folder) =>
@@ -217,7 +213,7 @@ export const useDashboardStore = create<DashboardState>()(
   setDestinationMode: (mode) => set({ destinationMode: mode }),
     }),
     {
-      name: 'klin-dashboard-storage',
+      name: 'klin-home-storage',
       partialize: (state) => ({
         watchingFolders: state.watchingFolders,
         destinationFolders: state.destinationFolders,
