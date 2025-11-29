@@ -1,17 +1,25 @@
-import { Shield, Lock, Trash2, FolderLock, Plus, X } from 'lucide-react'
+import { Shield, Lock, Trash2, FolderLock, Plus, X, FileText, Filter } from 'lucide-react'
 import { useState } from 'react'
+import { usePrivacyStore, ExcludePatternType } from '@/pages/privacy/store/usePrivacyStore'
+import { selectFolder } from '@/lib/tauri-api'
+import { generateUUID } from '@/lib/uuid'
 
 export function PrivacySettings() {
-  const [excludedFiles, setExcludedFiles] = useState([
-    { id: 1, name: 'passwords.txt', path: 'C:/Users/supak/Documents/passwords.txt' },
-    { id: 2, name: 'private_notes.md', path: 'C:/Users/supak/Documents/private_notes.md' },
-    { id: 3, name: 'financial_data.xlsx', path: 'C:/Users/supak/Downloads/financial_data.xlsx' },
-  ])
+  // Use real privacy store
+  const {
+    excludedFiles,
+    excludedFolders,
+    patterns,
+    addExcludedFile,
+    removeExcludedFile,
+    addExcludedFolder,
+    removeExcludedFolder,
+    addPattern,
+    removePattern,
+  } = usePrivacyStore()
 
-  const [excludedFolders, setExcludedFolders] = useState([
-    { id: 1, name: 'Private', path: 'C:/Users/supak/Documents/Private' },
-    { id: 2, name: 'Confidential', path: 'C:/Users/supak/Work/Confidential' },
-  ])
+  const [newPatternType, setNewPatternType] = useState<ExcludePatternType>('starts-with')
+  const [newPatternValue, setNewPatternValue] = useState('')
 
   const [privacyOptions, setPrivacyOptions] = useState({
     allowOrganize: true,
@@ -20,32 +28,31 @@ export function PrivacySettings() {
     shareUsageData: false,
   })
 
-  const removeExcludedFile = (id: number) => {
-    setExcludedFiles(prev => prev.filter(file => file.id !== id))
+  const handleAddFile = () => {
+    const path = window.prompt('Enter full file path to lock:')
+    if (path) addExcludedFile(path)
   }
 
-  const removeExcludedFolder = (id: number) => {
-    setExcludedFolders(prev => prev.filter(folder => folder.id !== id))
+  const handleAddFolder = async () => {
+    const path = await selectFolder()
+    if (path) addExcludedFolder(path)
   }
 
-  const addExcludedFile = () => {
-    // Mock: In real app, this would open a file picker
-    const mockFile = {
-      id: Date.now(),
-      name: 'new_private_file.txt',
-      path: 'C:/Users/supak/Documents/new_private_file.txt'
+  const handleAddPattern = () => {
+    if (!newPatternValue.trim()) return
+    addPattern({ id: generateUUID(), type: newPatternType, value: newPatternValue.trim() })
+    setNewPatternValue('')
+  }
+
+  const getPatternLabel = (type: ExcludePatternType) => {
+    switch (type) {
+      case 'starts-with': return 'Starts with'
+      case 'ends-with': return 'Ends with'
+      case 'contains': return 'Contains'
+      case 'extension': return 'Extension'
+      case 'matches-date': return 'Date'
+      default: return type
     }
-    setExcludedFiles(prev => [...prev, mockFile])
-  }
-
-  const addExcludedFolder = () => {
-    // Mock: In real app, this would open a folder picker
-    const mockFolder = {
-      id: Date.now(),
-      name: 'New Private Folder',
-      path: 'C:/Users/supak/Documents/New Private Folder'
-    }
-    setExcludedFolders(prev => [...prev, mockFolder])
   }
 
   const togglePrivacyOption = (option: keyof typeof privacyOptions) => {
@@ -53,6 +60,16 @@ export function PrivacySettings() {
       ...prev,
       [option]: !prev[option]
     }))
+  }
+
+  const getFileName = (path: string) => {
+    const parts = path.split(/[\\/]/)
+    return parts[parts.length - 1] || path
+  }
+
+  const getFolderName = (path: string) => {
+    const parts = path.split(/[\\/]/)
+    return parts[parts.length - 1] || path
   }
 
   return (
@@ -81,9 +98,9 @@ export function PrivacySettings() {
         {/* Excluded Files */}
         <div className="space-y-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="font-medium text-theme-text">Excluded Files</p>
+            <p className="font-medium text-theme-text">Locked Files</p>
             <button
-              onClick={addExcludedFile}
+              onClick={handleAddFile}
               className="flex items-center gap-2 px-3 py-1.5 text-sm bg-theme-primary text-white rounded-lg hover:bg-theme-primary/90 transition-colors"
             >
               <Plus className="h-4 w-4" />
@@ -94,14 +111,14 @@ export function PrivacySettings() {
           {excludedFiles.length === 0 ? (
             <div className="p-6 border border-dashed border-theme rounded-lg text-center">
               <Lock className="h-8 w-8 text-theme-muted mx-auto mb-2" />
-              <p className="text-sm text-theme-secondary">No files excluded</p>
+              <p className="text-sm text-theme-secondary">No files locked</p>
               <p className="text-xs text-theme-muted mt-1">Click "Add File" to lock files from AI</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {excludedFiles.map((file) => (
+              {excludedFiles.map((filePath) => (
                 <div
-                  key={file.id}
+                  key={filePath}
                   className="flex items-center justify-between p-3 bg-theme-secondary/50 rounded-lg border border-theme hover:bg-theme-secondary transition-colors group"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -109,13 +126,14 @@ export function PrivacySettings() {
                       <Lock className="h-4 w-4 text-red-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-theme-text truncate">{file.name}</p>
-                      <p className="text-xs text-theme-muted truncate">{file.path}</p>
+                      <p className="font-medium text-theme-text truncate">{getFileName(filePath)}</p>
+                      <p className="text-xs text-theme-muted truncate">{filePath}</p>
                     </div>
                   </div>
                   <button
-                    onClick={() => removeExcludedFile(file.id)}
+                    onClick={() => removeExcludedFile(filePath)}
                     className="ml-2 p-1.5 rounded-lg hover:bg-theme-tertiary opacity-0 group-hover:opacity-100 transition-all"
+                    title="Unlock file"
                   >
                     <X className="h-4 w-4 text-theme-secondary" />
                   </button>
@@ -128,9 +146,9 @@ export function PrivacySettings() {
         {/* Excluded Folders */}
         <div className="space-y-3">
           <div className="flex items-center justify-between mb-2">
-            <p className="font-medium text-theme-text">Excluded Folders</p>
+            <p className="font-medium text-theme-text">Locked Folders</p>
             <button
-              onClick={addExcludedFolder}
+              onClick={handleAddFolder}
               className="flex items-center gap-2 px-3 py-1.5 text-sm bg-theme-primary text-white rounded-lg hover:bg-theme-primary/90 transition-colors"
             >
               <Plus className="h-4 w-4" />
@@ -141,14 +159,14 @@ export function PrivacySettings() {
           {excludedFolders.length === 0 ? (
             <div className="p-6 border border-dashed border-theme rounded-lg text-center">
               <FolderLock className="h-8 w-8 text-theme-muted mx-auto mb-2" />
-              <p className="text-sm text-theme-secondary">No folders excluded</p>
+              <p className="text-sm text-theme-secondary">No folders locked</p>
               <p className="text-xs text-theme-muted mt-1">Click "Add Folder" to lock entire folders from AI</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {excludedFolders.map((folder) => (
+              {excludedFolders.map((folderPath) => (
                 <div
-                  key={folder.id}
+                  key={folderPath}
                   className="flex items-center justify-between p-3 bg-theme-secondary/50 rounded-lg border border-theme hover:bg-theme-secondary transition-colors group"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -156,13 +174,14 @@ export function PrivacySettings() {
                       <FolderLock className="h-4 w-4 text-orange-500" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-theme-text truncate">{folder.name}</p>
-                      <p className="text-xs text-theme-muted truncate">{folder.path}</p>
+                      <p className="font-medium text-theme-text truncate">{getFolderName(folderPath)}</p>
+                      <p className="text-xs text-theme-muted truncate">{folderPath}</p>
                     </div>
                   </div>
                   <button
-                    onClick={() => removeExcludedFolder(folder.id)}
+                    onClick={() => removeExcludedFolder(folderPath)}
                     className="ml-2 p-1.5 rounded-lg hover:bg-theme-tertiary opacity-0 group-hover:opacity-100 transition-all"
+                    title="Unlock folder"
                   >
                     <X className="h-4 w-4 text-theme-secondary" />
                   </button>
@@ -177,7 +196,99 @@ export function PrivacySettings() {
           <div className="flex gap-2">
             <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-amber-700 dark:text-amber-300">
-              Excluded files and folders will not be analyzed by AI, organized, or included in search results. They remain on your system but are completely ignored by Klin.
+              Locked files and folders will not be analyzed by AI, organized, or included in search results. They remain on your system but are completely ignored by Klin.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Pattern Rules Section */}
+      <div className="bg-theme-background border border-theme rounded-xl p-6 space-y-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+            <Filter className="h-5 w-5 text-purple-500" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-theme-text">Pattern Rules</h3>
+            <p className="text-sm text-theme-secondary">
+              Automatically lock files matching specific patterns
+            </p>
+          </div>
+        </div>
+
+        {/* Add Pattern */}
+        <div className="flex items-center gap-3">
+          <select
+            value={newPatternType}
+            onChange={(e) => setNewPatternType(e.target.value as ExcludePatternType)}
+            className="text-sm border border-theme rounded-lg px-3 py-2 bg-theme-background text-theme-text"
+          >
+            <option value="starts-with">Starts with</option>
+            <option value="ends-with">Ends with</option>
+            <option value="contains">Contains</option>
+            <option value="extension">Extension (e.g. .pdf)</option>
+            <option value="matches-date">Matches Date (YYYY-MM-DD)</option>
+          </select>
+          <input
+            value={newPatternValue}
+            onChange={(e) => setNewPatternValue(e.target.value)}
+            placeholder="Enter value..."
+            className="flex-1 text-sm border border-theme rounded-lg px-3 py-2 bg-theme-background text-theme-text"
+          />
+          <button
+            onClick={handleAddPattern}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-theme-primary text-white rounded-lg hover:bg-theme-primary/90 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            Add Rule
+          </button>
+        </div>
+
+        {/* Pattern List */}
+        {patterns.length === 0 ? (
+          <div className="p-6 border border-dashed border-theme rounded-lg text-center">
+            <Filter className="h-8 w-8 text-theme-muted mx-auto mb-2" />
+            <p className="text-sm text-theme-secondary">No pattern rules</p>
+            <p className="text-xs text-theme-muted mt-1">Add rules to automatically lock matching files</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {patterns.map((pattern) => (
+              <div
+                key={pattern.id}
+                className="flex items-center justify-between p-3 bg-theme-secondary/50 rounded-lg border border-theme hover:bg-theme-secondary transition-colors group"
+              >
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <div className="h-8 w-8 rounded bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText className="h-4 w-4 text-purple-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">
+                        {getPatternLabel(pattern.type)}
+                      </span>
+                      <p className="font-medium text-theme-text truncate">{pattern.value}</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => removePattern(pattern.id)}
+                  className="ml-2 p-1.5 rounded-lg hover:bg-theme-tertiary opacity-0 group-hover:opacity-100 transition-all"
+                  title="Remove rule"
+                >
+                  <X className="h-4 w-4 text-theme-secondary" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pattern Info */}
+        <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
+          <div className="flex gap-2">
+            <Filter className="h-4 w-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-purple-700 dark:text-purple-300">
+              Pattern rules automatically lock files whose names match the criteria. For example, "Extension: .pdf" locks all PDF files, or "Contains: private" locks files with "private" in the name.
             </p>
           </div>
         </div>

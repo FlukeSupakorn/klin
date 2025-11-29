@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles } from 'lucide-react'
+import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles, Lock } from 'lucide-react'
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
@@ -16,6 +16,8 @@ interface FileToolbarProps {
   onSelectAll: () => void
   onDeleteClick: () => void
   onSummarizeClick?: () => void
+  onLockClick?: () => void
+  lockedCount?: number
 }
 
 // Combined Toolbar Component (single line with all controls)
@@ -26,6 +28,8 @@ export function FileToolbar({
   onSelectAll,
   onDeleteClick,
   onSummarizeClick,
+  onLockClick,
+  lockedCount = 0,
 }: FileToolbarProps) {
   const { currentView, setCurrentView } = useFileStore()
   
@@ -87,12 +91,26 @@ export function FileToolbar({
         {/* Selected Count */}
         <span className="text-sm text-theme-secondary">
           {selectedCount} of {totalCount} selected
+          {lockedCount > 0 && (
+            <span className="ml-1 text-amber-600">
+              ({lockedCount} locked)
+            </span>
+          )}
         </span>
         
         {/* AI Actions and Delete Button (shows when items are selected) */}
         {selectedCount > 0 && (
           <>
             <span className="text-sm text-theme-secondary">•</span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-amber-300 hover:border-amber-400 dark:border-amber-700 dark:hover:border-amber-600"
+              onClick={onLockClick}
+            >
+              <Lock className="h-4 w-4" />
+              Lock
+            </Button>
             <Button
               variant="outline"
               size="sm"

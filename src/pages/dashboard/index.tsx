@@ -47,6 +47,7 @@ import { NotificationPanel, Notification } from '@/components/NotificationPanel'
 
 import { useDashboardStore } from './store/useDashboardStore'
 import { useFileStore } from '@/store/useFileStore'
+import { usePrivacyStore } from '@/pages/privacy/store/usePrivacyStore'
 import { useEffect } from 'react'
 
 export function DashboardPage() {
@@ -75,14 +76,28 @@ export function DashboardPage() {
     toggleFileSelection,
     handleSelectAll,
     isAllSelected,
+    lockedFilesCount,
+    selectableFilesCount,
   } = useFileSelection()
 
   // Get deselectAllFiles from file store
   const { deselectAllFiles } = useFileStore()
 
+  // Get privacy store for lock/unlock
+  const { addExcludedFile } = usePrivacyStore()
+
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
   
   const toast = useToast()
+
+  // Lock selected files
+  const handleLockFiles = () => {
+    selectedFiles.forEach(file => {
+      addExcludedFile(file.path)
+    })
+    deselectAllFiles()
+    toast.success('Files Locked', `${selectedFiles.length} file(s) locked from organization`)
+  }
 
   // Search state
   const [isSearchMode, setIsSearchMode] = useState(false)
@@ -340,6 +355,7 @@ export function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* Settings navigation is enough; Privacy lives under Settings */}
             <Button
               variant="outline"
               className="gap-2"
@@ -424,11 +440,13 @@ export function DashboardPage() {
             {/* Toolbar - View switcher, select all, delete */}
             <FileToolbar
               selectedCount={selectedFileIds.length}
-              totalCount={filteredFiles.length}
+              totalCount={selectableFilesCount}
               isAllSelected={isAllSelected}
               onSelectAll={handleSelectAll}
               onDeleteClick={handleDeleteClick}
               onSummarizeClick={handleSummarizeClick}
+              onLockClick={handleLockFiles}
+              lockedCount={lockedFilesCount}
             />
 
             {/* File List */}
