@@ -316,28 +316,23 @@ export function DashboardPage() {
       // Dashboard: organize all files from all folders
       return files
     } else {
-      // Inside folder: organize all files from that folder if none selected, else selected files
-      if (selectedFileIds.length === 0) {
-        return files.filter(f => f.sourceFolderId === currentViewFolderId)
-      } else {
-        return selectedFiles
-      }
+      // Inside folder: only organize selected files
+      return selectedFiles
     }
   }
 
-  const getOrganizeMode = (): 'all-folders' | 'single-folder' | 'selected-files' => {
+  const getOrganizeMode = (): 'all-folders' | 'selected-files' => {
     if (!currentViewFolderId) {
       // Dashboard: all folders mode
       return 'all-folders'
     } else {
-      // Inside folder: single folder if no files selected, else selected files
-      if (selectedFileIds.length === 0) {
-        return 'single-folder'
-      } else {
-        return 'selected-files'
-      }
+      // Inside folder: selected files mode (requires selection)
+      return 'selected-files'
     }
   }
+
+  // Check if organize should be enabled
+  const canOrganize = !currentViewFolderId || selectedFileIds.length > 0
 
   // Show first-time setup if needed
   if (isFirstTimeSetup) {
@@ -359,11 +354,17 @@ export function DashboardPage() {
             <Button
               variant="outline"
               className="gap-2"
-              disabled={selectedFileIds.length === 0}
+              disabled={!canOrganize}
               onClick={() => setIsOrganizeOpen(true)}
+              title={!canOrganize ? 'Select files to organize' : 'Organize files'}
             >
               <Sparkles className="h-4 w-4" />
               Organize
+              {!currentViewFolderId && files.length > 0 && (
+                <span className="ml-1 text-xs bg-theme-primary text-white px-1.5 py-0.5 rounded-full">
+                  All
+                </span>
+              )}
             </Button>
 
             <button 
@@ -447,6 +448,7 @@ export function DashboardPage() {
               onSummarizeClick={handleSummarizeClick}
               onLockClick={handleLockFiles}
               lockedCount={lockedFilesCount}
+              onUnlockClick={() => {}} // Files can be unlocked by clicking on them directly
             />
 
             {/* File List */}

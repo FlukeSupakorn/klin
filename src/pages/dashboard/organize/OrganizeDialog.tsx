@@ -1,4 +1,4 @@
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Folder, FileText, ArrowRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -17,6 +17,7 @@ import { formatFileSize, getFileType } from '../file-list/utils'
 import { organizeFilesQueue, OrganizeFileResponse } from '@/lib/mock-api'
 import { useActivityStore } from '@/pages/activity/store/useActivityStore'
 import { useToast } from '@/components/ui/toast'
+import { useDashboardStore } from '../store/useDashboardStore'
 
 // Simple UUID generator
 const generateId = () => {
@@ -29,7 +30,7 @@ interface OrganizeDialogProps {
   selectedFiles: FileItem[]
   onGenerate: () => void
   isLoading: boolean
-  organizeMode: 'all-folders' | 'single-folder' | 'selected-files'
+  organizeMode: 'all-folders' | 'selected-files'
 }
 
 export function OrganizeDialog({
@@ -44,6 +45,16 @@ export function OrganizeDialog({
   const updateQueueItem = useActivityStore((state) => state.updateQueueItem)
   const setProcessing = useActivityStore((state) => state.setProcessing)
   const setProgress = useActivityStore((state) => state.setProgress)
+  
+  // Get destination folder from dashboard store
+  const destinationFolders = useDashboardStore((state) => state.destinationFolders)
+  const watchingFolders = useDashboardStore((state) => state.watchingFolders)
+  
+  // Get the first destination folder (if any)
+  const destinationFolderPath = destinationFolders.length > 0 ? destinationFolders[0] : null
+  const destinationFolderName = destinationFolderPath 
+    ? destinationFolderPath.split(/[\\/]/).pop() || destinationFolderPath
+    : null
 
   const [isOrganizing, setIsOrganizing] = useState(false)
 
@@ -188,80 +199,132 @@ export function OrganizeDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          <div className="bg-theme-secondary rounded-lg p-4 space-y-2">
-            {organizeMode === 'all-folders' ? (
-              // Dashboard: show all folders summary
-              (() => {
-                const folderGroups = selectedFiles.reduce((acc, file) => {
-                  const folderId = file.sourceFolderId || 'unknown'
-                  if (!acc[folderId]) {
-                    acc[folderId] = { name: file.sourceFolderName || 'Unknown', count: 0 }
-                  }
-                  acc[folderId].count++
-                  return acc
-                }, {} as Record<string, { name: string; count: number }>)
-                const folders = Object.values(folderGroups)
-                return (
-                  <div className="flex flex-col items-start">
-                    <p className="text-sm font-medium text-theme-text mb-2">
-                      Organize All Watching Folders ({folders.length} folders)
-                    </p>
-                    <div className="space-y-1 w-full">
-                      {folders.map((folder, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-xs bg-theme-background rounded-md px-3 py-2 border border-theme">
-                          <span className="font-medium text-theme-text">{folder.name}</span>
-                          <span className="text-theme-secondary">{folder.count} files</span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-xs text-theme-secondary mt-2">
-                      Total: {selectedFiles.length} files will be organized
-                    </p>
-                  </div>
-                )
-              })()
-            ) : organizeMode === 'single-folder' ? (
-              // Single folder organize
-              <div className="flex flex-col items-start">
-                <p className="text-sm font-medium text-theme-text">
-                  Organize Folder: <span className="font-semibold">{selectedFiles[0]?.sourceFolderName || 'Folder'}</span>
-                </p>
-                <p className="text-xs text-theme-secondary">
-                  {selectedFiles.length} files will be organized in this folder
+        <div className="py-4 space-y-4">
+          {/* Mode Description */}
+          <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg">
+                <Sparkles className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-indigo-900 dark:text-indigo-100">
+                  {organizeMode === 'all-folders' 
+                    ? 'Organize All Watching Folders' 
+                    : 'Organize Selected Files'}
+                </h4>
+                <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">
+                  {organizeMode === 'all-folders'
+                    ? 'AI will analyze and organize files from all your watching folders'
+                    : `AI will analyze and organize ${selectedFiles.length} selected file${selectedFiles.length !== 1 ? 's' : ''}`}
                 </p>
               </div>
-            ) : (
-              // Selected files organize
-              <>
-                <p className="text-sm font-medium text-theme-text">
-                  Selected files ({selectedFiles.length}):
-                </p>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedFiles.map((file) => (
-                    <div
-                      key={file.path}
-                      className="flex items-center gap-3 bg-theme-background rounded-md p-2 border border-theme overflow-hidden"
-                    >
-                      <FileIcon
-                        type={getFileType(file.name, file.is_dir)}
-                        className="h-4 w-4 text-theme-primary flex-shrink-0"
-                      />
-                      <span
-                        className="text-sm text-theme-text truncate flex-1 min-w-0 max-w-[250px]"
-                        title={file.name}
-                      >
-                        {file.name}
-                      </span>
-                      <span className="text-xs text-theme-secondary flex-shrink-0 whitespace-nowrap">
-                        {formatFileSize(file.size)}
-                      </span>
+            </div>
+          </div>
+
+          {/* Folders/Files to Organize */}
+          <div className="bg-theme-secondary rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-theme-text">
+                {organizeMode === 'all-folders' ? 'Folders to Organize' : 'Files to Organize'}
+              </span>
+              <span className="text-xs font-medium text-theme-primary bg-theme-primary-light px-2 py-1 rounded-full">
+                {organizeMode === 'all-folders' 
+                  ? `${watchingFolders.length} folders`
+                  : `${selectedFiles.length} files`}
+              </span>
+            </div>
+
+            {organizeMode === 'all-folders' ? (
+              // Dashboard: show all folders with file counts
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {(() => {
+                  const folderGroups = selectedFiles.reduce((acc, file) => {
+                    const folderId = file.sourceFolderId || 'unknown'
+                    if (!acc[folderId]) {
+                      acc[folderId] = { name: file.sourceFolderName || 'Unknown', count: 0 }
+                    }
+                    acc[folderId].count++
+                    return acc
+                  }, {} as Record<string, { name: string; count: number }>)
+                  return Object.entries(folderGroups).map(([id, folder]) => (
+                    <div key={id} className="flex items-center justify-between bg-theme-background rounded-lg px-3 py-2.5 border border-theme">
+                      <div className="flex items-center gap-2">
+                        <Folder className="h-4 w-4 text-blue-500" />
+                        <span className="font-medium text-theme-text text-sm">{folder.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-3.5 w-3.5 text-theme-muted" />
+                        <span className="text-xs text-theme-secondary">{folder.count} files</span>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </>
+                  ))
+                })()}
+              </div>
+            ) : (
+              // Selected files: group by source folder
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {(() => {
+                  // Group files by source folder
+                  const filesByFolder = selectedFiles.reduce((acc, file) => {
+                    const folderName = file.sourceFolderName || 'Unknown'
+                    if (!acc[folderName]) {
+                      acc[folderName] = []
+                    }
+                    acc[folderName].push(file)
+                    return acc
+                  }, {} as Record<string, FileItem[]>)
+
+                  return Object.entries(filesByFolder).map(([folderName, files]) => (
+                    <div key={folderName} className="bg-theme-background rounded-lg border border-theme overflow-hidden">
+                      {/* Folder header */}
+                      <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 border-b border-theme">
+                        <Folder className="h-4 w-4 text-blue-500" />
+                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{folderName}</span>
+                        <span className="text-xs text-blue-500 dark:text-blue-400 ml-auto">{files.length} files</span>
+                      </div>
+                      {/* Files list */}
+                      <div className="divide-y divide-theme">
+                        {files.map((file) => (
+                          <div key={file.path} className="flex items-center gap-3 px-3 py-2">
+                            <FileIcon
+                              type={getFileType(file.name, file.is_dir)}
+                              className="h-4 w-4 text-theme-primary flex-shrink-0"
+                            />
+                            <span className="text-sm text-theme-text truncate flex-1 min-w-0" title={file.name}>
+                              {file.name}
+                            </span>
+                            <span className="text-xs text-theme-muted flex-shrink-0">
+                              {formatFileSize(file.size)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                })()}
+              </div>
             )}
           </div>
+
+          {/* Destination Folder Info */}
+          {destinationFolderPath && (
+            <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 flex-1">
+                  <Folder className="h-4 w-4 text-theme-muted" />
+                  <span className="text-sm text-theme-secondary">Watching Folders</span>
+                </div>
+                <ArrowRight className="h-4 w-4 text-green-500" />
+                <div className="flex items-center gap-2">
+                  <Folder className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">{destinationFolderName}</span>
+                </div>
+              </div>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-2">
+                Files will be organized into this destination folder
+              </p>
+            </div>
+          )}
 
           {/* Options */}
           <div className="mt-4 space-y-3">

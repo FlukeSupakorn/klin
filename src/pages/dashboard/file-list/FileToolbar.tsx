@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles, Lock } from 'lucide-react'
+import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles, Lock, Unlock } from 'lucide-react'
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
@@ -17,6 +17,7 @@ interface FileToolbarProps {
   onDeleteClick: () => void
   onSummarizeClick?: () => void
   onLockClick?: () => void
+  onUnlockClick?: () => void
   lockedCount?: number
 }
 
@@ -29,6 +30,7 @@ export function FileToolbar({
   onDeleteClick,
   onSummarizeClick,
   onLockClick,
+  onUnlockClick,
   lockedCount = 0,
 }: FileToolbarProps) {
   const { currentView, setCurrentView } = useFileStore()
@@ -128,6 +130,22 @@ export function FileToolbar({
             >
               <Trash2 className="h-4 w-4" />
               Delete Selected
+            </Button>
+          </>
+        )}
+
+        {/* Unlock button - shows when there are locked files even without selection */}
+        {lockedCount > 0 && selectedCount === 0 && (
+          <>
+            <span className="text-sm text-theme-secondary">•</span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-950/30 border-green-300 hover:border-green-400 dark:border-green-700 dark:hover:border-green-600"
+              onClick={onUnlockClick}
+            >
+              <Unlock className="h-4 w-4" />
+              Click locked files to unlock
             </Button>
           </>
         )}
