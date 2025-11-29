@@ -32,6 +32,7 @@ import { createNote } from '@/lib/note-api'
 import { DestinationBanner } from './destination/DestinationBanner'
 import { WatchingFoldersPanel } from './components/WatchingFoldersPanel'
 import { RecentActivityWidget } from './components/RecentActivityWidget'
+import { AIInsightsWidget } from './components/AIInsightsWidget'
 import { FileListView } from './file-list/FileListView'
 import { FileToolbar } from './file-list/FileToolbar'
 import { FirstTimeSetupDialog } from './onboarding/FirstTimeSetupDialog'
@@ -453,22 +454,8 @@ export function DashboardPage() {
             </div>
 
             {/* Right Section: AI Insights (30%) */}
-            <div className="flex-[3] bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl">
-                  <Sparkles className="h-5 w-5 text-indigo-600" />
-                </div>
-                <h2 className="text-lg font-semibold text-indigo-900">AI Insights</h2>
-              </div>
-              <div className="flex items-center justify-center h-[calc(100%-60px)]">
-                <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/50 mb-3">
-                    <Sparkles className="h-8 w-8 text-indigo-400" />
-                  </div>
-                  <p className="text-sm text-indigo-800 font-medium">No insights yet</p>
-                  <p className="text-xs text-indigo-600 mt-1">AI suggestions will appear here</p>
-                </div>
-              </div>
+            <div className="flex-[3] bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-6 overflow-hidden">
+              <AIInsightsWidget />
             </div>
           </div>
         )}
