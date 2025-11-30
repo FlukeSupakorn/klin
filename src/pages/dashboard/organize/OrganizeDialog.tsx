@@ -188,7 +188,7 @@ export function OrganizeDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] overflow-hidden">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Sparkles className="h-5 w-5 text-theme-primary" />
@@ -199,7 +199,7 @@ export function OrganizeDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4 space-y-4">
+        <div className="py-4 space-y-4 overflow-hidden">
           {/* Mode Description */}
           <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4">
             <div className="flex items-start gap-3">
@@ -222,7 +222,7 @@ export function OrganizeDialog({
           </div>
 
           {/* Folders/Files to Organize */}
-          <div className="bg-theme-secondary rounded-xl p-4 space-y-3">
+          <div className="bg-theme-secondary rounded-xl p-4 space-y-3 overflow-hidden">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-theme-text">
                 {organizeMode === 'all-folders' ? 'Folders to Organize' : 'Files to Organize'}
@@ -248,13 +248,13 @@ export function OrganizeDialog({
                   }, {} as Record<string, { name: string; count: number }>)
                   return Object.entries(folderGroups).map(([id, folder]) => (
                     <div key={id} className="flex items-center justify-between bg-theme-background rounded-lg px-3 py-2.5 border border-theme">
-                      <div className="flex items-center gap-2">
-                        <Folder className="h-4 w-4 text-blue-500" />
-                        <span className="font-medium text-theme-text text-sm">{folder.name}</span>
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span className="font-medium text-theme-text text-sm truncate">{folder.name}</span>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                         <FileText className="h-3.5 w-3.5 text-theme-muted" />
-                        <span className="text-xs text-theme-secondary">{folder.count} files</span>
+                        <span className="text-xs text-theme-secondary whitespace-nowrap">{folder.count} files</span>
                       </div>
                     </div>
                   ))
@@ -262,7 +262,7 @@ export function OrganizeDialog({
               </div>
             ) : (
               // Selected files: group by source folder
-              <div className="space-y-3 max-h-64 overflow-y-auto">
+              <div className="space-y-3 max-h-64 overflow-y-auto overflow-x-hidden">
                 {(() => {
                   // Group files by source folder
                   const filesByFolder = selectedFiles.reduce((acc, file) => {
@@ -278,9 +278,9 @@ export function OrganizeDialog({
                     <div key={folderName} className="bg-theme-background rounded-lg border border-theme overflow-hidden">
                       {/* Folder header */}
                       <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 border-b border-theme">
-                        <Folder className="h-4 w-4 text-blue-500" />
-                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300">{folderName}</span>
-                        <span className="text-xs text-blue-500 dark:text-blue-400 ml-auto">{files.length} files</span>
+                        <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span className="text-sm font-medium text-blue-700 dark:text-blue-300 truncate flex-1 min-w-0">{folderName}</span>
+                        <span className="text-xs text-blue-500 dark:text-blue-400 flex-shrink-0 whitespace-nowrap">{files.length} files</span>
                       </div>
                       {/* Files list */}
                       <div className="divide-y divide-theme">
@@ -293,7 +293,7 @@ export function OrganizeDialog({
                             <span className="text-sm text-theme-text truncate flex-1 min-w-0" title={file.name}>
                               {file.name}
                             </span>
-                            <span className="text-xs text-theme-muted flex-shrink-0">
+                            <span className="text-xs text-theme-muted flex-shrink-0 whitespace-nowrap">
                               {formatFileSize(file.size)}
                             </span>
                           </div>
