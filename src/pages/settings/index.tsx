@@ -4,6 +4,7 @@ import { SettingsSidebar } from './components/SettingsSidebar'
 import { ProfileSettings } from './components/ProfileSettings'
 import { SecuritySettings } from './components/SecuritySettings'
 import { AppearanceSettings } from './components/AppearanceSettings'
+import { PrivacySettings } from './components/PrivacySettings'
 import { AutomationSettings } from './components/AutomationSettings'
 import { NotificationSettings } from './components/NotificationSettings'
 import { LanguageSettings } from './components/LanguageSettings'
@@ -14,18 +15,14 @@ export function SettingsPage() {
   const {
     autoOrganize,
     setAutoOrganize,
+    autoScheduling,
+    setAutoScheduling,
+    autoRemoveDuplicates,
+    setAutoRemoveDuplicates,
   } = useAutomationSettings()
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
-      {/* Header */}
-      <div className="px-8 py-6 border-b border-theme">
-        <div>
-          <h1 className="text-3xl font-bold text-theme-text">Settings</h1>
-          <p className="text-sm text-theme-secondary mt-1">Manage your account settings and preferences</p>
-        </div>
-      </div>
-
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-theme-background">
       {/* Content */}
       <div className="flex-1 overflow-auto">
         <div className="flex h-full">
@@ -36,10 +33,15 @@ export function SettingsPage() {
             {activeTab === 'profile' && <ProfileSettings />}
             {activeTab === 'security' && <SecuritySettings />}
             {activeTab === 'appearance' && <AppearanceSettings />}
+            {activeTab === 'privacy' && <PrivacySettings />}
             {activeTab === 'automation' && (
               <AutomationSettings
                 autoOrganize={autoOrganize}
                 onAutoOrganizeChange={setAutoOrganize}
+                autoScheduling={autoScheduling}
+                onAutoSchedulingChange={setAutoScheduling}
+                autoRemoveDuplicates={autoRemoveDuplicates}
+                onAutoRemoveDuplicatesChange={setAutoRemoveDuplicates}
               />
             )}
             {activeTab === 'notifications' && <NotificationSettings />}

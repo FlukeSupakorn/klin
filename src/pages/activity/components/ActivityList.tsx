@@ -1,7 +1,7 @@
 import { useActivityStore } from '../store/useActivityStore'
 import { FileIcon } from '@/components/file/file-icon'
 import { CheckCircle2, XCircle, FolderOpen, ArrowRight } from 'lucide-react'
-import { getFileType } from '@/pages/home/file-list/utils'
+import { getFileType } from '@/pages/dashboard/file-list/utils'
 import { formatDistanceToNow } from 'date-fns'
 import { FilterType } from './SearchToolbar'
 
@@ -68,7 +68,7 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
                   <span className="text-sm font-medium text-theme-text truncate">
                     {item.original_name}
                   </span>
-                  {item.original_name !== item.final_name && (
+                  {item.tag !== 'duplicated' && item.original_name !== item.final_name && (
                     <>
                       <ArrowRight className="h-4 w-4 text-theme-muted flex-shrink-0" />
                       <span className="text-sm font-medium text-theme-primary truncate">
@@ -79,17 +79,34 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
                 </div>
               </div>
 
-              {/* Folder Change */}
-              <div className="flex items-center gap-2 text-xs text-theme-muted mb-2">
-                <FolderOpen className="h-3 w-3" />
-                <span className="truncate">{item.original_folder || 'Unknown'}</span>
-                {item.original_folder !== item.final_folder && (
-                  <>
-                    <ArrowRight className="h-3 w-3 flex-shrink-0" />
-                    <span className="truncate text-theme-primary">{item.final_folder}</span>
-                  </>
-                )}
-              </div>
+              {/* Folder Change or Duplicate Info */}
+              {item.tag === 'duplicated' ? (
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-xs text-theme-muted">
+                    <FolderOpen className="h-3 w-3" />
+                    <span className="truncate">{item.original_folder}</span>
+                  </div>
+                  {item.duplicateOf && (
+                    <div className="flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
+                      <span>Duplicate of:</span>
+                      <span className="font-medium truncate">{item.duplicateOf.name}</span>
+                      <span className="text-theme-muted">in</span>
+                      <span className="truncate">{item.duplicateOf.folder}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-xs text-theme-muted mb-2">
+                  <FolderOpen className="h-3 w-3" />
+                  <span className="truncate">{item.original_folder || 'Unknown'}</span>
+                  {item.original_folder !== item.final_folder && (
+                    <>
+                      <ArrowRight className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate text-theme-primary">{item.final_folder}</span>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* Timestamp */}
               <div className="text-xs text-theme-muted">
@@ -99,7 +116,12 @@ export function ActivityList({ searchQuery, activeFilter }: ActivityListProps) {
 
             {/* Action Badge */}
             <div className="flex-shrink-0">
-              {item.action === 'approved' ? (
+              {item.tag === 'duplicated' ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-full">
+                  <XCircle className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                  <span className="text-xs font-medium text-orange-700 dark:text-orange-300">Removed</span>
+                </div>
+              ) : item.action === 'approved' ? (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
                   <CheckCircle2 className="h-3.5 w-3.5 text-green-600" />
                   <span className="text-xs font-medium text-green-700">Approved</span>

@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
-import { Settings, Bell, Plus, StickyNote } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { Plus, StickyNote } from 'lucide-react'
 import { useNoteStore } from './store/useNoteStore'
 import { NoteCard } from './components/NoteCard'
 import { NoteEditor } from './components/NoteEditor'
 import { useToast } from '@/components/ui/toast'
 import { useEffect, useState } from 'react'
+import { useNavbar } from '@/components/layout/NavbarContext'
 
 export function NotePage() {
-  const navigate = useNavigate()
+  const { setCustomActionButton } = useNavbar()
   const toast = useToast()
   
   const notes = useNoteStore((state) => state.notes)
@@ -22,18 +22,30 @@ export function NotePage() {
   
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    loadNotes()
-  }, [loadNotes])
-
   const handleCreateNote = async () => {
     try {
-      await createNewNote() // No prompt, opens editor immediately
+      await createNewNote()
       toast.success('Note Created', 'New note created successfully')
     } catch (error) {
       toast.error('Create Failed', 'Failed to create note')
     }
   }
+
+  // Set custom action button for navbar
+  useEffect(() => {
+    setCustomActionButton(
+      <Button className="gap-2" onClick={() => createNewNote().then(() => toast.success('Note Created', 'New note created successfully')).catch(() => toast.error('Create Failed', 'Failed to create note'))}>
+        <Plus className="h-4 w-4" />
+        New Note
+      </Button>
+    )
+    return () => setCustomActionButton(null)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    loadNotes()
+  }, [loadNotes])
 
   const handleOpenNote = async (filename: string) => {
     try {
@@ -68,35 +80,9 @@ export function NotePage() {
 
   return (
     <>
-      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-theme-background">
-        {/* Header */}
-        <div className="px-8 py-6 border-b border-theme">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-theme-text">Notes</h1>
-              <p className="text-sm text-theme-secondary mt-1">
-                Create and manage your markdown notes
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <button 
-                className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary"
-                onClick={() => navigate('/settings')}
-              >
-                <Settings className="h-5 w-5 text-theme-secondary" />
-              </button>
-              <button className="h-10 w-10 rounded-lg border border-theme flex items-center justify-center hover-bg-theme-secondary">
-                <Bell className="h-5 w-5 text-theme-secondary" />
-              </button>
-              <Button className="gap-2" onClick={handleCreateNote}>
-                <Plus className="h-4 w-4" />
-                New Note
-              </Button>
-            </div>
-          </div>
-
-          {/* Search */}
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-theme-background">
+        {/* Search Bar */}
+        <div className="px-8 py-4 border-b border-theme">
           <div className="relative">
             <input
               type="text"

@@ -18,15 +18,7 @@ export function HelpSupportPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden">
-      {/* Header */}
-      <div className="px-8 py-6 border-b border-slate-200">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Help & Support</h1>
-          <p className="text-sm text-slate-500 mt-1">Get help with KLIN and contact support</p>
-        </div>
-      </div>
-
+    <div className="flex-1 flex flex-col h-full overflow-hidden">
       {/* Content */}
       <div className="flex-1 overflow-auto px-8 py-8">
         <div className="max-w-4xl mx-auto">

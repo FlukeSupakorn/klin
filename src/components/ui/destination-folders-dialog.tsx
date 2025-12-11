@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { selectFolder } from '@/lib/tauri-api'
-import { useHomeStore } from '@/pages/home/store/useHomeStore'
+import { useDashboardStore } from '@/pages/dashboard/store/useDashboardStore'
 
 interface DestinationFoldersDialogProps {
   open: boolean
@@ -40,8 +40,8 @@ export function DestinationFoldersDialog({
   const [newFolderPath, setNewFolderPath] = useState('')
   
   // Get watching folders - use actual watching folders if available, otherwise use temp (for setup)
-  const watchingFolders = useHomeStore((state) => state.watchingFolders)
-  const tempWatchingFolders = useHomeStore((state) => state.tempWatchingFolders)
+  const watchingFolders = useDashboardStore((state) => state.watchingFolders)
+  const tempWatchingFolders = useDashboardStore((state) => state.tempWatchingFolders)
   const foldersToUse = watchingFolders.length > 0 ? watchingFolders : tempWatchingFolders
 
   // Sync with currentFolders when they change

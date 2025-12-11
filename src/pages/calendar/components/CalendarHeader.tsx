@@ -13,8 +13,8 @@ interface CalendarHeaderProps {
 
 export function CalendarHeader({ month, year, onPrevMonth, onNextMonth, onToday }: CalendarHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-6">
-      <h2 className="text-2xl font-bold text-slate-900">{MONTHS[month]} {year}</h2>
+    <div className="flex items-center justify-between px-6 py-4 border-b border-theme bg-theme-background">
+      <h2 className="text-2xl font-bold text-theme-text">{MONTHS[month]} {year}</h2>
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={onPrevMonth}>
           <ChevronLeft className="h-4 w-4" />

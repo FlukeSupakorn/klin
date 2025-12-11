@@ -19,6 +19,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem('klin-theme', theme)
     document.documentElement.setAttribute('data-theme', theme)
+    
+    // Add/remove 'dark' class for Tailwind's dark: variant
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+    
     applyTheme(theme)
   }, [theme])
 
