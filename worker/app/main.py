@@ -11,6 +11,7 @@ from lancedb import connect
 
 from app.core.lifecycle import lifespan as original_lifespan
 from app.api.v1.routers import health, organize
+from app.api.dev_notes.routes import mount_dev_notes
 
 # Setup DB path
 BASE_DIR = Path(__file__).resolve().parent
@@ -83,6 +84,9 @@ app.include_router(health.router)
 app.include_router(organize.router)
 # app.include_router(plan.router)
 # app.include_router(analyze.router)
+
+# Mount dev-notes static files
+mount_dev_notes(app)
 
 if __name__ == "__main__":
     import uvicorn
