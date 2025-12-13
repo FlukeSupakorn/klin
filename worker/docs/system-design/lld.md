@@ -33,7 +33,7 @@ Entities focus on:
 8. **CalendarEvent**
    Events generated from file content (e.g., meetings, due dates).
 
-9. **EmbeddingRecord** *(Optional – only if using vector DB)*
+9. **EmbeddingRecord** 
    Stores embeddings for semantic search or file-content similarity.
 
 ---
@@ -52,6 +52,19 @@ FileRecord (1) ────────< SummaryNote >──────── (
 FileRecord (1) ────────< CalendarEvent >────── (∞)
 
 FileRecord (1) ────────< EmbeddingRecord >──── (∞)
+```
+
+```mermaid
+erDiagram
+    UserSetting ||--o{ FolderMapping : "has"
+    FolderMapping }o--|| DestinationFolder : "maps to"
+
+    FileRecord ||--o{ OrganizePlan : "has"
+    FileRecord ||--o{ OrganizeHistory : "has"
+    FileRecord ||--o{ DuplicateRecord : "has"
+    FileRecord ||--o{ SummaryNote : "has"
+    FileRecord ||--o{ CalendarEvent : "has"
+    FileRecord ||--o{ EmbeddingRecord : "has"
 ```
 
 ### Notes:
@@ -174,7 +187,7 @@ This schema is optimized for SQLite (default for desktop apps).
 
 ---
 
-### **Table: embeddings (Optional)**
+### **Table: embeddings**
 
 | Field        | Type     |
 | ------------ | -------- |
@@ -218,169 +231,3 @@ To improve performance for thousands of files:
 * Heavy files or documents are **never** stored in DB
 
 ---
-
-# **API Specifications (Tauri ↔ FastAPI Worker)**
-
-Tauri front-end communicates with the worker over `http://localhost:<port>`.
-
----
-
-## **1. POST /ingest**
-
-**Description:** Extract text, metadata, and embedding
-
-```json
-{
-  "file_path": "C:/Users/A/Documents/report.pdf"
-}
-```
-
-**Response**
-
-```json
-{
-  "text": "...",
-  "category": "Invoice",
-  "embedding": [...],
-  "metadata": { "pages": 3 }
-}
-```
-
----
-
-## **2. POST /plan**
-
-**Description:** Generate AI-based organize plan
-
-```json
-{
-  "file_path": "...",
-  "content": "...extracted text..."
-}
-```
-
-**Response**
-
-```json
-{
-  "action": "move",
-  "destination": "C:/Archive/Invoices",
-  "rename": "Invoice_2024_01.pdf",
-  "reason": "AI classification: invoice"
-}
-```
-
----
-
-## **3. POST /execute**
-
-```json
-{
-  "action": "move",
-  "source": "...",
-  "destination": "..."
-}
-```
-
----
-
-## **4. POST /duplicate/scan**
-
-```json
-{
-  "folder": "C:/Documents"
-}
-```
-
----
-
-## **5. GET /history**
-
-Returns organize history for UI display.
-
----
-
-## **6. POST /summary**
-
-Generates a note or document summary.
-
----
-
-# **Detailed Design Documents (LLD Breakdown)**
-
-Below is a breakdown for developer-level implementation.
-
----
-
-### **A. File Ingestion Module**
-
-* Validate file type
-* Extract text using PDF/OCR pipeline
-* Compute SHA-256 and file size
-* Store metadata in `file_records`
-* Emit event for next module
-
----
-
-### **B. Classification & Embedding Module**
-
-* Use local VLM (Ollama) or cloud AI
-* Extract categories using prompt templates
-* Embedding generated using:
-
-  * text embedding model
-  * or vision encoder (if image)
-
----
-
-### **C. Organize Planning Module**
-
-* Calls LLM with:
-
-  * extracted text
-  * folder mapping rules
-  * rename formatting rules
-* Returns a structured JSON plan
-
----
-
-### **D. Organize Execution Module**
-
-* Execute filesystem operations using Python or Rust
-* Save operation into `organize_history`
-* Maintain Undo Stack
-
----
-
-### **E. Duplicate Detection Module**
-
-* Compute:
-
-  * file hash
-  * similarity via embedding (optional)
-* Insert records into `duplicate_records`
-* Group duplicates for UI
-
----
-
-### **F. Summary / Notes Module**
-
-* Extract key ideas
-* Create / update summary in DB
-* Allow user edits
-
----
-
-### **G. Calendar Module**
-
-* Parse dates from content
-* Create events in `calendar_events`
-* Display in monthly/weekly views
-
----
-
-### **H. Settings Module**
-
-* Store JSON configuration
-* Load settings on startup
-* Model selection, watcher folders, and behavior toggles
