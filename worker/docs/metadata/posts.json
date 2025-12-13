@@ -1,0 +1,56 @@
+[
+  {
+    "time": "2025.12.13",
+    "title": "Functional Requirements",
+    "tag": "requirements",
+    "image": "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=2944",
+    "href": "#/requirement/functional",
+    "subtitle": "System functional requirements",
+    "category": "requirements"
+  },
+  {
+    "time": "2025.12.13",
+    "title": "Non-Functional Requirements",
+    "tag": "requirements",
+    "image": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2944",
+    "href": "#/requirement/non-functional",
+    "subtitle": "System non-functional requirements",
+    "category": "requirements"
+  },
+  {
+    "time": "2025.12.13",
+    "title": "High-Level System Design",
+    "tag": "architecture",
+    "image": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&q=80&w=2940",
+    "href": "#/system-design/hld",
+    "subtitle": "System architecture and technology stack",
+    "category": "system-design"
+  },
+  {
+    "time": "2025.12.13",
+    "title": "Low-Level System Design",
+    "tag": "architecture",
+    "image": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=2940",
+    "href": "#/system-design/lld",
+    "subtitle": "Detailed component design and interactions",
+    "category": "system-design"
+  },
+  {
+    "time": "2025.12.13",
+    "title": "Developer Module Breakdown",
+    "tag": "modules",
+    "image": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&q=80&w=2940",
+    "href": "#/system-design/dev-module",
+    "subtitle": "Detailed LLD breakdown for implementation",
+    "category": "system-design"
+  },
+  {
+    "time": "2025.12.13",
+    "title": "API Specifications",
+    "tag": "api",
+    "image": "https://images.unsplash.com/photo-1516259762381-22954d7d3ad2?auto=format&fit=crop&q=80&w=2966",
+    "href": "#/system-design/API",
+    "subtitle": "API endpoints and data formats",
+    "category": "system-design"
+  }
+]

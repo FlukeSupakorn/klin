@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Dev Notes</title>
@@ -7,7 +8,66 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-dashboard@3.2.0/dist/dashboard.min.css">
+  <style>
+    /* Sidebar tag-list customization */
+    :root {
+      --sidebar-tags-bg-color: #e8f4f8;
+      --sidebar-tags-font-color: #42b983;
+      --sidebar-tags-font-size: 0.8rem;
+    }
+
+    /* Tags section container */
+    .sidebar .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 12px 0;
+    }
+
+    /* Tag pills */
+    .sidebar .tag-list a {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      margin: 0;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .sidebar .tag-list a:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .sidebar .tag-list a:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tags section title styling */
+    .sidebar hr {
+      margin: 20px 15px 10px 15px;
+      border: none;
+      border-top: 1px solid #eee;
+    }
+
+    .sidebar p strong {
+      display: block;
+      padding: 0 15px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.6;
+      margin-bottom: 4px;
+    }
+  </style>
 </head>
+
 <body>
   <div id="app"></div>
   <script>
@@ -20,6 +80,36 @@
       autoSidebar: {
         collapsible: true,
       },
+      // Dashboard configuration
+      dashboard: {
+        numTabContent: 100,
+        metadataUrl: 'metadata/posts',
+        sort: true,
+        theme: 'default',
+        tagboardTheme: 'default',
+        categoryTheme: {},
+        pagination: true
+      },
+      plugins: [
+        function pageFooter(hook, vm) {
+          var footer = [
+            '<!-- tag-list -->',
+            '<hr/>',
+          ].join('');
+
+          hook.afterEach(function (html) {
+            return html + footer;
+          });
+        },
+        // Fix dashboard links to open in same page
+        function fixDashboardLinks(hook) {
+          hook.doneEach(function () {
+            document.querySelectorAll('.dashboard-card a, .tag-list a').forEach(function (link) {
+              link.removeAttribute('target');
+            });
+          });
+        },
+      ],
     }
   </script>
   <!-- Docsify v4 -->
@@ -32,5 +122,10 @@
   <script src="https://cdn.jsdelivr.net/npm/docsify-mermaid@2.0.1/dist/docsify-mermaid.js"></script>
   <!-- Docsify Copy Code plugin -->
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <!-- Docsify Dashboard plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-dashboard@3.2.0/dist/docsify-dashboard.min.js"></script>
+  <!-- Docsify Tabs plugin (required by dashboard, must be after dashboard) -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify-tabs@1/dist/docsify-tabs.min.js"></script>
 </body>
+
 </html>
