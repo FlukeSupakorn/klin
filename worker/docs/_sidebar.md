@@ -1,6 +1,6 @@
 * [Home](README.md)
 * [Todo](todo.md)
-* [Requirement](requirement/README.md)
+* Requirement
   * [Functional Requirement](requirement/functional.md)
   * [Non-Functional Requirement](requirement/non-functional.md)
 * System Design
