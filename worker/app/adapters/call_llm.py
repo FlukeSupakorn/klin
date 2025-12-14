@@ -174,7 +174,8 @@ def build_organize_prompt(filename: str, extracted_text: str | None, base64_text
 #TODO: turn into function
 def main():
     # Define paths
-    base_dir = Path(__file__).resolve().parent.parent / "db" / "jsondb"
+    worker_dir = Path(__file__).resolve().parent.parent.parent  # worker/
+    base_dir = worker_dir / "db" / "jsondb"
     organize_path = base_dir / "organize.json"
     destination_path = base_dir / "destination.json"
     result_path = base_dir / "result.json"

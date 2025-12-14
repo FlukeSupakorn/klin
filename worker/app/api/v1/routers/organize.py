@@ -1,8 +1,10 @@
 """Organize API endpoint - generates file organization plans."""
 import uuid
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from app.core.logging import get_logger
+from app.core.container import get_file_repo
+from app.core.ports.file_repo import FileRepositoryPort
 from app.schemas.organize import OrganizeRequest, OrganizeResponse
 from app.services.planning import organize_files
 
@@ -12,7 +14,10 @@ router = APIRouter(prefix="/v1", tags=["organize"])
 
 
 @router.post("/organize", response_model=OrganizeResponse)
-async def organize(request: OrganizeRequest) -> OrganizeResponse:
+async def organize(
+    request: OrganizeRequest,
+    file_repo: FileRepositoryPort = Depends(get_file_repo),
+) -> OrganizeResponse:
     """
     Generate organization plans for files.
     
@@ -54,7 +59,7 @@ async def organize(request: OrganizeRequest) -> OrganizeResponse:
             destinations = [d.path for d in request.destinations]
         
         # Generate organization plans
-        results = await organize_files(file_paths, destinations, request.options)
+        results = await organize_files(file_paths, destinations, request.options, file_repo=file_repo)
         
         logger.info(
             f"[{request_id}] Organization complete",

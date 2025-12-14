@@ -1,4 +1,10 @@
-# Tauri + React + Rust + Python Project .gitignore
+# ============================================================
+# KLIN Project .gitignore
+# ============================================================
+
+# ************************************************************
+#                    TAURI APP (src-tauri/)
+# ************************************************************
 
 # ===========================
 # Node.js / React / TypeScript
@@ -26,42 +32,47 @@ out/
 # ===========================
 # Rust / Cargo
 # ===========================
-# Cargo build artifacts
 target/
 **/*.rs.bk
 *.pdb
 
-# Cargo.lock (uncomment if building a library)
-# Cargo.lock
-
 # ===========================
-# Tauri
+# Tauri Build
 # ===========================
-# Tauri build outputs
 src-tauri/target/
 src-tauri/WixTools/
 
+
+# ************************************************************
+#                    WORKER (worker/)
+# ************************************************************
+
 # ===========================
-# Python
+# Python Bytecode
 # ===========================
-# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
-# Distribution / packaging
+# ===========================
+# Python Virtual Environments
+# ===========================
 .Python
 env/
 venv/
+.venv/
 ENV/
 env.bak/
 venv.bak/
+virtualenv/
+pyenv/
+.conda/
+
+# ===========================
+# Python Packaging
+# ===========================
 *.egg-info/
-dist/
-build/
 eggs/
 .eggs/
 lib64/
@@ -73,17 +84,15 @@ pip-wheel-metadata/
 *.egg
 MANIFEST
 
-# Virtual environments
-.venv/
-virtualenv/
-pyenv/
-.conda/
-
+# ===========================
 # Jupyter Notebook
+# ===========================
 .ipynb_checkpoints/
 *.ipynb_checkpoints/
 
+# ===========================
 # PyInstaller
+# ===========================
 *.manifest
 *.spec
 
@@ -104,24 +113,11 @@ pyenv/
 *.mlmodel
 
 # Model directories
-models/
 checkpoints/
 saved_models/
 weights/
 pretrained/
 trained_models/
-
-# Datasets
-data/
-datasets/
-*.csv
-#*.json
-*.jsonl
-*.parquet
-!package.json
-!tsconfig.json
-!tsconfig.node.json
-!tauri.conf.json
 
 # OCR specific
 tesseract/
@@ -130,9 +126,33 @@ tessdata/
 
 # Training outputs
 runs/
-logs/
 tensorboard/
 wandb/
+
+# ===========================
+# Worker Databases
+# ===========================
+**/db/lancedb/
+**/*.lance/
+**/db/sqlite/
+
+# ************************************************************
+#                    SHARED / GLOBAL
+# ************************************************************
+
+# ===========================
+# Environment & Secrets
+# ===========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.key
+*.pem
+secrets.json
+credentials.json
+.secrets/
 
 # ===========================
 # IDE / Editors
@@ -151,12 +171,9 @@ wandb/
 *.iws
 *.ipr
 
-# Vim
+# Vim / Emacs
 *.swp
 *.swo
-*~
-
-# Emacs
 *~
 \#*\#
 .\#*
@@ -190,23 +207,8 @@ $RECYCLE.BIN/
 *.sw?
 
 # Linux
-*~
 .directory
 .Trash-*
-
-# ===========================
-# Environment & Secrets
-# ===========================
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*.key
-*.pem
-secrets.json
-credentials.json
-.secrets/
 
 # ===========================
 # Testing
@@ -220,35 +222,46 @@ htmlcov/
 .tox/
 
 # ===========================
-# Misc
+# Logs & Temp Files
 # ===========================
-# Logs
 logs/
 *.log
-
-# Temporary files
 tmp/
 temp/
 *.tmp
 *.temp
 *.cache
 
-# Lock files (keep package-lock.json if you use npm)
-# package-lock.json
+# ===========================
+# Lock Files
+# ===========================
 yarn.lock
 pnpm-lock.yaml
 
-# Database
+# ===========================
+# Database Files
+# ===========================
 *.db
 *.sqlite
 *.sqlite3
 
-# Compressed files
+# ===========================
+# Compressed Files
+# ===========================
 *.zip
 *.tar.gz
 *.rar
 *.7z
 
+# ===========================
+# Misc
+# ===========================
 prompt
 
-lancedb
+# ===========================
+# JSON File Exceptions
+# ===========================
+!package.json
+!tsconfig.json
+!tsconfig.node.json
+!tauri.conf.json

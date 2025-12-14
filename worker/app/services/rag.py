@@ -91,8 +91,9 @@ def find_data_dir(script_dir: Path) -> Path:
 
 
 def load_request_config(script_dir: Path) -> list[str]:
-    # Look for request.json in ../db/jsondb/request.json relative to this script
-    req_path = script_dir.parent / "db" / "jsondb" / "request.json"
+    # Look for request.json in worker/db/jsondb/request.json
+    worker_dir = script_dir.parent.parent  # worker/
+    req_path = worker_dir / "db" / "jsondb" / "request.json"
     if not req_path.exists():
         print(f"Config file not found: {req_path}")
         return []

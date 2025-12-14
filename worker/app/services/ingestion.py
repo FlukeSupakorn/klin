@@ -2,7 +2,7 @@
 import mimetypes
 import os
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
 from pydantic import BaseModel
 
 from app.adapters.ollama_vlm import extract_text_with_llm
@@ -10,6 +10,9 @@ from app.core.config import get_settings
 from app.core.logging import get_logger
 from app.schemas.ingest import IngestOptions
 from app.utils import calculate_sha256, is_allowed_extension, get_file_size_mb
+
+if TYPE_CHECKING:
+    from app.core.ports.file_repo import FileRepositoryPort
 
 logger = get_logger(__name__)
 
@@ -27,6 +30,7 @@ class IngestionResult(BaseModel):
 async def process_single_file(
     file_path: str,
     options: IngestOptions,
+    file_repo: "FileRepositoryPort | None" = None,
 ) -> IngestionResult:
     """
     Process a single file for text extraction using LLM-based OCR.
@@ -34,6 +38,7 @@ async def process_single_file(
     Args:
         file_path: Path to the file
         options: Processing options
+        file_repo: Optional file repository for duplicate checking
         
     Returns:
         IngestionResult with extracted text and metadata
@@ -80,6 +85,18 @@ async def process_single_file(
         sha256 = calculate_sha256(file_path)
         file_size_bytes = os.path.getsize(file_path)
         
+        # Check for duplicates if file_repo is provided
+        if file_repo is not None:
+            existing = file_repo.get_by_hash(sha256)
+            if existing is not None:
+                return IngestionResult(
+                    file_sha256=sha256,
+                    origin_path=file_path,
+                    status="duplicate",
+                    error=f"Duplicate of file ID {existing.id}",
+                    meta={"duplicate_of_id": existing.id, "duplicate_of_path": existing.original_path},
+                )
+        
         # Check if LLM OCR is allowed
         if not options.allow_vlm_ocr:
             return IngestionResult(
@@ -125,6 +142,7 @@ async def process_single_file(
 async def process_files(
     file_paths: list[str],
     options: IngestOptions,
+    file_repo: "FileRepositoryPort | None" = None,
 ) -> list[IngestionResult]:
     """
     Process multiple files, optionally traversing directories.
@@ -132,6 +150,7 @@ async def process_files(
     Args:
         file_paths: List of file or directory paths
         options: Processing options
+        file_repo: Optional file repository for duplicate checking
         
     Returns:
         List of IngestionResults
@@ -158,7 +177,7 @@ async def process_files(
     # Process each file
     results = []
     for file_path in all_files:
-        result = await process_single_file(file_path, options)
+        result = await process_single_file(file_path, options, file_repo=file_repo)
         results.append(result)
     
     return results

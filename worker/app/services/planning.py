@@ -1,12 +1,16 @@
 """Organize planner service - generates file organization plans."""
 import uuid
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
 
 from app.core.logging import get_logger
 from app.schemas.common import ItemResult, PlanAction
 from app.schemas.organize import OrganizeOptions
 from app.services.ingestion import process_single_file, IngestionResult
 from app.schemas.ingest import IngestOptions
+
+if TYPE_CHECKING:
+    from app.core.ports.file_repo import FileRepositoryPort
+    from app.core.ports.history_repo import HistoryRepositoryPort
 
 logger = get_logger(__name__)
 
@@ -15,6 +19,7 @@ async def generate_plan_for_file(
     file_path: str,
     destinations: list[str],
     options: OrganizeOptions,
+    file_repo: "FileRepositoryPort | None" = None,
 ) -> ItemResult:
     """
     Generate an organization plan for a single file.
@@ -28,6 +33,7 @@ async def generate_plan_for_file(
         file_path: Path to the file
         destinations: List of allowed destination paths
         options: Organization options
+        file_repo: Optional file repository for duplicate checking
         
     Returns:
         ItemResult with action plan
@@ -39,7 +45,7 @@ async def generate_plan_for_file(
         traverse_folders=False
     )
     
-    ingestion_result = await process_single_file(file_path, ingest_options)
+    ingestion_result = await process_single_file(file_path, ingest_options, file_repo=file_repo)
     
     # If ingestion failed, return the error
     if ingestion_result.status != "ok":
@@ -87,6 +93,7 @@ async def organize_files(
     file_paths: list[str],
     destinations: list[str],
     options: OrganizeOptions,
+    file_repo: "FileRepositoryPort | None" = None,
 ) -> list[ItemResult]:
     """
     Generate organization plans for multiple files.
@@ -95,6 +102,7 @@ async def organize_files(
         file_paths: List of file paths to organize
         destinations: List of allowed destination paths
         options: Organization options
+        file_repo: Optional file repository for duplicate checking
         
     Returns:
         List of ItemResults with action plans
@@ -103,7 +111,7 @@ async def organize_files(
     
     results = []
     for file_path in file_paths:
-        result = await generate_plan_for_file(file_path, destinations, options)
+        result = await generate_plan_for_file(file_path, destinations, options, file_repo=file_repo)
         results.append(result)
     
     return results
