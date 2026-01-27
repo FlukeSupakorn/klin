@@ -84,13 +84,14 @@ export function DashboardPage() {
     isAllSelected,
     lockedFilesCount,
     selectableFilesCount,
+    selectedLockedCount,
   } = useFileSelection()
 
   // Get deselectAllFiles from file store
   const { deselectAllFiles } = useFileStore()
 
   // Get privacy store for lock
-  const { addExcludedFile, shouldExclude } = usePrivacyStore()
+  const { addExcludedFile, shouldExclude, removeExcludedFile } = usePrivacyStore()
 
   // Organize hook
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
@@ -141,6 +142,15 @@ export function DashboardPage() {
     })
     deselectAllFiles()
     toast.success('Files Locked', `${selectedFiles.length} file(s) locked from organization`)
+  }
+
+  // Unlock selected files
+  const handleUnlockFiles = () => {
+    selectedFiles.forEach(file => {
+      removeExcludedFile(file.path)
+    })
+    deselectAllFiles()
+    toast.success('Files Unlocked', `${selectedFiles.length} file(s) unlocked`)
   }
 
   // Organize logic - excludes locked files
@@ -204,7 +214,9 @@ export function DashboardPage() {
             onDeleteClick={openDeleteDialog}
             onSummarizeClick={() => handleSummarize(selectedFiles)}
             onLockClick={handleLockFiles}
+            onUnlockClick={handleUnlockFiles}
             lockedFilesCount={lockedFilesCount}
+            selectedLockedCount={selectedLockedCount}
             filteredFiles={filteredFiles}
             onToggleSelection={toggleFileSelection}
             loading={loading}
@@ -265,7 +277,9 @@ interface FolderViewProps {
   onDeleteClick: () => void
   onSummarizeClick: () => void
   onLockClick: () => void
+  onUnlockClick: () => void
   lockedFilesCount: number
+  selectedLockedCount: number
   filteredFiles: FileItem[]
   onToggleSelection: (id: string) => void
   loading: boolean
@@ -281,7 +295,9 @@ function FolderView({
   onDeleteClick,
   onSummarizeClick,
   onLockClick,
+  onUnlockClick,
   lockedFilesCount,
+  selectedLockedCount,
   filteredFiles,
   onToggleSelection,
   loading,
@@ -320,7 +336,9 @@ function FolderView({
         onDeleteClick={onDeleteClick}
         onSummarizeClick={onSummarizeClick}
         onLockClick={onLockClick}
+        onUnlockClick={onUnlockClick}
         lockedCount={lockedFilesCount}
+        selectedLockedCount={selectedLockedCount}
       />
 
       <FileListView

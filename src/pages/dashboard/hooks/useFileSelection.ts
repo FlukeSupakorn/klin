@@ -10,8 +10,8 @@ export function useFileSelection() {
   const [localSearch, setLocalSearch] = useState('')
   const shouldExclude = usePrivacyStore((s) => s.shouldExclude)
 
-  // Filter files by current folder if inside a folder, otherwise show empty
-  // Show ALL files including locked ones (they display with lock icon but can't be selected)
+  // Filter files by current folder if inside a folder, otherwise show nothing (dashboard view)
+  // Show ALL files including locked ones (they display with lock icon but can be selected)
   const filesInView = currentViewFolderId
     ? files.filter((file) => file.sourceFolderId === currentViewFolderId)
     : []
@@ -20,27 +20,30 @@ export function useFileSelection() {
     file.name.toLowerCase().includes(localSearch.toLowerCase())
   )
 
-  // Only non-locked files can be selected
-  const selectableFiles = filteredFiles.filter((file) => !shouldExclude(file.path, file.name))
+  // All files can be selected now (including locked ones)
+  const selectableFiles = filteredFiles
 
-  const selectedFiles = selectableFiles.filter((file) =>
+  const selectedFiles = filteredFiles.filter((file) =>
     selectedFileIds.has(file.path)
   )
 
   // Count locked files for display
   const lockedFilesCount = filteredFiles.filter((file) => shouldExclude(file.path, file.name)).length
+  
+  // Count how many selected files are locked
+  const selectedLockedCount = selectedFiles.filter((file) => shouldExclude(file.path, file.name)).length
 
   const handleSelectAll = () => {
-    // Only select non-locked files
-    if (selectedFileIds.size === selectableFiles.length && selectableFiles.length > 0) {
+    // Toggle: if all files are selected, deselect all; otherwise select all
+    if (selectedFileIds.size === filteredFiles.length && filteredFiles.length > 0) {
       deselectAllFiles()
     } else {
-      const allFileIds = selectableFiles.map((file) => file.path)
+      const allFileIds = filteredFiles.map((file) => file.path)
       selectAllFiles(allFileIds)
     }
   }
 
-  const isAllSelected = selectableFiles.length > 0 && selectedFileIds.size === selectableFiles.length
+  const isAllSelected = filteredFiles.length > 0 && selectedFileIds.size === filteredFiles.length
 
   return {
     localSearch,
@@ -48,6 +51,7 @@ export function useFileSelection() {
     filteredFiles,
     selectedFiles,
     selectedFileIds: Array.from(selectedFileIds), // Convert Set to Array for components
+    selectedLockedCount,
     toggleFileSelection,
     handleSelectAll,
     isAllSelected,

@@ -8,7 +8,7 @@ import { usePrivacyStore } from '@/pages/privacy/store/usePrivacyStore'
 import { formatFileSize, formatDate, getFileType } from './utils'
 import { usePagination } from '../hooks/usePagination'
 import { GridSkeleton, ListSkeleton, TabSkeleton, LoadingMoreSkeleton } from './FileSkeleton'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { EncryptionInfoDialog } from '@/components/EncryptionInfoDialog'
 import { EncryptFileDialog } from '@/components/EncryptFileDialog'
 
@@ -32,7 +32,7 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
   const [sortBy, setSortBy] = useState<'name' | 'size' | 'date'>('name')
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
-  // Check encryption status for all PDF files
+  // Check encryption status for all PDF files (only once on mount or when files change)
   useEffect(() => {
     const checkEncryption = async () => {
       const encrypted = new Set<string>()
@@ -56,12 +56,18 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
     if (files.length > 0) {
       checkEncryption()
     }
-  }, [files])
+  }, [files.length]) // Only re-run when number of files changes
 
-  const handleUnlockFile = (filePath: string, e: React.MouseEvent) => {
+  const handleToggleLockFile = (filePath: string, isLocked: boolean, e: React.MouseEvent) => {
     e.stopPropagation()
-    removeExcludedFile(filePath)
+    if (isLocked) {
+      removeExcludedFile(filePath)
+    } else {
+      addExcludedFile(filePath)
+    }
   }
+
+  const addExcludedFile = usePrivacyStore((s) => s.addExcludedFile)
 
   const handleEncryptionIconClick = (filePath: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -85,8 +91,26 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
     setSelectedEncryptionFile(null)
   }
 
-  const handleEncryptionComplete = () => {
-    // Refresh encryption status
+  const handleEncryptionComplete = async () => {
+    // Refresh encryption status for the specific file that was just encrypted/decrypted
+    if (selectedEncryptionFile) {
+      try {
+        const isEncrypted = await checkIsEncrypted(selectedEncryptionFile)
+        setEncryptedFiles(prev => {
+          const newSet = new Set(prev)
+          if (isEncrypted) {
+            newSet.add(selectedEncryptionFile)
+          } else {
+            newSet.delete(selectedEncryptionFile)
+          }
+          return newSet
+        })
+      } catch (error) {
+        // Silently fail if unable to check
+      }
+    }
+    
+    // Also call parent refresh if available
     if (onRefresh) {
       onRefresh()
     }
@@ -115,23 +139,25 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
     enabled: !loading,
   })
 
-  const sortedDisplayedFiles = [...displayedFiles].sort((a, b) => {
-    let compareValue = 0
+  const sortedDisplayedFiles = useMemo(() => {
+    return [...displayedFiles].sort((a, b) => {
+      let compareValue = 0
 
-    switch (sortBy) {
-      case 'name':
-        compareValue = a.name.localeCompare(b.name)
-        break
-      case 'size':
-        compareValue = a.size - b.size
-        break
-      case 'date':
-        compareValue = new Date(a.modified || 0).getTime() - new Date(b.modified || 0).getTime()
-        break
-    }
+      switch (sortBy) {
+        case 'name':
+          compareValue = a.name.localeCompare(b.name)
+          break
+        case 'size':
+          compareValue = a.size - b.size
+          break
+        case 'date':
+          compareValue = new Date(a.modified || 0).getTime() - new Date(b.modified || 0).getTime()
+          break
+      }
 
-    return sortOrder === 'asc' ? compareValue : -compareValue
-  })
+      return sortOrder === 'asc' ? compareValue : -compareValue
+    })
+  }, [displayedFiles, sortBy, sortOrder])
 
   const handleOpenFile = async (filePath: string) => {
     try {
@@ -239,21 +265,23 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                         onCheckedChange={() => onToggleSelection(file.path)}
                         aria-label={`Select ${file.name}`}
                       />
-                      {isLocked && (
-                        <button
-                          onClick={(e) => handleUnlockFile(file.path, e)}
-                          onMouseEnter={() => setHoveringLock(file.path)}
-                          onMouseLeave={() => setHoveringLock(null)}
-                          className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 transition-colors"
-                          title="Click to unlock from AI organization"
-                        >
-                          {hoveringLock === file.path ? (
+                      <button
+                        onClick={(e) => handleToggleLockFile(file.path, isLocked, e)}
+                        onMouseEnter={() => setHoveringLock(file.path)}
+                        onMouseLeave={() => setHoveringLock(null)}
+                        className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                        title={isLocked ? "Click to unlock from AI organization" : "Click to lock from AI organization"}
+                      >
+                        {hoveringLock === file.path ? (
+                          isLocked ? (
                             <Unlock className="h-4 w-4 text-green-500" />
                           ) : (
                             <Lock className="h-4 w-4 text-amber-500" />
-                          )}
-                        </button>
-                      )}
+                          )
+                        ) : (
+                          <Lock className="h-4 w-4 text-amber-500 opacity-50" />
+                        )}
+                      </button>
                     </div>
                   </td>
                   <td className="py-4 px-4">
@@ -343,33 +371,23 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   onClick={() => onToggleSelection(file.path)}
                 >
                   <div className="flex items-start justify-between mb-3">
-                    {isLocked ? (
-                      <button
-                        onClick={(e) => handleUnlockFile(file.path, e)}
-                        onMouseEnter={() => setHoveringLock(file.path)}
-                        onMouseLeave={() => setHoveringLock(null)}
-                        className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 transition-colors"
-                        title="Click to unlock"
-                      >
-                        {hoveringLock === file.path ? (
-                          <Unlock className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <Lock className="h-4 w-4 text-amber-500" />
-                        )}
-                      </button>
-                    ) : (
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={() => onToggleSelection(file.path)}
-                        aria-label={`Select ${file.name}`}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    )}
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => onToggleSelection(file.path)}
+                      aria-label={`Select ${file.name}`}
+                      onClick={(e) => e.stopPropagation()}
+                    />
                     <div className="flex items-center gap-1">
                       {isLocked && (
-                        <span className="text-[9px] font-bold text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded-full">
-                          LOCKED
-                        </span>
+                        <button
+                          onClick={(e) => handleToggleLockFile(file.path, isLocked, e)}
+                          onMouseEnter={() => setHoveringLock(file.path)}
+                          onMouseLeave={() => setHoveringLock(null)}
+                          className="text-[9px] font-bold text-amber-600 bg-amber-100 hover:bg-amber-200 px-1.5 py-0.5 rounded-full transition-colors cursor-pointer"
+                          title="Click to unlock"
+                        >
+                          {hoveringLock === file.path ? '🔓' : '🔒'}
+                        </button>
                       )}
                       {encryptedFiles.has(file.path) && (
                         <button
@@ -459,31 +477,34 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     shadow-sm shadow-theme-primary/5
                     hover:bg-theme-secondary hover:shadow-md hover:shadow-theme-primary/10
                     ${isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-sm shadow-theme-primary/10' : ''}
-                    ${isLocked ? 'opacity-70 ring-2 ring-amber-300 bg-amber-50/50' : ''}`}
-                  onClick={() => !isLocked && onToggleSelection(file.path)}
+                    ${isLocked ? 'ring-2 ring-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''}`}
+                  onClick={() => onToggleSelection(file.path)}
                 >
                   <div className="flex items-center gap-4">
-                    {isLocked ? (
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={() => onToggleSelection(file.path)}
+                      aria-label={`Select ${file.name}`}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    {isLocked && (
                       <button
-                        onClick={(e) => handleUnlockFile(file.path, e)}
+                        onClick={(e) => handleToggleLockFile(file.path, isLocked, e)}
                         onMouseEnter={() => setHoveringLock(file.path)}
                         onMouseLeave={() => setHoveringLock(null)}
-                        className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 transition-colors"
-                        title="Click to unlock"
+                        className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
+                        title={isLocked ? "Click to unlock" : "Click to lock"}
                       >
                         {hoveringLock === file.path ? (
-                          <Unlock className="h-4 w-4 text-green-500" />
+                          isLocked ? (
+                            <Unlock className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <Lock className="h-4 w-4 text-amber-500" />
+                          )
                         ) : (
-                          <Lock className="h-4 w-4 text-amber-500" />
+                          <Lock className="h-4 w-4 text-amber-500 opacity-50" />
                         )}
                       </button>
-                    ) : (
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={() => onToggleSelection(file.path)}
-                        aria-label={`Select ${file.name}`}
-                        onClick={(e) => e.stopPropagation()}
-                      />
                     )}
 
                     <div className="h-12 w-12 bg-theme-tertiary rounded-lg flex items-center justify-center flex-shrink-0 relative">

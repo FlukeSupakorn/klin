@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles, Lock } from 'lucide-react'
+import { Trash2, LayoutGrid, List, LayoutDashboard, ChevronDown, Sparkles, Lock, Unlock } from 'lucide-react'
 import { useFileStore } from '@/store/useFileStore'
 
 interface FileToolbarProps {
@@ -17,7 +17,9 @@ interface FileToolbarProps {
   onDeleteClick: () => void
   onSummarizeClick?: () => void
   onLockClick?: () => void
+  onUnlockClick?: () => void
   lockedCount?: number
+  selectedLockedCount?: number
 }
 
 // Combined Toolbar Component (single line with all controls)
@@ -29,7 +31,9 @@ export function FileToolbar({
   onDeleteClick,
   onSummarizeClick,
   onLockClick,
+  onUnlockClick,
   lockedCount = 0,
+  selectedLockedCount = 0,
 }: FileToolbarProps) {
   const { currentView, setCurrentView } = useFileStore()
   
@@ -102,15 +106,28 @@ export function FileToolbar({
         {selectedCount > 0 && (
           <>
             <span className="text-sm text-theme-secondary">•</span>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-amber-300 hover:border-amber-400 dark:border-amber-700 dark:hover:border-amber-600"
-              onClick={onLockClick}
-            >
-              <Lock className="h-4 w-4" />
-              Lock
-            </Button>
+            {selectedLockedCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 hover:bg-green-50 dark:hover:bg-green-950/30 border-green-300 hover:border-green-400 dark:border-green-700 dark:hover:border-green-600"
+                onClick={onUnlockClick}
+              >
+                <Unlock className="h-4 w-4" />
+                Unlock ({selectedLockedCount})
+              </Button>
+            )}
+            {selectedCount - selectedLockedCount > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 text-amber-600 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-950/30 border-amber-300 hover:border-amber-400 dark:border-amber-700 dark:hover:border-amber-600"
+                onClick={onLockClick}
+              >
+                <Lock className="h-4 w-4" />
+                Lock ({selectedCount - selectedLockedCount})
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
