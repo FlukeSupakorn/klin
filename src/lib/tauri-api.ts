@@ -13,6 +13,12 @@ export interface FileItem {
   sourceFolderName?: string
 }
 
+export interface EncryptionMetadata {
+  encrypted: boolean
+  algorithm: string
+  message: string
+}
+
 export async function getDownloadsFolder(): Promise<string> {
   return await invoke<string>('get_downloads_folder')
 }
@@ -60,5 +66,51 @@ export async function createFolder(folderPath: string): Promise<void> {
   } catch (error) {
     console.error('Failed to create folder:', error)
     throw error
+  }
+}
+
+// Encryption functions using qpdf
+export async function checkQpdfAvailable(): Promise<boolean> {
+  try {
+    return await invoke<boolean>('check_qpdf_available')
+  } catch (error) {
+    console.error('Failed to check qpdf availability:', error)
+    return false
+  }
+}
+
+export async function encryptPdf(filePath: string, password: string): Promise<EncryptionMetadata> {
+  try {
+    return await invoke<EncryptionMetadata>('encrypt_pdf', { filePath, password })
+  } catch (error) {
+    console.error('Failed to encrypt file:', error)
+    throw error
+  }
+}
+
+export async function decryptPdf(filePath: string, password: string): Promise<EncryptionMetadata> {
+  try {
+    return await invoke<EncryptionMetadata>('decrypt_pdf', { filePath, password })
+  } catch (error) {
+    console.error('Failed to decrypt file:', error)
+    throw error
+  }
+}
+
+export async function getEncryptionStatus(filePath: string): Promise<EncryptionMetadata> {
+  try {
+    return await invoke<EncryptionMetadata>('get_encryption_status', { filePath })
+  } catch (error) {
+    console.error('Failed to get encryption status:', error)
+    throw error
+  }
+}
+
+export async function checkIsEncrypted(filePath: string): Promise<boolean> {
+  try {
+    return await invoke<boolean>('check_is_encrypted', { filePath })
+  } catch (error) {
+    console.error('Failed to check encryption status:', error)
+    return false
   }
 }

@@ -1,10 +1,12 @@
 // Module declarations
 mod file_ops;
 mod note_ops;
+mod encryption;
 
 // Re-export commands for easy access
 use file_ops::*;
 use note_ops::*;
+use encryption::*;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -25,7 +27,12 @@ pub fn run() {
             update_note,
             delete_note,
             rename_note,
-            download_note
+            download_note,
+            encrypt_pdf,
+            decrypt_pdf,
+            get_encryption_status,
+            check_is_encrypted,
+            check_qpdf_available,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
