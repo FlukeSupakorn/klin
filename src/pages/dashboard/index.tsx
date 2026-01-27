@@ -90,7 +90,7 @@ export function DashboardPage() {
   const { deselectAllFiles } = useFileStore()
 
   // Get privacy store for lock
-  const { addExcludedFile } = usePrivacyStore()
+  const { addExcludedFile, shouldExclude } = usePrivacyStore()
 
   // Organize hook
   const { generateOrganizePreview, isLoadingOrganize } = useOrganize()
@@ -143,12 +143,11 @@ export function DashboardPage() {
     toast.success('Files Locked', `${selectedFiles.length} file(s) locked from organization`)
   }
 
-  // Organize logic
+  // Organize logic - excludes locked files
   const getOrganizeFiles = (): FileItem[] => {
-    if (!currentViewFolderId) {
-      return files // Dashboard: organize all files
-    }
-    return selectedFiles // Inside folder: selected files only
+    const filesToOrganize = !currentViewFolderId ? files : selectedFiles
+    // Filter out locked files
+    return filesToOrganize.filter(file => !shouldExclude(file.path, file.name))
   }
 
   const getOrganizeMode = (): 'all-folders' | 'selected-files' => {

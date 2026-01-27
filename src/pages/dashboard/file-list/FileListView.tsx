@@ -233,27 +233,28 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                   className={`hover-bg-theme-secondary transition-colors ${isSelected ? 'bg-theme-primary-light' : ''} ${isLocked ? 'opacity-60' : ''}`}
                 >
                   <td className="py-4 px-4">
-                    {isLocked ? (
-                      <button
-                        onClick={(e) => handleUnlockFile(file.path, e)}
-                        onMouseEnter={() => setHoveringLock(file.path)}
-                        onMouseLeave={() => setHoveringLock(null)}
-                        className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 transition-colors"
-                        title="Click to unlock"
-                      >
-                        {hoveringLock === file.path ? (
-                          <Unlock className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <Lock className="h-4 w-4 text-amber-500" />
-                        )}
-                      </button>
-                    ) : (
+                    <div className="flex items-center gap-2">
                       <Checkbox
                         checked={isSelected}
                         onCheckedChange={() => onToggleSelection(file.path)}
                         aria-label={`Select ${file.name}`}
                       />
-                    )}
+                      {isLocked && (
+                        <button
+                          onClick={(e) => handleUnlockFile(file.path, e)}
+                          onMouseEnter={() => setHoveringLock(file.path)}
+                          onMouseLeave={() => setHoveringLock(null)}
+                          className="h-5 w-5 flex items-center justify-center rounded hover:bg-amber-100 transition-colors"
+                          title="Click to unlock from AI organization"
+                        >
+                          {hoveringLock === file.path ? (
+                            <Unlock className="h-4 w-4 text-green-500" />
+                          ) : (
+                            <Lock className="h-4 w-4 text-amber-500" />
+                          )}
+                        </button>
+                      )}
+                    </div>
                   </td>
                   <td className="py-4 px-4">
                     <div className="flex items-center gap-3">
@@ -338,8 +339,8 @@ export function FileListView({ files, selectedFileIds, onToggleSelection, loadin
                     shadow-sm shadow-theme-primary/5
                     hover:bg-theme-secondary hover:shadow-lg hover:shadow-theme-primary/10 hover:scale-[1.02]
                     ${isSelected ? 'ring-2 ring-theme-primary bg-theme-primary/5 shadow-md shadow-theme-primary/10' : ''}
-                    ${isLocked ? 'opacity-70 ring-2 ring-amber-300 bg-amber-50/50' : ''}`}
-                  onClick={() => !isLocked && onToggleSelection(file.path)}
+                    ${isLocked ? 'ring-2 ring-amber-300 bg-amber-50/50 dark:bg-amber-950/20' : ''}`}
+                  onClick={() => onToggleSelection(file.path)}
                 >
                   <div className="flex items-start justify-between mb-3">
                     {isLocked ? (

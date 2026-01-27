@@ -1,4 +1,4 @@
-import { Sparkles, Folder, FileText, ArrowRight } from 'lucide-react'
+import { Sparkles, Folder, FileText, ArrowRight, AlertCircle } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -18,6 +18,7 @@ import { organizeFilesQueue, OrganizeFileResponse } from '@/lib/mock-api'
 import { useActivityStore } from '@/pages/activity/store/useActivityStore'
 import { useToast } from '@/components/ui/toast'
 import { useDashboardStore } from '../store/useDashboardStore'
+import { usePrivacyStore } from '@/pages/privacy/store/usePrivacyStore'
 
 // Simple UUID generator
 const generateId = () => {
@@ -49,6 +50,7 @@ export function OrganizeDialog({
   // Get destination folder from dashboard store
   const destinationFolders = useDashboardStore((state) => state.destinationFolders)
   const watchingFolders = useDashboardStore((state) => state.watchingFolders)
+  const { shouldExclude } = usePrivacyStore()
   
   // Get the first destination folder (if any)
   const destinationFolderPath = destinationFolders.length > 0 ? destinationFolders[0] : null
@@ -68,6 +70,9 @@ export function OrganizeDialog({
     const saved = localStorage.getItem('organize-auto-rename')
     return saved !== null ? saved === 'true' : true
   })
+
+  // Count locked files
+  const lockedFilesCount = selectedFiles.filter(file => shouldExclude(file.path, file.name)).length
 
   // Save preferences when they change
   useEffect(() => {
@@ -215,11 +220,30 @@ export function OrganizeDialog({
                 <p className="text-sm text-indigo-700 dark:text-indigo-300 mt-1">
                   {organizeMode === 'all-folders'
                     ? 'AI will analyze and organize files from all your watching folders'
-                    : `AI will analyze and organize ${selectedFiles.length} selected file${selectedFiles.length !== 1 ? 's' : ''}`}
+                    : `AI will analyze and organize ${selectedFiles.length - lockedFilesCount} file${selectedFiles.length - lockedFilesCount !== 1 ? 's' : ''}`}
                 </p>
               </div>
             </div>
           </div>
+
+          {/* Locked Files Warning */}
+          {lockedFilesCount > 0 && (
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-amber-100 dark:bg-amber-900/50 rounded-lg flex-shrink-0">
+                  <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-amber-900 dark:text-amber-100">
+                    {lockedFilesCount} Locked File{lockedFilesCount !== 1 ? 's' : ''} Will Be Skipped
+                  </h4>
+                  <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                    Files locked for AI protection won't be organized. Unlock them first if you want to organize them.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Folders/Files to Organize */}
           <div className="bg-theme-secondary rounded-xl p-4 space-y-3 overflow-hidden">
