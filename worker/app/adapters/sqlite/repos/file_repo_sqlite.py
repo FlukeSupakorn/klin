@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from app.adapters.sqlite.session import session_scope
 from app.adapters.sqlite.crud import file_crud
-from app.adapters.sqlite.mappers import file_record_to_domain
+from app.adapters.sqlite.mappers import file_record_to_domain, FileRecord
 from app.adapters.sqlite.models.file_record import FileRecordORM
 from app.core.ports.file_repo import FileRepositoryPort
-from app.core.domain import FileRecord
 
 
 class SqliteFileRepository(FileRepositoryPort):

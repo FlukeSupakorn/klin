@@ -1,9 +1,24 @@
+"""ORM → domain entity mappers."""
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import datetime
+
 from app.adapters.sqlite.models.file_record import FileRecordORM
-from app.adapters.sqlite.models.organize import OrganizeHistoryORM
-from app.adapters.sqlite.models.settings import FolderMappingORM, UserSettingORM
-from app.core.domain import FileRecord, FolderMapping, OrganizeHistory, UserSetting
+
+
+@dataclass(slots=True)
+class FileRecord:
+    """Domain entity for a tracked file."""
+    id: int | None
+    original_path: str
+    filename: str
+    current_path: str | None = None
+    new_filename: str | None = None
+    file_hash: str | None = None
+    category: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
 
 def file_record_to_domain(row: FileRecordORM) -> FileRecord:
@@ -17,32 +32,4 @@ def file_record_to_domain(row: FileRecordORM) -> FileRecord:
         category=row.category,
         created_at=row.created_at,
         updated_at=row.updated_at,
-    )
-
-
-def history_to_domain(row: OrganizeHistoryORM) -> OrganizeHistory:
-    return OrganizeHistory(
-        id=row.id,
-        file_id=row.file_id,
-        action_type=row.action_type,
-        old_path=row.old_path,
-        new_path=row.new_path,
-        old_name=row.old_name,
-        new_name=row.new_name,
-        status=row.status,
-        timestamp=row.timestamp,
-    )
-
-
-def folder_mapping_to_domain(row: FolderMappingORM) -> FolderMapping:
-    return FolderMapping(id=row.id, category=row.category, destination_path=row.destination_path)
-
-
-def user_setting_to_domain(row: UserSettingORM) -> UserSetting:
-    return UserSetting(
-        id=row.id,
-        watcher_folders=row.watcher_folders,
-        destination_folders=row.destination_folders,
-        llm_config=row.llm_config,
-        preferences=row.preferences,
     )

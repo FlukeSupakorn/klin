@@ -8,8 +8,14 @@ from pydantic import BaseModel
 from app.adapters.ollama_vlm import extract_text_with_llm
 from app.core.config import get_settings
 from app.core.logging import get_logger
-from app.schemas.ingest import IngestOptions
 from app.utils import calculate_sha256, is_allowed_extension, get_file_size_mb
+
+
+class IngestOptions(BaseModel):
+    """Options that control single-file ingestion behaviour."""
+    allow_vlm_ocr: bool = True
+    max_file_size_mb: int | None = None
+    traverse_folders: bool = True
 
 if TYPE_CHECKING:
     from app.core.ports.file_repo import FileRepositoryPort

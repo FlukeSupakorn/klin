@@ -5,12 +5,10 @@ from typing import Dict, Any, TYPE_CHECKING
 from app.core.logging import get_logger
 from app.schemas.common import ItemResult, PlanAction
 from app.schemas.organize import OrganizeOptions
-from app.services.ingestion import process_single_file, IngestionResult
-from app.schemas.ingest import IngestOptions
+from app.services.ingestion import process_single_file, IngestionResult, IngestOptions
 
 if TYPE_CHECKING:
     from app.core.ports.file_repo import FileRepositoryPort
-    from app.core.ports.history_repo import HistoryRepositoryPort
 
 logger = get_logger(__name__)
 

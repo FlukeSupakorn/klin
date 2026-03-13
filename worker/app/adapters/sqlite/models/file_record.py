@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import Field, Relationship, SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class FileRecordORM(SQLModel, table=True):
@@ -20,15 +20,3 @@ class FileRecordORM(SQLModel, table=True):
     )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-
-    organize_plans: list["OrganizePlanORM"] = Relationship(back_populates="file")
-    organize_history: list["OrganizeHistoryORM"] = Relationship(back_populates="file")
-    duplicate_records: list["DuplicateRecordORM"] = Relationship(back_populates="file")
-    summary_notes: list["SummaryNoteORM"] = Relationship(back_populates="file")
-    calendar_events: list["CalendarEventORM"] = Relationship(back_populates="file")
-
-
-# Forward refs for SQLModel relationship typing
-from .organize import DuplicateRecordORM, OrganizeHistoryORM, OrganizePlanORM  # noqa: E402
-from .embeddings import SummaryNoteORM  # noqa: E402
-from .calendar import CalendarEventORM  # noqa: E402

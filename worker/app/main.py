@@ -1,13 +1,18 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_voyager.server import create_voyager
 
 from app.core.lifecycle import lifespan as original_lifespan
-from app.api.v1.routers import health, organize
+from app.api.v1.routers import health, organize, document
 from app.api.dev_notes.routes import mount_dev_notes
 from app.db import init_db
+from app.core.exception_handlers import (
+    validation_exception_handler,
+    generic_exception_handler,
+)
 
 
 @asynccontextmanager
@@ -28,6 +33,10 @@ app = FastAPI(
     description="File processing worker with OCR, VLM analysis, and planning capabilities",
     version="0.3.0",
     lifespan=lifespan,
+    exception_handlers={
+        RequestValidationError: validation_exception_handler,
+        Exception: generic_exception_handler,
+    },
 )
 
 voyager_app = create_voyager(app)
@@ -42,6 +51,7 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(organize.router)
+app.include_router(document.router)
 # app.include_router(plan.router)
 # app.include_router(analyze.router)
 
