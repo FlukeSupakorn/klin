@@ -52,5 +52,14 @@
     "href": "#/system-design/API",
     "subtitle": "API endpoints and data formats",
     "category": "system-design"
+  },
+  {
+    "time": "2025.12.14",
+    "title": "Architecture Diagram",
+    "tag": "mermaid",
+    "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=2940",
+    "href": "#/mermaid/architecture",
+    "subtitle": "System architecture visualized with Mermaid",
+    "category": "mermaid"
   }
 ]

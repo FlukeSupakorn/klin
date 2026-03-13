@@ -1,5 +1,6 @@
 * [Dashboard](home/Dashboard.md)
-* [README](home/README.md)
+* [Setup](home/Setup.md)
+* [Structure](home/app-structure.md)
 * [Todo](home/todo.md)
 * Requirement
   * [Functional Requirement](requirement/functional.md)
@@ -9,7 +10,8 @@
   * [Low-Level Design (LLD)](system-design/lld.md)
   * [Developer Module Breakdown](system-design/dev-module.md)
   * [API Specifications](system-design/API.md)
-
+* Mermaid Diagrams
+  * [Architecture](mermaid/architecture.md)
 ---
 **Tags**
 

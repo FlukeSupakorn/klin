@@ -25,6 +25,8 @@ async def lifespan(app: FastAPI):
             "port": settings.PORT,
             "ollama_url": settings.OLLAMA_BASE_URL,
             "model": settings.MODEL_NAME,
+            "embedding_model": settings.EMBEDDING_MODEL,
+            "rag_parser": settings.RAG_PARSER,
         }
     )
     
@@ -42,6 +44,20 @@ async def lifespan(app: FastAPI):
                 logger.warning(f"Ollama returned status {response.status_code}")
     except Exception as e:
         logger.warning(f"Could not connect to Ollama: {e}")
+    
+    # Initialize RAG-Anything (lazy — just create adapter, storage init on first use)
+    try:
+        from app.adapters.raganything_adapter import get_rag_adapter
+        adapter = get_rag_adapter()
+        logger.info(
+            "RAG-Anything adapter created",
+            extra={
+                "working_dir": settings.RAG_WORKING_DIR,
+                "parser": settings.RAG_PARSER,
+            }
+        )
+    except Exception as e:
+        logger.warning(f"Could not pre-create RAG-Anything adapter: {e}")
     
     yield
     

@@ -1,1 +1,1 @@
-"""Core configuration and utilities."""
+"""Core layer: configuration, container, lifecycle, logging."""

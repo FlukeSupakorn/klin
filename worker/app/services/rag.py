@@ -1,253 +1,125 @@
-from pathlib import Path
-import sys
-import base64
-import hashlib
-import pandas as pd
-import numpy as np
+"""Service for Retrieval-Augmented Generation (RAG) using RAG-Anything.
 
-try:
-    from lancedb import connect
-except Exception:
-    print("lancedb is not installed. Install with: pip install lancedb")
-    raise
+Replaces the previous LangChain-based RAG chain with RAG-Anything's
+graph-aware multimodal retrieval powered by LightRAG.
 
+Key differences from the old pipeline:
+- No LangChain chains, retrievers, or document loaders
+- Knowledge-graph + vector hybrid retrieval (not vector-only)
+- Multimodal support: text, images, tables
+- Built-in entity/relationship extraction during ingestion
+"""
 
-def file_to_base64(path: Path) -> tuple[str, bytes]:
-    b = path.read_bytes()
-    return base64.b64encode(b).decode("utf-8"), b
+from __future__ import annotations
 
+from typing import Any
 
-def bytes_to_deterministic_vector(b: bytes, dim: int = 64) -> list:
-    # Use SHA512 to produce enough bytes for a deterministic vector
-    digest = hashlib.sha512(b).digest()
-    out = bytearray()
-    cur = digest
-    while len(out) < dim:
-        out.extend(cur)
-        cur = hashlib.sha512(cur).digest()
-    arr = np.frombuffer(bytes(out[:dim]), dtype=np.uint8).astype(np.float32) / 255.0
-    return arr.tolist()
+from app.adapters.raganything_adapter import get_rag_adapter
+from app.core.logging import get_logger
+
+logger = get_logger(__name__)
 
 
-def text_to_embedding(text: str, dim: int) -> list:
-    """Try to create a semantic embedding using sentence-transformers.
-    If unavailable, fall back to deterministic hash-based embedding.
+async def ingest_document(
+    file_path: str,
+    *,
+    output_dir: str | None = None,
+    parse_method: str | None = None,
+    doc_id: str | None = None,
+) -> dict[str, Any]:
     """
-    try:
-        from sentence_transformers import SentenceTransformer
+    Ingest a document into the RAG knowledge base.
 
-        model = SentenceTransformer("all-MiniLM-L6-v2")
-        vec = model.encode([text])[0]
-        vec = np.array(vec, dtype=np.float32)
-        if vec.size != dim:
-            if vec.size > dim:
-                vec = vec[:dim]
-            else:
-                out = np.zeros(dim, dtype=np.float32)
-                out[: vec.size] = vec
-                vec = out
-        return vec.tolist()
-    except Exception:
-        return bytes_to_deterministic_vector(text.encode("utf-8"), dim=dim)
+    RAG-Anything parses the document (MinerU/Docling), extracts multimodal
+    content (text + images + tables), builds a knowledge graph, and indexes
+    everything for hybrid retrieval.
 
+    Args:
+        file_path: Absolute path to the document.
+        output_dir: Directory for parsed artefacts.
+        parse_method: Parse method override.
+        doc_id: Optional document identifier.
 
-def extract_text_from_pdf(path: Path) -> str | None:
-    try:
-        import PyPDF2
-
-        with path.open("rb") as f:
-            reader = PyPDF2.PdfReader(f)
-            pages = []
-            for p in reader.pages:
-                try:
-                    pages.append(p.extract_text() or "")
-                except Exception:
-                    pages.append("")
-            text = "\n".join(pages)
-            return text.strip() or None
-    except Exception:
-        return None
+    Returns:
+        Ingestion result dict.
+    """
+    adapter = get_rag_adapter()
+    return await adapter.ingest_document(
+        file_path,
+        output_dir=output_dir,
+        parse_method=parse_method,
+        doc_id=doc_id,
+    )
 
 
-def find_db_dir(script_dir: Path) -> Path:
-    # search upwards for lancedb_store (works with repo layout)
-    for parent in (script_dir, *script_dir.parents):
-        cand = parent / "lancedb_store"
-        if cand.exists():
-            return cand
-    # fallback to script sibling
-    cand = script_dir / "lancedb_store"
-    return cand
+async def ingest_content(
+    content: str,
+    file_path: str = "unknown",
+    doc_id: str | None = None,
+) -> dict[str, Any]:
+    """
+    Ingest pre-extracted text content into the RAG knowledge base.
+
+    This wraps the text into a content list and uses RAG-Anything's
+    insert_content_list for direct injection (no document parsing).
+
+    Args:
+        content: Raw text to ingest.
+        file_path: Reference file path for citation.
+        doc_id: Optional document identifier.
+    """
+    adapter = get_rag_adapter()
+    content_list = [
+        {"type": "text", "text": content, "page_idx": 0},
+    ]
+    return await adapter.ingest_content_list(
+        content_list,
+        file_path=file_path,
+        doc_id=doc_id,
+    )
 
 
-def find_data_dir(script_dir: Path) -> Path:
-    # Search upward for a `data` folder (common in this repo layout)
-    for parent in (script_dir, *script_dir.parents):
-        cand = parent / "data"
-        if cand.exists():
-            return cand
-    # fallback to two levels up + data (best-effort)
-    return script_dir.parent.parent / "data"
+async def query_rag(
+    question: str,
+    *,
+    mode: str = "hybrid",
+    vlm_enhanced: bool | None = None,
+) -> str:
+    """
+    Query the RAG knowledge base with a natural-language question.
+
+    Modes:
+    - "local"  : focus on directly connected entities
+    - "global" : broad cross-document reasoning
+    - "hybrid" : combined local + global (recommended)
+    - "naive"  : simple chunk retrieval (no graph)
+    - "mix"    : combination of all modes
+
+    Args:
+        question: User's question.
+        mode: Retrieval mode.
+        vlm_enhanced: If True, VLM analyses images in retrieved context.
+
+    Returns:
+        Generated answer string with file references.
+    """
+    adapter = get_rag_adapter()
+    return await adapter.query(question, mode=mode, vlm_enhanced=vlm_enhanced)
 
 
-def load_request_config(script_dir: Path) -> list[str]:
-    # Look for request.json in ../db/jsondb/request.json relative to this script
-    req_path = script_dir.parent / "db" / "jsondb" / "request.json"
-    if not req_path.exists():
-        print(f"Config file not found: {req_path}")
-        return []
-    
-    try:
-        import json
-        with req_path.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-            return data.get("destination", [])
-    except Exception as e:
-        print(f"Failed to load config: {e}")
-        return []
-
-#TODO : not finished yet (turn into a function)
-def main():
-    script_dir = Path(__file__).resolve().parent
-    
-    destinations = load_request_config(script_dir)
-    if not destinations:
-        print("No destinations found in request.json")
-        sys.exit(1)
-
-    all_files = []
-    for dest in destinations:
-        path = Path(dest)
-        if not path.exists():
-            print(f"Path does not exist: {path}")
-            continue
-            
-        if path.is_file():
-             if path.suffix.lower() in (".txt", ".md", ".text", ".pdf"):
-                 all_files.append(path)
-        elif path.is_dir():
-            # Recursively find supported files
-            for ext in ("*.txt", "*.md", "*.text", "*.pdf"):
-                all_files.extend(path.rglob(ext))
-    
-    if not all_files:
-        print("No valid files found to ingest.")
-        sys.exit(0)
-        
-    print(f"Found {len(all_files)} files to ingest.")
-
-    # Determine DB directory
-    db_dir = find_db_dir(script_dir)
-    db_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"Connecting to LanceDB at: {db_dir}")
-    db = connect(str(db_dir))
-
-    table_name = "Files"
-
-    # If table exists, read it to determine next id and embedding dim
-    existing = None
-    try:
-        tab = db.table(table_name)
-        try:
-            existing = tab.to_pandas()
-        except Exception:
-            try:
-                existing = pd.DataFrame(list(tab))
-            except Exception:
-                existing = None
-    except Exception:
-        existing = None
-    
-    if existing is not None:
-        pass
-
-    next_id = 0
-    target_dim = 64
-    if existing is not None and not existing.empty:
-        if "id" in existing.columns:
-            try:
-                next_id = int(existing["id"].max()) + 1
-            except Exception:
-                next_id = len(existing)
-        else:
-            next_id = len(existing)
-
-        if "embedding" in existing.columns:
-            first = existing["embedding"].iloc[0]
-            try:
-                target_dim = len(first)
-            except Exception:
-                target_dim = 64
-
-    rows = []
-    for i, arg_path in enumerate(all_files):
-        print(f"Processing [{i+1}/{len(all_files)}]: {arg_path.name}")
-        try:
-            b64, raw_bytes = file_to_base64(arg_path)
-
-            suffix = arg_path.suffix.lower()
-            text_field = None
-
-            if suffix in (".txt", ".md", ".text"):
-                try:
-                    text_field = arg_path.read_text(encoding="utf-8")
-                except Exception:
-                    text_field = None
-            elif suffix == ".pdf":
-                text_field = extract_text_from_pdf(arg_path)
-
-            # Compute embedding
-            if text_field:
-                embedding = text_to_embedding(text_field, dim=target_dim)
-            else:
-                embedding = bytes_to_deterministic_vector(raw_bytes, dim=target_dim)
-
-            row = {
-                "id": next_id + i,
-                "filename": arg_path.name,
-                "content_base64": b64,
-                "embedding": embedding,
-            }
-            if text_field:
-                row["text"] = text_field
-            
-            rows.append(row)
-        except Exception as e:
-            print(f"Error processing {arg_path}: {e}")
-
-    if not rows:
-        print("No rows generated.")
-        sys.exit(0)
-
-    df = pd.DataFrame(rows)
-
-    # Upsert: use add() to append if table exists, otherwise create
-    try:
-        try:
-            tbl = db.open_table(table_name)
-            tbl.add(df)
-            table = tbl
-            print(f"Appended {len(rows)} rows to '{table_name}'.")
-        except Exception:
-            # Table doesn't exist or cannot be opened
-            table = db.create_table(table_name, df)
-            print(f"Created table '{table_name}' with {len(rows)} rows.")
-    except Exception as e:
-        print("Failed to write table:", e)
-        sys.exit(1)
-
-    # Print a short preview
-    try:
-        preview = table.to_pandas()[["id", "filename"]]
-        print("Preview (last 5):")
-        print(preview.tail(5))
-    except Exception:
-        try:
-            print(list(table.select(limit=5)))
-        except Exception:
-            print("Stored records. Inspect using the lancedb client APIs.")
-
-
-if __name__ == "__main__":
-    main()
+async def query_rag_multimodal(
+    question: str,
+    multimodal_content: list[dict[str, Any]],
+    *,
+    mode: str = "hybrid",
+) -> str:
+    """
+    Query with additional multimodal context (e.g. a table or image the
+    user provides alongside the question).
+    """
+    adapter = get_rag_adapter()
+    return await adapter.query_with_multimodal(
+        question,
+        multimodal_content=multimodal_content,
+        mode=mode,
+    )
